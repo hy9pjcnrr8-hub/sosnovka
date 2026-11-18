@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Лесной рубеж</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout (player's TACTICAL OPS design): fixed dark forest backdrop, sticky top bar, full first screen with a huge
+     headline + live side panel, then dark content sections with the same lime accent and square buttons. */
+  --bg:#080b0d; --panel:rgba(0,0,0,.6); --line:rgba(255,255,255,.13); --text:#ffffff; --muted:#a3a7a2; --accent:#c7ff48;
+  --blue:#6c9bff; --red:#ff7466;
+  --display:"Montserrat","Arial Black",Arial,sans-serif; --body:Arial,"Helvetica Neue",sans-serif;
+  color-scheme:dark;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{font-family:var(--body);background:var(--bg);color:var(--text);line-height:1.6}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3{font-family:var(--display);font-weight:900;text-wrap:balance}
+h2{font-size:clamp(28px,4.4vw,44px);letter-spacing:-1px;line-height:1.05;margin-bottom:14px;text-transform:uppercase}
+h3{font-size:18px;letter-spacing:.5px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 max(22px,env(safe-area-inset-left))}
+.muted{color:var(--muted)}
+/* background */
+.background{position:fixed;inset:0;z-index:-1}
+#forest{position:absolute;inset:0;width:100%;height:100%;display:block;filter:brightness(.55)}
+.background::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.9),transparent),linear-gradient(0deg,rgba(0,0,0,.9),transparent)}
+/* header */
+header{position:sticky;top:0;z-index:5;height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:0 max(24px,4.5vw);background:rgba(0,0,0,.62);border-bottom:1px solid var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.logo{font-family:var(--display);font-size:24px;font-weight:900;letter-spacing:4px;color:var(--text);text-decoration:none;white-space:nowrap}
+.logo span{color:var(--accent)}
+nav{display:flex;gap:30px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{color:#aaa;text-decoration:none;font-size:12.5px;letter-spacing:2px;font-weight:700;white-space:nowrap;transition:color .3s}
+nav a:hover{color:var(--accent)}
+.hbtn{padding:11px 20px!important;font-size:12px!important}
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:10px;padding:19px 35px;font-family:var(--body);font-size:13px;font-weight:700;letter-spacing:2px;
+  cursor:pointer;border:none;text-decoration:none;transition:background .3s,color .3s,transform .3s,box-shadow .3s;white-space:nowrap}
+.play{background:var(--accent);color:#000}
+.play:hover{background:#fff;transform:translateY(-4px);box-shadow:0 10px 35px rgba(199,255,72,.32)}
+.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.32);color:#fff}
+.secondary:hover{background:#fff;color:#000}
+/* first screen */
+.main{min-height:calc(100svh - 76px);display:flex;align-items:center;padding:48px 9%;position:relative}
+.content{max-width:660px;animation:appear 1s ease}
+.subtitle{color:var(--accent);letter-spacing:6px;font-size:13px;font-weight:700;margin-bottom:22px}
+.main h1{font-size:clamp(52px,8vw,104px);line-height:.95;letter-spacing:-3px;text-transform:uppercase}
+.main h1 span{color:var(--accent)}
+.description{margin-top:28px;color:#b3b6b1;font-size:16px;line-height:1.8;max-width:500px}
+.buttons{display:flex;gap:15px;margin-top:38px;flex-wrap:wrap}
+.stats{display:flex;gap:48px;margin-top:58px;flex-wrap:wrap}
+.stat h2{color:var(--accent);font-size:30px;letter-spacing:0;margin:0;font-variant-numeric:tabular-nums}
+.stat p{color:#8a8e89;font-size:11px;letter-spacing:2px;margin-top:6px;font-weight:700}
+.side-panel{position:absolute;right:max(24px,4.5vw);bottom:56px;width:290px;padding:22px;background:rgba(0,0,0,.66);border:1px solid rgba(255,255,255,.16);
+  -webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px)}
+.online{color:var(--accent);font-size:12px;margin-bottom:14px;font-weight:700;letter-spacing:1px}
+.online.off{color:#c9c9c9}
+.side-panel h3{font-size:19px;margin-bottom:10px;text-transform:uppercase}
+.side-panel p{color:#9fa39e;font-size:12.5px;line-height:1.7}
+.side-panel a{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;letter-spacing:2px;text-decoration:none}
+@keyframes appear{from{opacity:.001;transform:translateY(28px)}to{opacity:1;transform:none}}
+@media (max-width:1050px){ .side-panel{position:static;margin:36px 0 0;width:auto;max-width:520px} .main{flex-direction:column;align-items:flex-start;justify-content:center} }
+@media (max-width:800px){ header{padding:0 18px;height:64px} .logo{font-size:18px;letter-spacing:3px} nav{gap:16px} nav a{font-size:10.5px} .hbtn{display:none!important}
+  .main{padding:36px 22px;min-height:calc(100svh - 64px)} .stats{gap:26px} .btn{padding:16px 24px} }
+/* sections */
+section{padding:72px 0;border-top:1px solid var(--line);background:rgba(5,8,9,.86)}
+.eyebrow{color:var(--accent);letter-spacing:5px;font-size:12px;font-weight:700;margin-bottom:10px}
+.intro{max-width:64ch;margin-bottom:28px;color:var(--muted)}
+.modes{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.mode,.mapc,.dev{background:var(--panel);border:1px solid var(--line)}
+.mode{padding:20px;display:flex;flex-direction:column;gap:10px;transition:border-color .3s}
+.mode:hover,.mapc:hover,.dev:hover{border-color:rgba(199,255,72,.5)}
+.mode .meta{display:flex;gap:6px;flex-wrap:wrap}
+.mode .meta span{font-size:11px;font-weight:700;letter-spacing:1px;padding:3px 8px;background:rgba(255,255,255,.07);color:var(--muted);text-transform:uppercase}
+.mode.online{border-color:rgba(199,255,72,.55)}
+.mode.online .meta span:first-child{background:var(--accent);color:#000}
+.mode h3{text-transform:uppercase}
+.mode p{font-size:14.5px;color:var(--muted)}
+@media (max-width:900px){ .modes{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:480px){ .modes{grid-template-columns:1fr} }
+.tablewrap{overflow-x:auto;border:1px solid var(--line);background:var(--panel)}
+table{width:100%;border-collapse:collapse;min-width:640px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line)}
+th{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;background:rgba(255,255,255,.03)}
+tr:last-child td{border-bottom:0}
+td.n{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:14px;letter-spacing:.5px}
+.bar{height:5px;background:rgba(255,255,255,.1);width:110px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:8px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.note{font-size:14px;color:var(--muted);margin-top:12px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media (max-width:760px){ .cols{grid-template-columns:1fr} }
+.cols h3{text-transform:uppercase;letter-spacing:1px}
+.keys{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:center;font-size:15px;color:#d6d8d4}
+kbd{font-family:var(--body);font-weight:700;font-size:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.25);padding:3px 8px;white-space:nowrap;letter-spacing:1px}
+.maps{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){ .maps{grid-template-columns:1fr} }
+.mapc{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:start;padding:18px;transition:border-color .3s}
+.mapc canvas{width:150px;height:150px;border-radius:50%;border:1px solid var(--line);background:#132219}
+.mapc h3{text-transform:uppercase}
+.mapc p{font-size:14.5px;color:#c4c7c2}.mapc .dim{color:var(--accent);font-size:11px;letter-spacing:2px;font-weight:700;margin:4px 0 8px;text-transform:uppercase}
+@media (max-width:420px){ .mapc{grid-template-columns:1fr} }
+.steps{counter-reset:s;display:grid;gap:14px;max-width:70ch;padding:0}
+.steps li{list-style:none;counter-increment:s;display:grid;grid-template-columns:44px 1fr;gap:12px;color:#d6d8d4}
+.steps li::before{content:counter(s);font-family:var(--display);font-weight:900;width:36px;height:36px;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center}
+.warn{margin-top:18px;padding:14px 16px;border-left:3px solid var(--accent);background:var(--panel);font-size:15px;max-width:70ch;color:#cfd2cd}
+.log{display:grid;max-width:78ch}
+.log div{display:grid;grid-template-columns:72px 1fr;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);color:#cfd2cd}
+.log div:last-child{border-bottom:0}
+.log b{font-family:var(--display);font-weight:900;color:var(--accent)}
+.devs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.dev .av.t{background:#ffd27a;color:#1a1405}
+@media (max-width:700px){ .devs{grid-template-columns:1fr} }
+.dev{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start;padding:20px;transition:border-color .3s}
+.av{width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:24px;background:var(--accent);color:#000}
+.av.c{background:#fff}
+.dev h3{text-transform:uppercase}
+.dev p{font-size:14.5px;color:#c4c7c2}.dev .dim{color:var(--accent);font-size:11px;letter-spacing:2px;font-weight:700;margin:4px 0 8px;text-transform:uppercase}
+.final{padding:64px 0;background:rgba(5,8,9,.86);border-top:1px solid var(--line)}
+.final .box{display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid rgba(199,255,72,.45);background:rgba(199,255,72,.06);padding:30px}
+.final h2{margin:0 0 6px}
+footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;color:#777b76;background:#050708;border-top:1px solid var(--line);letter-spacing:.5px}
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} html{scroll-behavior:auto} }
+</style>
+</head>
+<body>
+<div class="background"><canvas id="forest" aria-hidden="true"></canvas></div>
+
+<header>
+  <a class="logo" href="#top">ЛЕСНОЙ<span> РУБЕЖ</span></a>
+  <nav aria-label="Разделы">
+    <a href="#top">ГЛАВНАЯ</a><a href="#modes">РЕЖИМЫ</a><a href="#weapons">ОРУЖИЕ</a><a href="#map">КАРТЫ</a><a href="#controls">УПРАВЛЕНИЕ</a><a href="#online">ОНЛАЙН</a><a href="#log">ОБНОВЛЕНИЯ</a><a href="#team">РАЗРАБОТЧИКИ</a>
+  </nav>
+  <a class="btn play hbtn" href="play.html">▶ ИГРАТЬ</a>
+</header>
+
+<div class="main" id="top">
+  <div class="content">
+    <div class="subtitle">ТАКТИЧЕСКИЙ ШУТЕР · ОНЛАЙН И ОФФЛАЙН</div>
+    <h1>Вступай<br>в <span>бой</span></h1>
+    <div class="description">Добро пожаловать на «Лесной рубеж». Выбирай карту, собирай оружие в арсенале и веди свою команду в бой против ботов или живых игроков. Игра запускается прямо в браузере.</div>
+    <div class="buttons">
+      <a class="btn play" href="play.html">▶ НАЧАТЬ ИГРУ</a>
+    <a class="btn" id="apkDl" href="lesnoy-rubezh.apk" download style="display:none;border:1px solid var(--accent);color:var(--accent)">⬇ СКАЧАТЬ ДЛЯ ANDROID</a>
+    <script>if (/github\.io$/.test(location.hostname)) document.getElementById("apkDl").style.display = "inline-flex";</script>
+      <a class="btn secondary" href="play.html#armory">АРСЕНАЛ</a>
+      <a class="btn secondary" href="play.html#settings">НАСТРОЙКИ</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><h2>4</h2><p>КАРТЫ</p></div>
+      <div class="stat"><h2>5</h2><p>СТВОЛОВ</p></div>
+      <div class="stat"><h2>40</h2><p>МОДУЛЕЙ И ОКРАСОК</p></div>
+      <div class="stat"><h2>5×5</h2><p>КОМАНДНЫЕ БОИ</p></div>
+    </div>
+  </div>
+  <aside class="side-panel" aria-live="polite">
+    <div class="online off" id="srv">● ПРОВЕРЯЕМ СЕРВЕР…</div>
+    <h3>Обновление 0.15</h3>
+    <p>Синие против красных, игровая валюта КР, магазин оружия и модулей, миссии с наградами и три вида гранат: осколочная, светошумовая и дымовая.</p>
+    <a href="#log">ВСЕ ОБНОВЛЕНИЯ →</a>
+  </aside>
+</div>
+
+<section id="modes">
+  <div class="wrap">
+    <div class="eyebrow">КАК ИГРАТЬ</div>
+    <h2>Режимы</h2>
+    <p class="intro">Выберите режим и карту в главном меню игры. Оффлайн-режимы идут против ботов, у которых три уровня сложности. В онлайн-режиме играют только живые люди.</p>
+    <div class="modes">
+      <article class="mode online"><div class="meta"><span>Онлайн</span><span>без лимита</span></div><h3>Онлайн-бой</h3>
+        <p>Синие против красных, только живые игроки. Команда выбирается сама, туда, где меньше людей, или вручную. Возрождение на базе через 5 секунд.</p></article>
+      <article class="mode"><div class="meta"><span>5 на 5</span><span>6 минут</span></div><h3>Командный бой</h3>
+        <p>Вы и четыре бота-напарника против пяти противников. Побеждает команда, первой набравшая 35 убийств.</p></article>
+      <article class="mode"><div class="meta"><span>5 на 5</span><span>до 100 очков</span></div><h3>Захват точки</h3>
+        <p>Займите бревенчатый домик в центре леса. Пока точка ваша, команда получает очко каждые 1,4 секунды.</p></article>
+      <article class="mode"><div class="meta"><span>3 бойца</span><span>волны</span></div><h3>Выживание</h3>
+        <p>Вы и двое напарников против растущих волн противника. С третьей волны появляются бойцы с дробовиками, с четвёртой — снайперы.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="weapons">
+  <div class="wrap">
+    <div class="eyebrow">АРСЕНАЛ</div>
+    <h2>Оружие</h2>
+    <p class="intro">В начале у вас только АК. Остальные автоматы, ПП, винтовки и пистолеты покупаются в Арсенале за КР — игровую валюту, которую дают за убийства, победы и миссии. Баланс начинается с нуля. В бой берёте два ствола: основное и пистолет (кнопка ⇄, клавиши 1/2, Q или колесо). Каждый модуль — прицел, глушитель, рукоять, приклад, магазин, окраска — тоже стоит денег.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Оружие</th><th>Урон за выстрел</th><th>Темп, выстр./мин</th><th>Магазин / запас</th><th>Перезарядка</th><th>Цена</th></tr></thead>
+      <tbody>
+        <tr><td class="n">АК</td><td>30 <span class="bar"><i style="width:30%"></i></span></td><td>600, автоогонь</td><td>30 / 120</td><td>2,1 с</td><td>бесплатно</td></tr>
+        <tr><td class="n">Винтовка «Вихрь»</td><td>26 <span class="bar"><i style="width:26%"></i></span></td><td>705, автоогонь</td><td>30 / 150</td><td>2,0 с</td><td>1 500 КР</td></tr>
+        <tr><td class="n">Винтовка «Тайга»</td><td>44 <span class="bar"><i style="width:44%"></i></span></td><td>430, автоогонь</td><td>20 / 100</td><td>2,5 с</td><td>2 200 КР</td></tr>
+        <tr><td class="n">ПП «Шершень»</td><td>20 <span class="bar"><i style="width:20%"></i></span></td><td>910, автоогонь</td><td>32 / 160</td><td>1,7 с</td><td>900 КР</td></tr>
+        <tr><td class="n">ПП «Оса»</td><td>16 <span class="bar"><i style="width:16%"></i></span></td><td>1090, автоогонь</td><td>25 / 150</td><td>1,4 с</td><td>600 КР</td></tr>
+        <tr><td class="n">Снайперская винтовка</td><td>100 <span class="bar"><i style="width:100%"></i></span></td><td>48</td><td>5 / 25</td><td>2,8 с</td><td>2 600 КР</td></tr>
+        <tr><td class="n">Дробовик</td><td>9 × 17 <span class="bar"><i style="width:100%"></i></span></td><td>70, помповый</td><td>6 / 30</td><td>2,6 с</td><td>1 100 КР</td></tr>
+        <tr><td class="n">Пистолет</td><td>34 <span class="bar"><i style="width:34%"></i></span></td><td>400</td><td>12 / ∞</td><td>1,3 с</td><td>250 КР</td></tr>
+        <tr><td class="n">Тяжёлый пистолет</td><td>52 <span class="bar"><i style="width:52%"></i></span></td><td>190</td><td>7 / 35</td><td>1,6 с</td><td>700 КР</td></tr>
+        <tr><td class="n">Револьвер «Бизон»</td><td>62 <span class="bar"><i style="width:62%"></i></span></td><td>130</td><td>6 / 36</td><td>2,3 с</td><td>950 КР</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">У всех бойцов 100 единиц здоровья. Через 5 секунд без урона здоровье начинает восстанавливаться. Дробь теряет силу после 8 метров. В прицеле и в приседе разброс меньше, на бегу и в прыжке — больше.</p>
+  </div>
+</section>
+
+<section id="map">
+  <div class="wrap">
+    <div class="eyebrow">ПОЛЕ БОЯ</div>
+    <h2>Карты</h2>
+    <p class="intro">Карта выбирается в меню игры, перед боем. Во всех режимах синяя база на юге, красная на севере, точка захвата в центре. В онлайне вы попадаете к тем, кто выбрал ту же карту.</p>
+    <div class="maps">
+      <article class="mapc"><canvas width="400" height="400" data-map="forest" aria-label="Схема карты Сосновая падь"></canvas>
+        <div><h3>Сосновая падь</h3><p class="dim">Ø 144 м · хвойный лес</p>
+        <p>Густой ельник с берёзами, папоротником, грибами и цветочными полянами. Бревенчатый домик в центре, изба охотника с печью и кроватью, сторожевая вышка, лагерь с костром, дровяник, брошенные машины и окопы с мостками у баз.</p></div></article>
+      <article class="mapc"><canvas width="400" height="400" data-map="fields" aria-label="Схема карты Поля"></canvas>
+        <div><h3>Поля</h3><p class="dim">Ø 164 м · открытая местность</p>
+        <p>Пшеница за изгородями, рулоны сена и стога, пугала, мельница, два силоса, водонапорная башня и линия электропередачи вдоль дороги. Амбар со стойлами в центре, жилой дом с огородом и бельём на верёвке, окопы перед базами.</p></div></article>
+      <article class="mapc"><canvas width="400" height="400" data-map="front" aria-label="Схема карты Фронт"></canvas>
+        <div><h3>Фронт</h3><p class="dim">Ø 140 м · линия окопов</p>
+        <p>По две линии окопов с каждой стороны, ходы сообщения, дощатые стенки, настилы на дне и мешки на бруствере. Землянки, пулемётные гнёзда, полевые орудия, разрушенные дома, воронки, колючая проволока, ежи и три подбитые машины в дыму. В центре бункер с рацией и картой.</p></div></article>
+      <article class="mapc"><canvas width="400" height="400" data-map="village" aria-label="Схема карты Деревня"></canvas>
+        <div><h3>Деревня</h3><p class="dim">Ø 152 м · дома и дворы</p>
+        <p>Двадцать домов на двух улицах. Внутри кровати, печи, столы со стульями, полки, шкафы, ковры и лампы. Есть лавка с прилавком, часовня со скамьями, амбар, огороды, уборные, бельё на верёвках, фонари на улицах, два грузовика и окопы на окраинах.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section id="controls">
+  <div class="wrap">
+    <div class="eyebrow">ТЕЛЕФОН И КОМПЬЮТЕР</div>
+    <h2>Управление</h2>
+    <p class="intro">Раскладку кнопок на телефоне можно поменять: Настройки → Расположение кнопок, затем перетащите кнопки пальцем.</p>
+    <div class="cols">
+      <div><h3 style="margin-bottom:12px">Телефон, горизонтально</h3>
+        <div class="keys">
+          <kbd>левая часть</kbd><span>движение; отклонить до упора вперёд — бег</span>
+          <kbd>правая часть</kbd><span>поворот камеры</span>
+          <kbd>ОГОНЬ</kbd><span>стрельба; кнопку можно вести пальцем, чтобы целиться</span>
+          <kbd>ПРИЦЕЛ</kbd><span>прицеливание, у винтовки — оптика</span>
+          <kbd>⤓ ⤒</kbd><span>присесть и прыжок</span>
+          <kbd>⟳ ⇄</kbd><span>перезарядка и смена оружия</span>
+        </div></div>
+      <div><h3 style="margin-bottom:12px">Компьютер</h3>
+        <div class="keys">
+          <kbd>клик</kbd><span>захватить мышь</span>
+          <kbd>W A S D</kbd><span>движение, <kbd>Shift</kbd> — бег</span>
+          <kbd>ЛКМ</kbd><span>огонь, <kbd>ПКМ</kbd> — прицел</span>
+          <kbd>C</kbd><span>присесть, <kbd>Пробел</kbd> — прыжок</span>
+          <kbd>R</kbd><span>перезарядка</span>
+          <kbd>1/2 · Q</kbd><span>оружие, <kbd>G</kbd> граната, <kbd>Enter</kbd> чат, <kbd>T</kbd> выбор гранаты, <kbd>Esc</kbd> — пауза</span>
+        </div></div>
+    </div>
+  </div>
+</section>
+
+<section id="online">
+  <div class="wrap">
+    <div class="eyebrow">ВМЕСТЕ С ДРУЗЬЯМИ</div>
+    <h2>Как играть с друзьями</h2>
+    <ol class="steps">
+      <li><span>Откройте игру и нажмите <b>Поделиться</b> в правом верхнем углу страницы claude.ai. Пригласите друзей по почте.</span></li>
+      <li><span>Друзья входят в свой аккаунт claude.ai и открывают присланную ссылку.</span></li>
+      <li><span>В меню игры все выбирают вкладку <b>Онлайн</b>, вводят позывной и жмут <b>Подключиться к бою</b>. Список тех, кто уже в бою, видно до входа.</span></li>
+    </ol>
+    <p class="warn">Онлайн работает только для вошедших в claude.ai людей, которым вы дали доступ. Если открыть игру по публичной ссылке или без входа в аккаунт, доступны только оффлайн-режимы с ботами.</p>
+  </div>
+</section>
+
+<section id="log">
+  <div class="wrap">
+    <div class="eyebrow">ЖУРНАЛ ИЗМЕНЕНИЙ</div>
+    <h2>Обновления</h2>
+    <div class="log">
+      <div><b>0.22</b><span>Новый взрыв осколочной гранаты: вспышка со светом на окружение, огненный шар, разлёт искр и осколков, комья земли и камни с отскоками, ударная волна и пылевое кольцо по земле, столб дыма, тлеющие угольки и выжженное пятно, которое остаётся на земле. Многослойный звук: хлопок, гул и осыпающаяся земля. Светошумовая — ослепительная белая вспышка с искрами.</span></div>
+      <div><b>0.21</b><span>Новые модели бойцов в тактическом снаряжении: камуфляжная форма, плитоноска с подсумками, шлем с креплением для ПНВ и активными наушниками, очки и маска, перчатки, наколенники, берцы и рюкзак с антенной. Синие — в серо-синем камуфляже, красные — в буро-красном, плюс цветные повязки, нашивки и полоса на шлеме. Камуфляж и на рукавах в виде от первого лица.</span></div>
+      <div><b>0.20</b><span>Серверы игры: четыре общих сервера и «Своя комната» по коду для друзей. Работают из любых сетей — мобильный интернет, разный Wi-Fi — без аккаунта Claude и без своего компьютера-сервера; соединение идёт через публичные узлы с автоматическим переключением на запасной.</span></div>
+      <div><b>0.19</b><span>Онлайн без аккаунта Claude: свой сервер server.js (только Node.js, без установки пакетов). Запустите его на компьютере — друзья в той же Wi-Fi сети открывают показанный адрес или вводят его в игре и в Android-приложении. Сервер можно разместить и в интернете.</span></div>
+      <div><b>0.18</b><span>Аккаунты сохраняются в базе: при входе через claude.ai деньги, оружие и миссии хранятся на сервере и переносятся в новые версии игры. Код аккаунта для переноса на другое устройство или в версию по другой ссылке. Гироскоп переделан: повороты считаются относительно настоящей вертикали.</span></div>
+      <div><b>0.17</b><span>Чат в бою: кнопка «ЧАТ» или Enter, быстрые фразы. Панель главного администратора (paralysax): наблюдение за игроком его глазами, кик, мут на 5 или 30 минут, блокировка и разбан; действия подписаны ключом администратора, подделать их нельзя. Управление гироскопом: поворот телефона поворачивает бойца, с отдельной чувствительностью в настройках.</span></div>
+      <div><b>0.16</b><span>Регистрация и вход по нику и паролю. У каждого аккаунта свои деньги, оружие, модули и миссии; ник аккаунта становится позывным в онлайне. Пароль хранится только в виде хэша. Прогресс, накопленный до обновления, переносится в первый созданный аккаунт.</span></div>
+      <div><b>0.15</b><span>Две команды: синие и красные, выбор стороны в оффлайне. Игровая валюта КР с нуля: деньги за убийства (в голову и гранатой — больше), победы, захват точки, волны. Магазин: пять новых стволов («Вихрь», «Тайга», «Шершень», «Оса», «Бизон»), стартовое оружие — только АК, все модули платные. Вкладка «Миссии» с десятью заданиями и уровнями. Гранаты: осколочная, светошумовая, дымовая — боты тоже бросают их и убегают от них. Обновлён интерфейс меню и Арсенала.</span></div>
+      <div><b>0.14</b><span>Все карты стали больше примерно в полтора раза. Окопы на каждой карте с дощатыми стенками, настилами и мостками. Интерьеры домов: кровати, печи, столы, полки, шкафы, ковры, лампы. Новые постройки: вышка, силосы, водонапорная башня, линия электропередачи, разрушенные дома, землянки, пулемётные гнёзда, орудия, лагерь с костром. Цветы, грибы и высокая трава.</span></div>
+      <div><b>0.13</b><span>Новый дизайн сайта по макету paralysax.</span></div>
+      <div><b>0.12</b><span>Погода и время суток на основе движка Realistic JS World Engine от paralysax: день, вечер с закатом и ночь со звёздами и луной, дождь с грозой и звуком, мокрая блестящая земля. Фонарик на оружии ночью (клавиша L). Пруды с камышами и кувшинками на картах «Сосновая падь», «Поля» и «Деревня», в воде бойцы двигаются медленнее.</span></div>
+      <div><b>0.11</b><span>Арсенал: модернизация всех пяти стволов. Прицелы (коллиматор, мини-коллиматор, голографический, 4×, 8×), дульные устройства (пламегаситель, компенсатор, глушители, тормоз, чок), рукоятки, лазер, сошки, приклады, увеличенные, барабанные и спаренные магазины, семь окрасок. Каждый модуль меняет характеристики.</span></div>
+      <div><b>0.10</b><span>Новые модели бойцов по наброску игрока: прямоугольный торс, округлые плечи, лицо с носом, ушами и глазами, причёска, закатанные рукава, ботинки. Синие и красные различаются цветом формы и повязками на плечах.</span></div>
+      <div><b>0.9</b><span>Пятое оружие — тяжёлый пистолет по модели игрока: 52 урона, магазин на 7 патронов, затвор отходит при выстреле.</span></div>
+      <div><b>0.8</b><span>Новые руки от первого лица: тактические перчатки с пальцами, обхватывающими оружие, накладки на костяшки, манжеты, рукава со складками, часы на левой руке. У бойцов разное снаряжение на голове: шлем с очками, кепка с гарнитурой, шапка с гарнитурой, балаклава под шлемом.</span></div>
+      <div><b>0.7</b><span>Новые карты: «Поля» с пшеницей и мельницей, «Фронт» с окопами, воронками и бункером, «Деревня» с домами, часовней и колодцем. Выбор карты в меню, в онлайне игроки распределяются по картам.</span></div>
+      <div><b>0.6</b><span>Густая трава с ветром, ели из настоящих ветвей, берёзы и кусты с листвой, папоротник. Рельефная кора, камни, мешковина, ящики и бочки. Облака и отражения неба.</span></div>
+      <div><b>0.5</b><span>Настройки: звук, чувствительность, поле зрения, размер и раскладка кнопок. Бойцы стали похожи на людей: лица, суставы, снаряжение.</span></div>
+      <div><b>0.4</b><span>Онлайн-режим для живых игроков, позывные, таблица счёта, лента убийств.</span></div>
+      <div><b>0.3</b><span>Горизонтальный экран, тени, рельеф, домик и базы. Режимы «Командный бой», «Захват точки», «Выживание». Снайперская винтовка с оптикой.</span></div>
+      <div><b>0.2</b><span>Лес, противники-люди, автомат, пистолет и дробовик.</span></div>
+      <div><b>0.1</b><span>Первая 3D-арена с дронами.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="team">
+  <div class="wrap">
+    <div class="eyebrow">КОМАНДА</div>
+    <h2>Разработчики</h2>
+    <div class="devs">
+      <article class="dev"><div class="av" aria-hidden="true">P</div><div><h3>paralysax</h3><p class="dim">Главный разработчик</p>
+        <p>Придумал игру, режимы и карты, сделал модель тяжёлого пистолета, модели бойцов и движок погоды и времени суток.</p></div></article>
+      <article class="dev"><div class="av c" aria-hidden="true">C</div><div><h3>Claude</h3><p class="dim">Главный разработчик</p>
+        <p>Написал код игры, графику, поведение ботов, онлайн-режим и этот сайт.</p></div></article>
+      <article class="dev"><div class="av t" aria-hidden="true">И</div><div><h3>иксов</h3><p class="dim">Тестер · модератор</p>
+        <p>Проверяет новые версии, ищет ошибки и следит за порядком в онлайн-боях.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<div class="final">
+  <div class="wrap"><div class="box">
+    <div><h2>Лес ждёт</h2><p class="muted">Держите телефон горизонтально. На слабых устройствах выберите среднюю или низкую графику.</p></div>
+    <a class="btn play" href="play.html">▶ НАЧАТЬ ИГРУ</a>
+  </div></div>
+</div>
+<footer><div class="wrap">ЛЕСНОЙ РУБЕЖ · создатели: paralysax и Claude · тестер и модератор: иксов · дизайн сайта по макету paralysax · графика и звук генерируются кодом при запуске</div></footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function rnd(seed){ return () => { seed = (seed*16807) % 2147483647; return seed/2147483647; }; }
+  // ---- background forest ----
+  const cv = document.getElementById('forest'), g = cv.getContext('2d');
+  let W = 0, H = 0, layers = [], t0 = performance.now();
+  function build(){
+    const dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W*dpr; cv.height = H*dpr; g.setTransform(dpr,0,0,dpr,0,0);
+    const R = rnd(42); layers = []; const cols = ['#2a4535','#203a2b','#183022','#112418','#0b1a10'];
+    for (let L=0; L<5; L++){ const trees = [], n = Math.ceil(W/(26 - L*2)) + 4, base = H*(.5 + L*.12);
+      for (let i=0;i<n;i++) trees.push({x:i*(W+120)/n - 60 + R()*20, h:(60 + R()*70)*(1 + L*.45), w:(16 + R()*10)*(1 + L*.4), b:base + R()*16});
+      layers.push({trees, col:cols[L], speed:(L+1)*.6}); }
+  }
+  function tree(x, b, h, w){ g.beginPath(); g.moveTo(x, b-h); const tiers = 6;
+    for (let k=1;k<=tiers;k++){ const y = b-h + h*k/tiers, ww = w*(.35 + .65*k/tiers); g.lineTo(x+ww, y); g.lineTo(x+ww*.45, y - h/tiers*.15); }
+    g.lineTo(x+w*.08, b); g.lineTo(x-w*.08, b);
+    for (let k=tiers;k>=1;k--){ const y = b-h + h*k/tiers, ww = w*(.35 + .65*k/tiers); g.lineTo(x-ww*.45, y - h/tiers*.15); g.lineTo(x-ww, y); }
+    g.closePath(); g.fill(); }
+  function draw(now){ const t = (now - t0)/1000;
+    const sky = g.createLinearGradient(0,0,0,H); sky.addColorStop(0,'#3b5a66'); sky.addColorStop(.55,'#6f8a80'); sky.addColorStop(1,'#1d3024'); g.fillStyle = sky; g.fillRect(0,0,W,H);
+    const sun = g.createRadialGradient(W*.78, H*.32, 0, W*.78, H*.32, H*.6); sun.addColorStop(0,'rgba(255,214,150,.55)'); sun.addColorStop(1,'rgba(255,214,150,0)'); g.fillStyle = sun; g.fillRect(0,0,W,H);
+    layers.forEach((L,i) => { g.fillStyle = L.col; const off = reduce ? 0 : Math.sin(t*.05 + i)*L.speed*6;
+      for (const tr of L.trees) tree(tr.x + off, tr.b, tr.h, tr.w); g.fillRect(0, L.trees[0].b, W, H);
+      const fog = g.createLinearGradient(0, L.trees[0].b - 90, 0, L.trees[0].b + 30), fa = .16 + (reduce ? 0 : Math.sin(t*.3 + i)*.04);
+      fog.addColorStop(0,'rgba(190,205,195,0)'); fog.addColorStop(1,`rgba(190,205,195,${fa})`); g.fillStyle = fog; g.fillRect(0, L.trees[0].b - 90, W, 120); });
+    if (!reduce) requestAnimationFrame(draw); }
+  build(); requestAnimationFrame(draw);
+  addEventListener('resize', () => { build(); if (reduce) requestAnimationFrame(draw); });
+  // ---- live server status (same room as the game) ----
+  const srv = document.getElementById('srv');
+  const setSrv = (txt, ok) => { srv.textContent = '● ' + txt; srv.classList.toggle('off', !ok); };
+  (async () => {
+    let tries = 0; while (!(window.claude && typeof window.claude.use === 'function') && tries++ < 25) await new Promise(r => setTimeout(r, 200));
+    let room = null; try { if (window.claude && window.claude.use) room = await window.claude.use('room'); } catch(e){}
+    if (!room){ setSrv('ОНЛАЙН РАБОТАЕТ НА CLAUDE.AI', false); return; }
+    const render = () => { if (!room.connected()){ setSrv('ПОДКЛЮЧЕНИЕ К СЕРВЕРУ…', false); return; }
+      const n = room.peers().filter(p => !p.sameTab && p.presence && p.presence.g === 'lr1' && p.presence.on).length;
+      setSrv(n ? `СЕРВЕР НА СВЯЗИ · В БОЮ: ${n}` : 'СЕРВЕР НА СВЯЗИ · БОЙ СВОБОДЕН', true); };
+    room.onPeers(render, () => setSrv('ОНЛАЙН НЕДОСТУПЕН В ЭТОМ ПРОСМОТРЕ', false)); room.onConnection(render, () => {});
+  })();
+  // ---- map schematics ----
+  const DRAW = {
+    forest(m, P, R2, k){ for (let i=0;i<300;i++){ const a = R2()*6.28, r = Math.sqrt(R2())*54, x = Math.cos(a)*r, z = Math.sin(a)*r;
+        if (Math.hypot(x, z) < 11 || Math.hypot(x, z-40) < 12 || Math.hypot(x, z+40) < 12 || (Math.abs(z) < 40 && Math.abs(x - Math.sin(z*.08)*3) < 3.5)) continue;
+        const [X,Y] = P(x,z); m.fillStyle = R2() < .2 ? '#4f7a3d' : '#2f5532'; m.beginPath(); m.arc(X, Y, 4 + R2()*3, 0, 6.29); m.fill(); }
+      m.strokeStyle = '#8a7350'; m.lineWidth = 6; m.lineCap = 'round'; m.beginPath(); for (let z=-40; z<=40; z+=2){ const [X,Y] = P(Math.sin(z*.08)*3, z); z === -40 ? m.moveTo(X,Y) : m.lineTo(X,Y); } m.stroke();
+      const [X,Y] = P(-3.5,-3.5); m.fillStyle = '#f0a43a'; m.fillRect(X, Y, 7*k, 7*k); },
+    fields(m, P, R2, k){ m.fillStyle = '#c2a250';
+      for (const r of [[8,-38,32,32],[-40,6,32,32],[10,14,24,22]]){ const [X,Y] = P(r[0], r[1]); m.fillRect(X, Y, r[2]*k, r[3]*k); }
+      m.fillStyle = '#4f7a3d'; for (let x=-56; x<=56; x+=4.2) for (const z of [-44,44]){ const [X,Y] = P(x,z); m.beginPath(); m.arc(X,Y,3,0,6.29); m.fill(); }
+      for (let z=-36; z<=36; z+=4.6) for (const x of [-50,50]){ const [X,Y] = P(x,z); m.beginPath(); m.arc(X,Y,3,0,6.29); m.fill(); }
+      m.strokeStyle = '#8a7350'; m.lineWidth = 5; m.beginPath(); { const [a,b] = P(0,-50), [c,d] = P(0,50); m.moveTo(a,b); m.lineTo(c,d); } m.stroke();
+      { const [X,Y] = P(-6,-4); m.fillStyle = '#f0a43a'; m.fillRect(X, Y, 12*k, 8*k); }
+      { const [X,Y] = P(-24,-14); m.fillStyle = '#d9cfb8'; m.beginPath(); m.arc(X,Y,2.2*k,0,6.29); m.fill(); } },
+    front(m, P, R2, k){ m.fillStyle = '#4a3f30'; for (let i=0;i<46;i++){ const x = (R2()*2-1)*48, z = (R2()*2-1)*34; if (Math.hypot(x,z) < 10) continue; const [X,Y] = P(x,z); m.beginPath(); m.arc(X,Y,(1.4+R2()*2.8)*k,0,6.29); m.fill(); }
+      m.strokeStyle = '#2a2219'; m.lineWidth = 2*k; m.lineJoin = 'round';
+      for (const s of [1,-1]){ m.beginPath(); for (let x=-44; x<=44; x+=11){ const [X,Y] = P(x, s*(21 + ((x/11)%2 ? 3 : 0))); x === -44 ? m.moveTo(X,Y) : m.lineTo(X,Y); } m.stroke();
+        m.beginPath(); [[0,40],[3,33],[-2,28],[0,21]].forEach((q,i) => { const [X,Y] = P(q[0], s*q[1]); i ? m.lineTo(X,Y) : m.moveTo(X,Y); }); m.stroke(); }
+      m.strokeStyle = '#9a948a'; m.lineWidth = 1.5; m.setLineDash([3,3]); for (const z of [13,-13]) for (const [a,b] of [[-40,-6],[6,40]]){ const [X1,Y1] = P(a,z), [X2,Y2] = P(b,z); m.beginPath(); m.moveTo(X1,Y1); m.lineTo(X2,Y2); m.stroke(); } m.setLineDash([]);
+      { const [X,Y] = P(-4.5,-4.5); m.fillStyle = '#f0a43a'; m.fillRect(X, Y, 9*k, 9*k); } },
+    village(m, P, R2, k){ m.strokeStyle = '#8a7350'; m.lineWidth = 5*k; m.lineCap = 'butt';
+      m.beginPath(); { const [a,b] = P(0,-46), [c,d] = P(0,46); m.moveTo(a,b); m.lineTo(c,d); const [e,f] = P(-30,0), [g,h] = P(19,0); m.moveTo(e,f); m.lineTo(g,h); } m.stroke();
+      { const [X,Y] = P(0,0); m.fillStyle = '#8a7350'; m.beginPath(); m.arc(X,Y,7.5*k,0,6.29); m.fill(); m.fillStyle = '#f0a43a'; m.beginPath(); m.arc(X,Y,1.2*k,0,6.29); m.fill(); }
+      m.fillStyle = '#c9b49a'; for (const [x,z,w,d] of [[-11,-26,8,6],[-11,-14,7,6],[-11,14,7,6],[-11,26,8,6],[11,-24,7,6],[11,-12,8,6],[11,12,8,6],[11,24,7,6],[-24,9,7,6],[-24,-9,7,6],[24,0,10,7]]){ const [X,Y] = P(x-w/2, z-d/2); m.fillRect(X, Y, w*k, d*k); }
+      m.fillStyle = '#3f6a35'; for (let i=0;i<150;i++){ const a = R2()*6.28, r = 34 + Math.sqrt(R2())*22, [X,Y] = P(Math.cos(a)*r, Math.sin(a)*r); m.beginPath(); m.arc(X,Y,3,0,6.29); m.fill(); } },
+  };
+  document.querySelectorAll('canvas[data-map]').forEach(mc => {
+    const m = mc.getContext('2d'), S = mc.width, c = S/2, k = S/2/58, P = (x, z) => [c + x*k, c + z*k], R2 = rnd(7), id = mc.dataset.map;
+    m.fillStyle = id === 'front' ? '#3a3a2c' : id === 'fields' ? '#4e6a32' : '#163021'; m.beginPath(); m.arc(c, c, 56*k, 0, 6.29); m.fill();
+    m.save(); m.beginPath(); m.arc(c, c, 56*k, 0, 6.29); m.clip(); DRAW[id](m, P, R2, k); m.restore();
+    for (const [z, col] of [[44,'#6c9bff'],[-44,'#ff7466']]){ const [X,Y] = P(0,z); m.fillStyle = col; m.beginPath(); m.arc(X, Y, 5*k, 0, 6.29); m.fill(); }
+    m.font = 'bold 18px "PT Sans", sans-serif'; m.textAlign = 'center'; m.fillStyle = '#e8eee5'; m.fillText('С', c, 22); m.fillText('Ю', c, S-8);
+  });
+})();
+</script>
+</body>
+</html>
