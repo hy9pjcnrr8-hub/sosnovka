@@ -283,7 +283,7 @@
   <button class="big" id="play">В БОЙ</button>
   </div>
   <div id="secOn" class="hidden">
-    <div class="row" id="netKinds"><span class="lbl">Сервер</span><button class="opt" data-net="pub">Серверы игры</button><button class="opt" data-net="claude">Claude</button><button class="opt" data-net="ws">Свой сервер</button></div>
+    <div class="row" id="netKinds"><span class="lbl">Сервер</span><button class="opt" data-net="pub">Серверы игры</button><button class="opt" data-net="claude">Облачный</button><button class="opt" data-net="ws">Свой сервер</button></div>
     <div class="row hidden" id="srvRow"><div id="srvList"></div></div>
     <div class="row hidden" id="roomRow"><span class="lbl">Код</span><input class="nick" id="roomCode" maxlength="12" placeholder="например les77" autocomplete="off" spellcheck="false" autocapitalize="off"><button class="opt sel" id="roomGo">Войти в комнату</button></div>
     <div class="row hidden" id="netAddrRow"><span class="lbl">Адрес</span><input class="nick" id="netAddr" maxlength="120" placeholder="192.168.1.5:8080" autocomplete="off" spellcheck="false" autocapitalize="off" style="width:220px"><button class="opt sel" id="netGo">Подключить</button></div>
@@ -298,7 +298,7 @@
       <button class="opt" data-gfx="high">Высокая</button><button class="opt" data-gfx="mid">Средняя</button><button class="opt" data-gfx="low">Низкая</button></div>
     <div id="lobby"></div>
     <button class="big" id="playOn">ПОДКЛЮЧИТЬСЯ К БОЮ</button>
-    <div class="help">Онлайн-бой: живые игроки, синие против красных, без ботов и без лимита времени. <b>Серверы игры</b> — общие серверы, заходить можно из любой сети и с любого устройства, без аккаунта Claude; «Своя комната» — отдельный сервер по коду только для друзей. <b>Claude</b> — для тех, кто открыл игру на claude.ai. <b>Свой сервер</b>: один игрок запускает на компьютере файл server.js из архива игры (нужен Node.js), остальные в той же Wi-Fi сети открывают адрес, который он покажет, или вводят его здесь. Сервер можно разместить и в интернете.</div>
+    <div class="help">Онлайн-бой: живые игроки, синие против красных, без ботов и без лимита времени. <b>Серверы игры</b> — общие серверы, заходить можно из любой сети и с любого устройства, без регистрации; «Своя комната» — отдельный сервер по коду только для друзей. <b>Облачный</b> — встроенный сервер для тех, кому вы открыли доступ к игре. <b>Свой сервер</b>: один игрок запускает на компьютере файл server.js из архива игры (нужен Node.js), остальные в той же Wi-Fi сети открывают адрес, который он покажет, или вводят его здесь. Сервер можно разместить и в интернете.</div>
   </div>
   <div class="help"><b>Телефон</b> (держите горизонтально): левая часть экрана — движение (до упора вперёд — бег), правая — обзор. Кнопки: огонь (две), прицел, прыжок, присесть, перезарядка, ⇄ смена оружия.<br>
   <b>Компьютер:</b> клик — захват мыши · WASD · Shift бег · C присесть · пробел прыжок · ЛКМ огонь · ПКМ прицел · R · 1/2, Q или колесо — смена оружия · G граната · T выбор гранаты · Esc пауза.<br>
@@ -342,7 +342,6 @@
 <div id="about" class="ov hidden"><h1 style="font-size:26px">ЛЕСНОЙ РУБЕЖ</h1><div class="sub">РАЗРАБОТЧИКИ</div>
   <div class="sgrid" style="max-width:900px">
     <div class="sbox"><h3>paralysax</h3><p style="margin:0;font-size:14px;line-height:1.5">Главный разработчик. Идея игры, режимы и карты, модель тяжёлого пистолета, модели бойцов, движок погоды и времени суток.</p></div>
-    <div class="sbox"><h3>Claude</h3><p style="margin:0;font-size:14px;line-height:1.5">Главный разработчик. Код игры, графика, искусственный интеллект ботов, онлайн-режим, сайт.</p></div>
     <div class="sbox"><h3>иксов</h3><p style="margin:0;font-size:14px;line-height:1.5">Тестер и модератор. Проверяет новые версии, ищет ошибки, следит за порядком в онлайне.</p></div>
   </div>
   <button class="big" id="aboutClose">Закрыть</button>
@@ -3617,11 +3616,11 @@ function setNet(state){ roomState = state; renderLobby(); }
 function renderLobby(){
   const st = $('netst');
   if (roomState === 'off' || roomState === 'noaddr' || ((roomState === 'wsfail' || roomState === 'pubfail') && !(room && room.connected()))){
-    st.innerHTML = '<span class="dot bad"></span>' + (roomState === 'off' ? 'Сервер Claude здесь недоступен. Выберите «По сети» и введите адрес своего сервера.' : roomState === 'noaddr' ? 'Введите адрес сервера, например 192.168.1.5:8080' : roomState === 'pubfail' ? 'Серверы игры сейчас недоступны из этого просмотра. Если игра открыта на claude.ai — выберите «Claude»; в приложении и на сайте проверьте интернет. Повторяю попытку…' : 'Не удаётся подключиться к ' + esc(NET.addr) + '. Проверьте, что сервер запущен и телефон в той же сети. Повторяю попытку…');
+    st.innerHTML = '<span class="dot bad"></span>' + (roomState === 'off' ? 'Облачный сервер здесь недоступен. Выберите «Серверы игры».' : roomState === 'noaddr' ? 'Введите адрес сервера, например 192.168.1.5:8080' : roomState === 'pubfail' ? 'Серверы игры сейчас недоступны из этого просмотра. Проверьте интернет или выберите «Облачный». Повторяю попытку…' : 'Не удаётся подключиться к ' + esc(NET.addr) + '. Проверьте, что сервер запущен и телефон в той же сети. Повторяю попытку…');
     $('playOn').disabled = true; $('playOn').style.opacity = .5; }
   else if (room && room.connected()){ const all = allArena(), per = {}; for (const p of all){ const m = peerMap(p.presence); per[m] = (per[m]||0) + 1; }
     const parts = Object.keys(MAPS).filter(k => per[k]).map(k => `${MAPS[k].name}: ${per[k]}`).join(' · ');
-    st.innerHTML = `<span class="dot ok"></span>${room.kind === 'ws' ? 'Сервер ' + esc(NET.addr) : room.kind === 'mqtt' ? (NET.srv.startsWith('r-') ? 'Комната «' + esc(NET.srv.slice(2)) + '»' : (SERVERS.find(v => v.id === NET.srv) || {}).name) + ' · узел ' + esc(room.broker()) : 'Сервер Claude'} на связи · в бою: ${all.length}${parts ? ' (' + parts + ')' : ''}`; $('playOn').disabled = false; $('playOn').style.opacity = 1; }
+    st.innerHTML = `<span class="dot ok"></span>${room.kind === 'ws' ? 'Сервер ' + esc(NET.addr) : room.kind === 'mqtt' ? (NET.srv.startsWith('r-') ? 'Комната «' + esc(NET.srv.slice(2)) + '»' : (SERVERS.find(v => v.id === NET.srv) || {}).name) + ' · узел ' + esc(room.broker()) : 'Облачный сервер'} на связи · в бою: ${all.length}${parts ? ' (' + parts + ')' : ''}`; $('playOn').disabled = false; $('playOn').style.opacity = 1; }
   else { st.innerHTML = '<span class="dot wait"></span>Подключение к серверу…'; $('playOn').disabled = !room; $('playOn').style.opacity = room ? 1 : .5; }
   const list = arenaPeers();
   $('lobby').innerHTML = list.length ? list.map(p => `<span class="pl c${p.presence.t === 1 ? 1 : 0}">${esc(cleanName(p.presence.n))}</span>`).join('') : '<span style="opacity:.6">На этой карте сейчас никого нет. Зайдите первым и позовите друзей.</span>';
@@ -4061,7 +4060,7 @@ $('adminPanel').addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.id === 'admClose'){ $('adminPanel').classList.add('hidden'); $(admFrom).classList.remove('hidden'); return; }
   if (b.id === 'admKeyGo'){ const d = $('admKey').value.trim(); try { await activateAdmin(d); ACC.adminKey = d; saveAccs(); toast('Права администратора включены'); updateAdminUi(); sendPresence(); }
-    catch(err){ $('admErr').textContent = err.message === 'nocrypto' ? 'Шифрование недоступно в этом просмотре — откройте игру на claude.ai' : 'Неверный ключ'; } return; }
+    catch(err){ $('admErr').textContent = err.message === 'nocrypto' ? 'Шифрование недоступно в этом окне — откройте игру по защищённой ссылке (https)' : 'Неверный ключ'; } return; }
   const a = b.dataset.a; if (!a) return; const cell = b.closest('.acts');
   if (cell.dataset.d){ return adminDo(a, {dv:cell.dataset.d, n:cell.dataset.n}); }
   const p = roomPlayers().find(x => x.peer === cell.dataset.p); if (!p) return;
@@ -4122,8 +4121,8 @@ async function enableGyro(on){
   if (typeof DeviceMotionEvent === 'undefined'){ gyroOn = false; gyroErr = 'в этом браузере нет датчиков движения'; return false; }
   if (typeof DeviceMotionEvent.requestPermission === 'function'){
     try { const res = await (gyroAsk || DeviceMotionEvent.requestPermission()); gyroAsk = null;
-      if (res !== 'granted'){ gyroOn = false; gyroErr = 'iOS ответил «запрещено». Закройте и снова откройте приложение Claude — iOS спросит ещё раз'; return false; } }
-    catch(e){ gyroAsk = null; gyroOn = false; gyroErr = 'iOS не даёт доступ к датчику внутри окна Claude (' + (e && e.name || 'ошибка') + ')'; return false; } }
+      if (res !== 'granted'){ gyroOn = false; gyroErr = 'iOS ответил «запрещено». Закройте и снова откройте браузер или приложение — iOS спросит ещё раз'; return false; } }
+    catch(e){ gyroAsk = null; gyroOn = false; gyroErr = 'iOS не даёт доступ к датчику в этом окне (' + (e && e.name || 'ошибка') + ')'; return false; } }
   if (!gyroListening){ addEventListener('devicemotion', onMotion); gyroListening = true; }
   setTimeout(() => { if (gyroOn && !gyroSeen) toast('Гироскоп не отвечает: устройство или просмотр не дают к нему доступ'); }, 2500);
   return true;
@@ -4150,7 +4149,7 @@ async function cloudPush(){
   cloud.busy = false;
 }
 function setCloudState(s){ const el = $('cloudSt'); if (!el) return;
-  el.textContent = {ok:'☁ сохранено в базе', ro:'☁ база только для чтения — сохраняется на устройстве', err:'☁ нет связи с базой', wait:'☁ подключение к базе…', off:'☁ база недоступна — сохраняется на устройстве'}[s] || '';
+  el.textContent = {ok:'☁ сохранено в базе', ro:'☁ база только для чтения — сохраняется на устройстве', err:'☁ нет связи с базой', wait:'☁ подключение к базе…', off:'☁ сохраняется на устройстве'}[s] || '';
   el.className = 'cloud ' + s; }
 function mergeRemote(remote){
   if (!remote || typeof remote !== 'object') return false; let changed = false;
