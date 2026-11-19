@@ -1,6 +1,6 @@
 // Лесной рубеж — offline support for the installed (home screen) version.
 // The game page and version file are always fetched fresh when online; everything else is cached.
-const CACHE = 'lr-v18';
+const CACHE = 'lr-v19';
 const CORE = ['app.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-180.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

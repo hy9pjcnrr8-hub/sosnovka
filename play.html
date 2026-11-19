@@ -585,7 +585,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v1.00</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v1.10</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -2560,27 +2560,28 @@ const capsule = (r, len, c, p=[0,0,0], s=[1,1,1]) => [
 const OPS = {plate:0x2b2d26, pouch:0x34362d, strap:0x22231e, mask:0x1b1c1a, helm:0x2d2f2a, lens:0x0c0d0e, glove:0x1e1f1c, pad:0x191a17, boot:0x15140f, sole:0x0b0b09, metal:0x3a3c3e};
 const camoList = list => list.map(it => (it.camo = 1, it));
 const pelvisList = P => [
-  ...camoList([{g:G.box(.36,.13,.2), c:P.pants, p:[0,.97,0]}]),
-  {g:G.box(.38,.05,.215), c:OPS.strap, p:[0,1.035,0]},                       // battle belt
+  ...camoList([{g:G.sph(1,26,16), c:P.pants, p:[0,.97,0], s:[.165,.1,.11]}, {g:G.cyl(.16,.165,.08,26), c:P.pants, p:[0,1.0,0], s:[1,1,.68]}]),
+  {g:G.cyl(.168,.17,.05,28), c:OPS.strap, p:[0,1.035,0], s:[1,1,.7]},       // battle belt
   {g:G.box(.07,.07,.05), c:OPS.pouch, p:[-.13,1.02,.11]}, {g:G.box(.06,.06,.045), c:OPS.pouch, p:[.14,1.02,.11]},
   {g:G.box(.12,.1,.06), c:OPS.pouch, p:[.06,.98,-.12]},                       // dump pouch
   {g:G.box(.03,.02,.02), c:OPS.metal, p:[0,1.035,.11]},                       // buckle
 ];
 const torsoList = (P, pack = true) => [
   ...camoList([
-    {g:G.box(.38,.54,.2), c:P.uni, p:[0,1.24,0]},
-    {g:G.sph(1,20,14), c:P.uni, p:[-.215,1.455,0], s:[.11,.088,.105]},
-    {g:G.sph(1,20,14), c:P.uni, p:[.215,1.455,0], s:[.11,.088,.105]},
-    {g:G.cyl(.075,.085,.07,16), c:P.uni, p:[0,1.52,-.02]},                    // collar
+    {g:G.sph(1,28,20), c:P.uni, p:[0,1.33,0], s:[.185,.2,.115]},               // chest
+    {g:G.cyl(.15,.165,.24,28), c:P.uni, p:[0,1.14,0], s:[1,1,.68]},            // abdomen
+    {g:G.sph(1,24,16), c:P.uni, p:[-.19,1.44,0], s:[.072,.068,.07]},           // deltoids
+    {g:G.sph(1,24,16), c:P.uni, p:[.19,1.44,0], s:[.072,.068,.07]},
+    {g:G.cyl(.068,.08,.07,22), c:P.uni, p:[0,1.5,-.01]},                       // collar
   ]),
   // plate carrier: front + back plates, cummerbund, shoulder straps
-  {g:G.box(.33,.36,.05), c:OPS.plate, p:[0,1.27,.115]}, {g:G.box(.33,.38,.05), c:OPS.plate, p:[0,1.27,-.115]},
-  {g:G.box(.405,.16,.2), c:OPS.plate, p:[0,1.12,0]},
-  {g:G.box(.07,.03,.25), c:OPS.strap, p:[-.12,1.47,0]}, {g:G.box(.07,.03,.25), c:OPS.strap, p:[.12,1.47,0]},
+  {g:G.box(.3,.34,.05), c:OPS.plate, p:[0,1.27,.105]}, {g:G.box(.3,.36,.05), c:OPS.plate, p:[0,1.27,-.1]},
+  {g:G.box(.35,.15,.19), c:OPS.plate, p:[0,1.12,0]},
+  {g:G.box(.06,.025,.22), c:OPS.strap, p:[-.11,1.46,0]}, {g:G.box(.06,.025,.22), c:OPS.strap, p:[.11,1.46,0]},
   // magazine pouches (three), admin pouch, radio, tourniquet
-  ...[-.1, 0, .1].map(x => ({g:G.box(.085,.13,.045), c:OPS.pouch, p:[x,1.14,.16]})),
-  ...[-.1, 0, .1].map(x => ({g:G.box(.088,.025,.05), c:OPS.strap, p:[x,1.21,.162]})),
-  {g:G.box(.2,.1,.03), c:OPS.pouch, p:[0,1.31,.155]},
+  ...[-.09, 0, .09].map(x => ({g:G.box(.078,.12,.04), c:OPS.pouch, p:[x,1.15,.145]})),
+  ...[-.09, 0, .09].map(x => ({g:G.box(.08,.022,.046), c:OPS.strap, p:[x,1.215,.147]})),
+  {g:G.box(.18,.09,.03), c:OPS.pouch, p:[0,1.31,.14]},
   {g:G.box(.06,.12,.05), c:OPS.pouch, p:[-.13,1.36,.15]}, {g:G.cyl(.006,.006,.12,6), c:OPS.metal, p:[-.14,1.47,.155]},
   {g:G.cyl(.018,.018,.08,10), c:0x262626, p:[.135,1.37,.155]},
   {g:G.box(.05,.035,.006), c:P.band, p:[-.06,1.4,.142]},                     // team tag on chest
@@ -2593,9 +2594,16 @@ const torsoList = (P, pack = true) => [
   ] : []),
 ];
 function headList(P, S, hair=0, gear='nvg-mask-1'){
-  const [helm, face] = gear.split('-'), L = [{g:G.box(.1,.12,.1), c:face === 'none' ? S : OPS.mask, p:[0,1.565,0]}, {g:G.sph(1,26,20), c:S, p:[0,1.72,0], s:[.094,.124,.092]}];
+  const [helm, face] = gear.split('-'), skinC = face === 'mask' ? OPS.mask : S;
+  const L = [{g:G.cyl(.052,.058,.1,20), c:skinC, p:[0,1.58,-.008]}, {g:G.sph(1,28,22), c:S, p:[0,1.725,-.004], s:[.092,.112,.1]},
+    {g:G.sph(1,24,16), c:S, p:[0,1.655,.022], s:[.075,.055,.075]}];                                   // jaw and chin
+  if (face !== 'mask'){ const lip = new THREE.Color(S).lerp(new THREE.Color(0x8a3a32), .35).getHex(), brow = HAIRS[hair % HAIRS.length];
+    for (const sd of [-1, 1]){ L.push({g:G.sph(1,14,10), c:S, p:[sd*.092,1.725,-.006], s:[.014,.03,.02]},                         // ears
+      {g:G.sph(1,12,10), c:0xf2efe8, p:[sd*.031,1.737,.085], s:[.014,.009,.006]}, {g:G.sph(1,10,8), c:0x2a2018, p:[sd*.031,1.737,.0905], s:[.006,.006,.003]},   // eyes
+      {g:G.box(.032,.007,.012), c:brow, p:[sd*.032,1.758,.089], r:[0,0,sd*-.12]}); }                                         // brows
+    L.push({g:G.box(.018,.04,.026), c:S, p:[0,1.712,.098], r:[-.25,0,0]}, {g:G.sph(1,12,10), c:S, p:[0,1.694,.105], s:[.016,.011,.012]},   // nose
+      {g:G.box(.036,.008,.01), c:lip, p:[0,1.668,.095]}); }                                                                // mouth
   if (face === 'mask') L.push({g:G.sph(1,22,14), c:OPS.mask, p:[0,1.675,.012], s:[.1,.085,.092]});
-  if (face === 'none'){ L.push({g:G.sph(1,12,10), c:0x22201c, p:[-.034,1.738,.084], s:[.012,.01,.006]}, {g:G.sph(1,12,10), c:0x22201c, p:[.034,1.738,.084], s:[.012,.01,.006]}, {g:G.sph(1,14,10), c:S, p:[0,1.712,.09], s:[.016,.028,.022]}); }
   if (face === 'mask' || face === 'goggles'){ L.push({g:G.box(.15,.045,.03), c:OPS.lens, p:[0,1.742,.085]}, {g:G.box(.162,.055,.022), c:OPS.strap, p:[0,1.742,.078]}, {g:G.torus(.098, .008), c:OPS.strap, p:[0,1.742,0], r:[Math.PI/2,0,0], s:[1,1,.9]}); }
   if (helm === 'nvg' || helm === 'std'){
     L.push(...camoList([{g:new THREE.SphereGeometry(1,26,14,0,Math.PI*2,0,Math.PI*.56), c:P.helm, p:[0,1.79,-.005], s:[.122,.105,.128]}]),
@@ -2610,29 +2618,32 @@ function headList(P, S, hair=0, gear='nvg-mask-1'){
   return L;
 }
 const uArmList = (P, side) => [
-  ...camoList(capsule(.052, .19, P.uni, [0,-.13,0])),
-  {g:G.cyl(.056,.056,.045,16), c:P.band, p:[0,-.075,0]},                    // armband
-  {g:G.box(.012,.06,.05), c:P.band, p:[side*.052,-.03,0]},                   // shoulder patch
+  ...camoList([{g:G.cyl(.05,.042,.25,22), c:P.uni, p:[0,-.135,0]}, {g:G.sph(.045,20,14), c:P.uni, p:[0,-.27,0]}, {g:G.sph(1,20,14), c:P.uni, p:[0,-.07,.008], s:[.052,.08,.05]}]),
+  {g:G.cyl(.053,.051,.04,22), c:P.band, p:[0,-.09,0]},                      // armband
+  {g:G.box(.01,.055,.045), c:P.band, p:[side*.05,-.035,0]},                   // shoulder patch
 ];
 const fArmList = P => [
-  ...camoList(capsule(.044, .15, P.uni, [0,-.11,0])),
-  {g:G.cyl(.047,.047,.04,14), c:P.uni, p:[0,-.2,0]},
-  {g:G.cyl(.04,.042,.05,14), c:OPS.glove, p:[0,-.24,0]},
-  {g:G.sph(1,16,12), c:OPS.glove, p:[0,-.295,0], s:[.046,.052,.036]},       // gloved hand
+  ...camoList([{g:G.cyl(.043,.036,.2,22), c:P.uni, p:[0,-.1,0]}, {g:G.sph(1,20,14), c:P.uni, p:[0,-.06,-.006], s:[.046,.075,.044]}]),
+  {g:G.cyl(.039,.037,.035,20), c:P.uni, p:[0,-.2,0]},                       // cuff
+  {g:G.cyl(.033,.031,.04,18), c:OPS.glove, p:[0,-.235,0]},                  // wrist
+  {g:G.box(.032,.085,.07), c:OPS.glove, p:[0,-.29,.004]},                    // palm
+  {g:G.box(.03,.06,.062), c:OPS.glove, p:[.004,-.355,.006], r:[.25,0,0]},   // fingers
+  {g:G.sph(1,14,10), c:OPS.glove, p:[.02,-.28,.035], s:[.014,.03,.014], r:[.5,0,0]},   // thumb
 ];
 const thighList = (P, side) => [
-  ...camoList(capsule(.08, .26, P.pants, [0,-.2,0])),
+  ...camoList([{g:G.cyl(.086,.062,.4,24), c:P.pants, p:[0,-.21,0]}, {g:G.sph(.086,22,16), c:P.pants, p:[0,-.01,0]}, {g:G.sph(1,20,14), c:P.pants, p:[0,-.16,.012], s:[.08,.15,.07]}]),
   {g:G.box(.055,.13,.075), c:OPS.pouch, p:[side*.085,-.2,.01]},              // cargo pocket
   ...(side > 0 ? [{g:G.box(.04,.17,.09), c:OPS.strap, p:[.098,-.12,0]}, {g:G.box(.03,.05,.05), c:0x1a1a1a, p:[.1,-.02,.0]}] : []),  // holster
   {g:G.box(.17,.02,.17), c:OPS.strap, p:[0,-.08,0], s:[1,1,1]},
 ];
 const shinList = P => [
-  {g:G.sph(1,16,12), c:OPS.pad, p:[0,-.01,.045], s:[.075,.085,.055]},        // knee pad
-  {g:G.box(.1,.03,.03), c:OPS.strap, p:[0,-.01,.0]},
-  ...camoList(capsule(.06, .24, P.pants, [0,-.19,0])),
-  {g:G.cyl(.068,.072,.14,16), c:OPS.boot, p:[0,-.36,0]},                    // boot shaft
-  {g:G.box(.12,.085,.22), c:OPS.boot, p:[0,-.445,.045]},
-  {g:G.box(.125,.025,.23), c:OPS.sole, p:[0,-.49,.045]},
+  {g:G.box(.08,.095,.035), c:OPS.pad, p:[0,-.015,.052]},                     // knee pad
+  {g:G.cyl(.064,.064,.022,20), c:OPS.strap, p:[0,-.02,0]},
+  ...camoList([{g:G.sph(.062,20,14), c:P.pants, p:[0,0,0]}, {g:G.cyl(.06,.046,.32,22), c:P.pants, p:[0,-.17,0]}, {g:G.sph(1,20,14), c:P.pants, p:[0,-.12,-.018], s:[.058,.11,.056]}]),
+  {g:G.cyl(.054,.06,.15,20), c:OPS.boot, p:[0,-.37,0]},                     // boot shaft
+  {g:G.box(.1,.08,.24), c:OPS.boot, p:[0,-.445,.045]},                       // foot
+  {g:G.sph(1,18,12), c:OPS.boot, p:[0,-.44,.15], s:[.05,.042,.045]},         // toe cap
+  {g:G.box(.108,.024,.26), c:OPS.sole, p:[0,-.49,.048]},
 ];
 // camouflage: procedural blotches computed in the shader for vertices flagged as cloth
 function camoShader(mat, freq, all){
@@ -2676,7 +2687,7 @@ function buildSoldier(team, wtype, skin, gear, pal){
   const parts = [];
   const add = (parent, geo, x=0, y=0, z=0, head=false) => { const m = new THREE.Mesh(geo, SOLDIER_MAT); m.position.set(x,y,z); m.castShadow = false; m.userData.head = head; parent.add(m); parts.push(m); return m; };
   add(body, partGeo('pelvis'+team, () => pelvisList(P)));
-  const gearS = (pal && pal.gear) || 'nvg-mask-1';
+  const gearS = (pal && pal.gear) || ['nvg-goggles-1', 'std-none-1', 'nvg-mask-1', 'std-goggles-1', 'nvg-none-1'][(skin + gear*2) % 5];
   add(body, partGeo('torso'+team+'_'+gearS.slice(-1), () => torsoList(P, gearS.slice(-1) !== '0')));
   const head = new THREE.Group(); head.position.set(0,1.56,0); body.add(head);
   add(head, partGeo('head'+team+'_'+skin+'_'+gear+'_'+gearS, () => headList(P,S,gear,gearS)), 0, -1.56, 0, true);
@@ -3026,17 +3037,9 @@ function computeStats(key, att){
 function finishOf(key, att){ return weaponMats(att.finish || 'blued'); }
 function buildRifle(att, M, hands_){
   const g = new THREE.Group(), out = {g};
-  P.box(g,.058,.085,.30,M.metal,0,0,0); P.box(g,.052,.03,.27,M.metal2,0,.05,.01);
-  P.box(g,.002,.024,.07,M.dark,.0295,.012,.0); P.box(g,.012,.006,.02,M.metal2,.032,.006,-.02);
-  P.zc(g,.0045,.0045,.03,M.metal,.03,-.01,.03,8);
-  for (let i=0;i<5;i++) P.box(g,.054,.004,.01,M.metal,0,.066,-.08+i*.03);
-  P.box(g,.068,.065,.19,M.wood,0,-.004,-.245); P.box(g,.05,.032,.17,M.wood,0,.05,-.24);
-  for (let i=0;i<4;i++) P.box(g,.0695,.008,.004,M.dark,0,-.004,-.31+i*.04);
-  P.zc(g,.012,.012,.2,M.metal,0,.05,-.25); P.zc(g,.011,.011,.42,M.metal,0,.012,-.36);
-  P.box(g,.012,.05,.014,M.metal,0,.04,-.5); P.ring(g,.013,.003,M.metal,0,.012,-.5);
-  P.box(g,.01,.01,.06,M.metal,0,-.058,.03); P.box(g,.004,.018,.006,M.metal2,0,-.05,.045,.3);
+  rifleBody(g, M, att);
   const opt = att.optic;
-  if (opt === 'iron'){ P.box(g,.03,.02,.04,M.metal,0,.07,-.1); P.box(g,.006,.012,.006,M.metal,0,.083,-.1); out.ads = new THREE.Vector3(0,-.083,-.3); }
+  if (opt === 'iron'){ out.ads = new THREE.Vector3(0,-.076,-.3); }
   else { rail(g, M, .24, 0, .064, -.03); const r = OPTICS[opt](g, M, [0,.076,-.03]); out.ads = new THREE.Vector3(0, -(.076 + r.sightY), r.scope ? -.24 : -.28); }
   const tip = MUZZLES[att.muzzle](g, M, [0,.012,-.57]);
   const mz = new THREE.Object3D(); mz.position.set(0,.012,tip-.01); g.add(mz); out.muzzle = mz;
@@ -3045,7 +3048,7 @@ function buildRifle(att, M, hands_){
   if (att.under === 'angled') angled(g, M, 0, -.037, -.205);
   if (att.under === 'laser') out.beam = laserModule(g, M, .046, -.008, -.27);
   // stock
-  if (att.stock === 'wood'){ P.box(g,.046,.075,.28,M.wood,0,-.03,.29,.08); P.box(g,.05,.11,.02,M.rubber,0,-.05,.43); P.ring(g,.007,.002,M.metal,.024,-.04,.33); }
+  if (att.stock === 'wood'){ rifleStockWood(g, M); }
   else if (att.stock === 'fold'){ P.box(g,.034,.045,.024,M.metal,0,-.01,.162); for (const y of [.002,-.058]) P.zc(g,.0075,.0075,.25,M.metal2,0,y,.29,12);
     P.box(g,.014,.09,.014,M.metal2,0,-.028,.414,.05); P.box(g,.042,.11,.016,M.rubber,0,-.03,.428); P.box(g,.03,.012,.012,M.metal2,0,-.028,.3); }
   else if (att.stock === 'tact'){ P.zc(g,.019,.019,.009,M.metal2,0,-.012,.155,20); P.zc(g,.016,.016,.24,M.metal,0,-.012,.28,20);
@@ -3056,8 +3059,8 @@ function buildRifle(att, M, hands_){
   // magazine
   const seg = (i, n) => { const t = i/(n-1); return [-.075 - i*.062, -.07 - i*.022 - t*t*.03, .12 + i*.18]; };
   const magSegs = n => { for (let i=0;i<n;i++){ const [y,z,r] = seg(i, n); P.box(g,.036,.07,.068,M.metal2,0,y,z,r); P.box(g,.038,.006,.07,M.metal,0,y+.03,z,r); } return seg(n-1, n); };
-  if (att.mag === 'std'){ const [y,z,r] = magSegs(3); P.box(g,.042,.012,.074,M.metal,0,y-.04,z-.005,r); }
-  else if (att.mag === 'ext'){ const [y,z,r] = magSegs(5); P.box(g,.042,.012,.074,M.metal,0,y-.04,z-.008,r); }
+  if (att.mag === 'std'){ rifleMag(g, M, 3); }
+  else if (att.mag === 'ext'){ rifleMag(g, M, 5); }
   else if (att.mag === 'drum'){ P.box(g,.036,.06,.066,M.metal2,0,-.08,-.075,.12); P.xc(g,.075,.07,M.metal2,0,-.175,-.09,32); P.xc(g,.077,.006,M.metal,.033,-.175,-.09,32); P.xc(g,.077,.006,M.metal,-.033,-.175,-.09,32);
     P.xc(g,.03,.074,M.metal,0,-.175,-.09,20); P.box(g,.012,.04,.008,M.metal,.04,-.175,-.09); for (let k=0;k<8;k++){ const a = k/8*6.283; P.box(g,.072,.006,.006,M.dark,0,-.175+Math.sin(a)*.077,-.09+Math.cos(a)*.077,a); } }
   else { for (const sx of [-.021,.021]){ for (let i=0;i<3;i++){ const [y,z,r] = seg(i,3); P.box(g,.036,.07,.068,M.metal2,sx,y,z,r); } }
@@ -6874,6 +6877,91 @@ if (ACC && ACC.loadout) for (let i = 0; i < WEAPON_KEYS.length; i++){ const k = 
   menu.addEventListener('click', () => setTimeout(refresh, 30)); document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.m2Sheet')) setTimeout(refresh, 30); });
   refresh(); window.__m2refresh = refresh;
 })();
+
+// =============================== 1.10: realistic models ===============================
+// ---- rounded (bevelled) boxes: no more sharp cubes on guns and soldiers ----
+const rbC = {};
+function roundBox(w, h, d, r, s = 3){ r = Math.min(r, w/2 - 1e-4, h/2 - 1e-4, d/2 - 1e-4); const k = [w, h, d, r, s].map(v => +(+v).toFixed(5)).join('_'); if (rbC[k]) return rbC[k];
+  const g = new THREE.BoxGeometry(w, h, d, s, s, s), p = g.attributes.position, hx = w/2 - r, hy = h/2 - r, hz = d/2 - r, v = new THREE.Vector3(), c = new THREE.Vector3();
+  for (let i = 0; i < p.count; i++){ v.fromBufferAttribute(p, i); c.set(clamp(v.x, -hx, hx), clamp(v.y, -hy, hy), clamp(v.z, -hz, hz)); const n = v.sub(c); if (n.lengthSq() > 1e-12){ n.normalize().multiplyScalar(r); c.add(n); p.setXYZ(i, c.x, c.y, c.z); } }
+  g.computeVertexNormals(); return rbC[k] = g; }
+const RB = (w, h, d) => roundBox(w, h, d, Math.min(w, h, d)*.28, 3);
+P.box = (g, w, h, d, m, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0) => mk(g, (w > .006 && h > .006 && d > .006) ? RB(w, h, d) : BG(w, h, d), m, x, y, z, rx, ry, rz);
+G.box = (w, h, d) => roundBox(w, h, d, Math.min(w, h, d)*.3, 3);
+G.cyl = (a, b, h, n = 14, open = false) => new THREE.CylinderGeometry(a, b, h, Math.max(n, 22), 1, open);
+G.sph = (r, w = 14, h = 10) => new THREE.SphereGeometry(r, Math.max(w, 24), Math.max(h, 16));
+
+// ---- surface detail: fine metal grain, wood grain, grip stipple ----
+const noiseN = tex(256, 256, (g, w, h) => { const id = g.createImageData(w, h); for (let i = 0; i < w*h; i++){ const n = 128 + (Math.random() - .5)*26; id.data[i*4] = n; id.data[i*4 + 1] = 128 + (Math.random() - .5)*26; id.data[i*4 + 2] = 255; id.data[i*4 + 3] = 255; } g.putImageData(id, 0, 0); });
+noiseN.wrapS = noiseN.wrapT = THREE.RepeatWrapping; noiseN.repeat.set(3, 3);
+const woodTex = tex(512, 128, (g, w, h) => { g.fillStyle = '#6a3a1c'; g.fillRect(0, 0, w, h); for (let i = 0; i < 90; i++){ const y = Math.random()*h, a = .05 + Math.random()*.15;
+    g.strokeStyle = Math.random() < .5 ? `rgba(40,18,6,${a})` : `rgba(150,90,45,${a})`; g.lineWidth = .6 + Math.random()*2.2; g.beginPath(); g.moveTo(0, y); for (let x = 0; x <= w; x += 32) g.lineTo(x, y + Math.sin(x*.02 + i)*3 + (Math.random() - .5)*2); g.stroke(); }
+  for (let i = 0; i < 6; i++){ const x = Math.random()*w, y = Math.random()*h; const gr = g.createRadialGradient(x, y, 0, x, y, 14); gr.addColorStop(0, 'rgba(30,12,4,.5)'); gr.addColorStop(1, 'rgba(30,12,4,0)'); g.fillStyle = gr; g.fillRect(x - 14, y - 14, 28, 28); } });
+woodTex.wrapS = woodTex.wrapT = THREE.RepeatWrapping;
+const stippleN = tex(128, 128, (g, w, h) => { g.fillStyle = 'rgb(128,128,255)'; g.fillRect(0, 0, w, h); for (let i = 0; i < 900; i++){ const x = Math.random()*w, y = Math.random()*h; g.fillStyle = `rgb(${100 + Math.random()*56},${100 + Math.random()*56},255)`; g.fillRect(x, y, 2, 2); } });
+stippleN.wrapS = stippleN.wrapT = THREE.RepeatWrapping; stippleN.repeat.set(4, 4);
+const _wm0 = weaponMats;
+weaponMats = function(fk){ const M = _wm0(fk); if (M._real) return M; M._real = true;
+  for (const k of ['metal', 'metal2', 'metalD', 'metal2D']) if (M[k] && !M[k].map){ M[k].normalMap = noiseN; M[k].normalScale = new THREE.Vector2(.25, .25); M[k].metalness = Math.max(M[k].metalness, .55); M[k].roughness = Math.min(.55, M[k].roughness + .05); M[k].envMapIntensity = 1.1; M[k].needsUpdate = true; }
+  if (M.poly && !M.poly.map){ M.poly.normalMap = stippleN; M.poly.normalScale = new THREE.Vector2(.5, .5); M.poly.roughness = .72; M.poly.needsUpdate = true; }
+  M.woodR = new THREE.MeshStandardMaterial({map:woodTex, color:C(0xd9a070), roughness:.42, metalness:0, envMapIntensity:.7}); M.wood = M.woodR;
+  return M; };
+
+// ---- extruded side profiles (z, y pairs) with bevelled edges ----
+function prof(g, pts, width, m, x = 0, y = 0, z = 0, bevel = .0025, holes){
+  const sh = new THREE.Shape(); pts.forEach(([pz, py], i) => i ? sh.lineTo(-pz, py) : sh.moveTo(-pz, py)); sh.closePath();
+  if (holes) for (const hp of holes){ const hh = new THREE.Path(); hp.forEach(([pz, py], i) => i ? hh.lineTo(-pz, py) : hh.moveTo(-pz, py)); hh.closePath(); sh.holes.push(hh); }
+  const geo = new THREE.ExtrudeGeometry(sh, {depth:Math.max(.001, width - bevel*2), bevelEnabled:bevel > 0, bevelThickness:bevel, bevelSize:bevel*.8, bevelSegments:2, curveSegments:10});
+  geo.rotateY(Math.PI/2); geo.translate(-(width - bevel*2)/2, 0, 0); geo.computeVertexNormals(); const mm = new THREE.Mesh(geo, m); mm.position.set(x, y, z); mm.castShadow = true; g.add(mm); return mm; }
+const arc = (cz, cy, r, a0, a1, n = 8) => Array.from({length:n + 1}, (_, i) => { const a = a0 + (a1 - a0)*i/n; return [cz + Math.cos(a)*r, cy + Math.sin(a)*r]; });
+function tubeAlong(g, pts, r, m, seg = 24){ const c = new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(...p))); const mm = new THREE.Mesh(new THREE.TubeGeometry(c, seg, r, 8, false), m); mm.castShadow = true; g.add(mm); return mm; }
+
+// ---- realistic assault rifle body (AK-pattern layout, original modelling) ----
+function rifleBody(g, M, att){
+  // stamped receiver with magwell step and rivets
+  prof(g, [[.15, .03], [.15, -.026], [.11, -.034], [.045, -.042], [-.075, -.042], [-.095, -.034], [-.135, -.03], [-.135, .03]], .048, M.metal, 0, 0, 0, .002);
+  for (const z of [.12, .05, -.02, -.1]) for (const sx of [-1, 1]) P.zc(g, .0035, .0035, .002, M.metal2, sx*.0245, -.03, z, 10).rotation.set(0, 0, Math.PI/2);
+  // dust cover: rounded top with stiffening ribs
+  const dc = mk(g, new THREE.CylinderGeometry(.0235, .0235, .245, 24, 1, false, 0, Math.PI), M.metal2, 0, .03, .02, 0, Math.PI/2, Math.PI/2); dc.scale.set(1, 1, .9); dc.castShadow = true;
+  for (const z of [-.06, -.03, 0, .03, .06]) mk(g, new THREE.TorusGeometry(.0237, .0018, 6, 18, Math.PI), M.metal2, 0, .03, z + .02, 0, 0, 0);
+  P.box(g, .02, .012, .012, M.metal2, 0, .052, .14);
+  // charging handle and selector lever on the right side
+  prof(g, [[-.05, .006], [-.05, -.004], [-.09, -.006], [-.095, .004]], .006, M.metal, .028, .012, 0, .001); P.zc(g, .006, .006, .016, M.metal, .038, .013, -.093, 14).rotation.set(0, 0, Math.PI/2);
+  prof(g, [[.1, .028], [.1, .018], [-.04, .006], [-.04, .014]], .004, M.metal2, .0262, 0, 0, .0008); P.box(g, .006, .02, .014, M.metal2, .03, .002, -.045);
+  // rear sight block and leaf, front sight with protective ears
+  prof(g, [[-.085, .03], [-.135, .03], [-.135, .058], [-.1, .062], [-.085, .05]], .03, M.metal, 0, 0, 0, .0015);
+  P.box(g, .02, .005, .05, M.metal2, 0, .066, -.11); P.box(g, .006, .009, .004, M.metal2, 0, .072, -.087);
+  prof(g, [[-.48, .02], [-.52, .02], [-.52, .05], [-.505, .062], [-.49, .062], [-.48, .045]], .022, M.metal, 0, 0, 0, .0015);
+  for (const sx of [-1, 1]) P.box(g, .003, .03, .014, M.metal, sx*.009, .07, -.5); P.zc(g, .0015, .0015, .012, M.metal2, 0, .076, -.5, 8).rotation.set(0, 0, 0);
+  // barrel, gas block and gas tube
+  P.zc(g, .0095, .0095, .43, M.metal, 0, .012, -.36, 20); P.zc(g, .012, .012, .03, M.metal, 0, .012, -.47, 18);
+  prof(g, [[-.33, .012], [-.365, .012], [-.365, .052], [-.345, .062], [-.33, .052]], .028, M.metal, 0, 0, 0, .002);
+  P.zc(g, .0115, .0115, .2, M.metal2, 0, .05, -.235, 18);
+  // wooden handguards: lower with finger grooves, upper over the gas tube
+  const lw = [[-.135, .022], [-.135, -.028], [-.16, -.034], [-.2, -.036], [-.215, -.031], [-.23, -.036], [-.26, -.036], [-.275, -.031], [-.29, -.034], [-.325, -.032], [-.335, -.02], [-.335, .022]];
+  prof(g, lw, .056, M.wood, 0, 0, 0, .006);
+  const up = mk(g, new THREE.CylinderGeometry(.0175, .0175, .17, 22, 1, false, 0, Math.PI), M.wood, 0, .05, -.24, 0, Math.PI/2, Math.PI/2); up.castShadow = true;
+  mk(g, new THREE.TorusGeometry(.0182, .002, 6, 20), M.metal2, 0, .05, -.155); mk(g, new THREE.TorusGeometry(.03, .0025, 6, 24), M.metal2, 0, .003, -.335).scale.set(1, 1.2, 1);
+  // pistol grip with stipple, trigger guard and trigger
+  prof(g, [[.055, -.036], [.1, -.036], [.122, -.072], [.142, -.13], [.142, -.145], [.105, -.15], [.085, -.1], [.06, -.06]], .03, M.poly, 0, 0, 0, .004);
+  tubeAlong(g, [[0, -.04, .045], [0, -.068, .04], [0, -.072, .0], [0, -.062, -.03], [0, -.042, -.035]], .0028, M.metal2, 20);
+  tubeAlong(g, [[0, -.04, .02], [0, -.055, .018], [0, -.065, .026]], .0025, M.metal, 8);
+  // sling swivels
+  mk(g, new THREE.TorusGeometry(.008, .0015, 6, 14), M.metal2, .02, -.02, -.3, 0, Math.PI/2); mk(g, new THREE.TorusGeometry(.008, .0015, 6, 14), M.metal2, .02, -.03, .4, 0, Math.PI/2);
+}
+function rifleMag(g, M, n){ // curved steel magazine with ribs, n = segments (3 std, 5 extended)
+  const len = n === 3 ? .17 : .27, k = len/.17, outer = [], inner = [];
+  for (let i = 0; i <= 10; i++){ const t = i/10, y = -.03 - t*len, bend = t*t*.06*k; outer.push([-.035 - bend - .002 + t*.0, y]); inner.push([.03 - bend*.7, y]); }
+  const pts = [...outer, ...inner.reverse()]; prof(g, pts, .032, M.metal2, 0, 0, -.045, .003);
+  for (let i = 1; i < 6; i++){ const t = i/6.5, y = -.03 - t*len, bend = t*t*.06*k; P.box(g, .033, .004, .055, M.metal, 0, y, -.045 - bend*.85 + .0, -t*.5); }
+  const t1 = 1, yb = -.03 - len, bb = .06*k; P.box(g, .036, .012, .074, M.metal, 0, yb - .004, -.045 - bb*.85, -.5); }
+function rifleStockWood(g, M){
+  prof(g, [[.148, .028], [.148, -.03], [.2, -.05], [.32, -.085], [.44, -.11], [.44, .018], [.32, .014], [.2, .022]], .042, M.wood, 0, 0, 0, .007);
+  prof(g, [[.44, .02], [.44, -.112], [.452, -.112], [.452, .02]], .046, M.metal2, 0, 0, 0, .002);
+  mk(g, new THREE.TorusGeometry(.007, .0015, 6, 14), M.metal2, .022, -.07, .33, 0, Math.PI/2); }
+
+// rebuild every weapon model with the new shapes and materials
+for (let i = 0; i < WEAPONS.length; i++) try { applyLoadout(i); } catch(e){}
 
 equip(0); WEAPONS[0].model.g.visible = false;
 if (settings.gfx) $('gfxs').querySelector(`[data-gfx="${settings.gfx}"]`)?.click();
