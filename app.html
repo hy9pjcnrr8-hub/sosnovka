@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 510, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 520, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -461,7 +461,7 @@
   #hud .btn{scale:var(--s,1)}
   body.editing #hud .btn.esel{outline:3px solid #c7ff48!important;outline-offset:4px;box-shadow:0 0 18px rgba(199,255,72,.7)}
   #editBar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;max-width:92vw}
-  #eSize{display:flex;align-items:center;gap:8px}#eSize.hidden{display:none}#eSize input{width:150px;accent-color:#c7ff48}#eVal{font-style:normal;min-width:40px;color:#c7ff48;font-weight:800}
+  #eSize,#eAim{display:flex;align-items:center;gap:6px}#eSize.hidden,#eAim.hidden{display:none}#eAim .opt{padding:4px 10px}#eSize input{width:150px;accent-color:#c7ff48}#eVal{font-style:normal;min-width:40px;color:#c7ff48;font-weight:800}
   #aim{width:58px;height:58px;right:calc(env(safe-area-inset-right) + 136px);bottom:calc(env(safe-area-inset-bottom) + 23px)}
   #reload{width:50px;height:50px;right:calc(env(safe-area-inset-right) + 215px);bottom:calc(env(safe-area-inset-bottom) + 20px)}
   #crouch{width:54px;height:54px;right:calc(env(safe-area-inset-right) + 123px);bottom:calc(env(safe-area-inset-bottom) + 103px)}
@@ -503,7 +503,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 5 карт · 8 режимов · онлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 0.51 · Android</div></div></div>
+  <div class="spV">версия 0.52 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><div id="armorW"><div id="armor"></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -546,7 +546,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.51</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.52</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -686,7 +686,7 @@
   </div>
   <div class="row"><button class="big alt" id="sReset">Сбросить всё</button><button class="big" id="sClose">Готово</button></div>
 </div>
-<div id="editBar" class="hidden"><span id="eHint">Перетащите кнопку или нажмите на неё, чтобы изменить размер</span><span id="eSize" class="hidden"><b id="eName"></b><input type="range" id="eRange" min="50" max="200" step="5"><i id="eVal"></i></span><button class="opt" id="eReset">Сбросить</button><button class="opt sel" id="eDone">Готово</button></div>
+<div id="editBar" class="hidden"><span id="eHint">Перетащите кнопку или нажмите на неё, чтобы изменить размер</span><span id="eSize" class="hidden"><b id="eName"></b><input type="range" id="eRange" min="50" max="200" step="5"><i id="eVal"></i></span><span id="eAim" class="hidden">Прицел: <button class="opt" data-ah="0">Нажать</button><button class="opt" data-ah="1">Зажать</button></span><button class="opt" id="eReset">Сбросить</button><button class="opt sel" id="eDone">Готово</button></div>
 
 <div id="end" class="ov hidden"><h1 id="endT">ПОБЕДА</h1><div class="sub" id="endS"></div><div id="endEarn"></div><div id="board"></div>
   <div class="row"><button class="big" id="again">Ещё раз</button><button class="big alt" id="endMenu">В меню</button></div></div>
@@ -5727,8 +5727,11 @@ $('eDone').addEventListener('click', () => {
 $('eReset').addEventListener('click', () => { settings.layout = {}; applyLayout(); saveSettings(); editSelect(null); });
 const BTN_NAMES = {fire:'Огонь', fireL:'Огонь слева', aim:'Прицел', jump:'Прыжок', crouch:'Присед', reload:'Перезарядка', swap:'Оружие', nade:'Граната', nadeSw:'Выбор гранаты', pause:'Пауза', chatBtn:'Чат', strikeBtn:'Авиаудар', abil:'Способность', quadBtn:'Транспорт', radioBtn:'Рация', emoteBtn:'Эмоции', knifeBtn:'Нож'};
 let editSel = null;
+function syncAimMode(){ $('eAim').querySelectorAll('button').forEach(b => b.classList.toggle('sel', (b.dataset.ah === '1') === !!settings.aimHold)); }
+$('eAim').addEventListener('click', e => { const b = e.target.closest('button[data-ah]'); if (!b) return; settings.aimHold = b.dataset.ah === '1'; aiming = false; $('aim').classList.remove('on'); syncAimMode(); saveSettings();
+  toast(settings.aimHold ? 'Прицел: держите кнопку' : 'Прицел: нажмите, чтобы включить, нажмите ещё раз — выключить'); });
 function editSelect(id){ editSel = id; document.querySelectorAll('#hud .btn.esel').forEach(b => b.classList.remove('esel'));
-  $('eSize').classList.toggle('hidden', !id); $('eHint').classList.toggle('hidden', !!id); if (!id) return;
+  $('eSize').classList.toggle('hidden', !id); $('eHint').classList.toggle('hidden', !!id); $('eAim').classList.toggle('hidden', id !== 'aim'); syncAimMode(); if (!id) return;
   $(id).classList.add('esel'); const s = (settings.layout[id] || {}).s || 1; $('eName').textContent = BTN_NAMES[id] || id; $('eRange').value = Math.round(s*100); $('eVal').textContent = Math.round(s*100) + '%'; }
 $('eRange').addEventListener('input', () => { if (!editSel) return; const v = +$('eRange').value/100; settings.layout[editSel] = Object.assign({}, settings.layout[editSel], {s:v}); $('eVal').textContent = Math.round(v*100) + '%'; applyLayout(); saveSettings(); });
 for (const id of BTN_IDS){
