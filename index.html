@@ -254,6 +254,15 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
       <article class="mapc"><canvas width="400" height="400" data-map="base" aria-label="Схема карты Военная база"></canvas>
         <div><h3>Военная база</h3><p class="dim">Ø 152 м · контейнеры и ангары</p>
         <p>Штабеля морских контейнеров в центре, два ангара с воротами, казармы, четыре вышки по углам, грузовики и ящики с припасами. Много укрытий на средней дистанции.</p></div></article>
+      <article class="mapc"><canvas width="400" height="400" data-map="port" aria-label="Схема карты Порт"></canvas>
+        <div><h3>Порт</h3><p class="dim">Ø 236 м · большая карта</p>
+        <p>Морской порт: причал с кранами-козлами, грузовое судно у стенки, железная дорога с вагонами, контейнерный терминал в несколько ярусов, два склада, контора, погрузчики, грузовики и легковые машины.</p></div></article>
+      <article class="mapc"><canvas width="400" height="400" data-map="pass" aria-label="Схема карты Перевал"></canvas>
+        <div><h3>Перевал</h3><p class="dim">Ø 232 м · большая карта</p>
+        <p>Серпантин через горную долину между хребтами со снежными вершинами. В центре развалины старой крепости с башнями, на дороге два блокпоста со шлагбаумами, охотничьи избы, озёра, разбитые машины и густой ельник по склонам.</p></div></article>
+      <article class="mapc"><canvas width="400" height="400" data-map="factory" aria-label="Схема карты Завод"></canvas>
+        <div><h3>Завод</h3><p class="dim">Ø 224 м · большая карта</p>
+        <p>Промзона: два огромных цеха, дымящие трубы, резервуары, водонапорная башня, эстакады с трубами, железнодорожная ветка с вагонами, контейнеры, погрузчики и бетонные обломки. Лужи на асфальте.</p></div></article>
     </div>
   </div>
 </section>
@@ -317,6 +326,7 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
     <div class="eyebrow">ЖУРНАЛ ИЗМЕНЕНИЙ</div>
     <h2>Обновления</h2>
     <div class="log">
+      <div><b>0.70</b><span>Большие карты: «Порт» с кранами, грузовым судном, вагонами и контейнерным терминалом, «Перевал» с горным серпантином, развалинами крепости и блокпостами, «Завод» с цехами, дымящими трубами и эстакадами. Новые подробные модели машин: легковые с кабиной, фарами, зеркалами и колёсными дисками, армейские грузовики с тентом, погрузчики и вагоны; разбитые машины ржавые и на спущенных колёсах. Двери в домах закрыты и сами открываются, когда к ним подходят. Стёкла в окнах бьются от пуль и гранат. Лужи на дорогах блестят, хлюпают и немного замедляют. Каска слетает с бота от выстрела в голову, при перезарядке пустой магазин падает на землю. Быстрый бой подбирает сервер с игроками близкого звания. Свои комнаты с правилами: только пистолеты, только снайперские или дробовики и раунды до 10, 20 или 30 убийств. Кнопка «Смотреть» в друзьях — наблюдайте за боем друга. Запись лучших моментов: двойные и тройные убийства сохраняются в видео (включается в настройках).</span></div>
       <div><b>0.60</b><span>Большое обновление ощущений боя. Звук выстрелов стал объёмным: далёкий выстрел приходит с задержкой, звучит глуше и с эхом леса, слышно, слева стреляют или справа. Пули пробивают тонкие доски и заборы, но теряют силу. Боты вздрагивают от попаданий и падают в сторону от выстрела. Из деревьев от стрельбы взлетают птицы — по ним можно понять, где бой. Боты ходят парами, а их меткость подстраивается под ваши результаты (можно выключить). Помощь в прицеливании на телефоне (можно выключить). Быстрые сигналы команде в меню эмоций: «Враг здесь», «Нужна помощь», «Иду на точку» — с меткой на экране и на радаре. 14 достижений и испытания для каждого оружия с золотой раскраской за последний этап. Новогодняя форма с 20 декабря по 10 января. У модераторов теперь личные ключи: подтверждённая звёздочка, кик и мут.</span></div>
       <div><b>0.53</b><span>Звёздочки у команды игры: золотая у главного разработчика paralysax, голубая у тестеров и модераторов иксов и Stepan2010_ok. Видны рядом с ником в меню, профиле, чате, рейтинге и списке друзей. Нажмите на звёздочку — появится подсказка, кто это.</span></div>
       <div><b>0.52</b><span>В редакторе расположения кнопок у прицела появился выбор: «Нажать» — прицел включается касанием и выключается повторным, «Зажать» — прицел работает, пока держите кнопку.</span></div>
@@ -454,6 +464,30 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
       m.fillStyle = '#c9b49a'; for (const [x,z] of [[-40,-40],[40,40],[40,-40],[-40,40]]){ const [X,Y] = P(x-1.5, z-1.5); m.fillRect(X, Y, 3*k, 3*k); }
       m.fillStyle = '#2f4a2c'; for (let i=0;i<120;i++){ const a = R2()*6.28, r = 48 + Math.sqrt(R2())*10, [X,Y] = P(Math.cos(a)*r, Math.sin(a)*r); m.beginPath(); m.arc(X,Y,3,0,6.29); m.fill(); }
       { const [X,Y] = P(0,0); m.fillStyle = '#f0a43a'; m.beginPath(); m.arc(X,Y,1.4*k,0,6.29); m.fill(); } },
+    port(m, P, R2, k){ m.fillStyle = '#5f6a3c'; m.fillRect(0, 0, 400, 400); const kk = 56/118; const Q = (x, z) => P(x*kk, z*kk);
+      { const [X] = Q(50, 0); m.fillStyle = '#2e5a6a'; m.fillRect(X, 0, 400, 400); m.fillStyle = '#d8c020'; m.fillRect(X - 2, 0, 3, 400); }
+      m.fillStyle = '#77736b'; { const [X1, Y1] = Q(-45, -110), [X2] = Q(50, 0); m.fillRect(X1, Y1, X2 - X1, 400); }
+      const cols = ['#5a6e4a','#8a4a2e','#2e4a6a','#9a8a5a','#6a2e2e']; for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++){ const [X, Y] = Q(12 + r*7.5 - 3, -46 + c*16 - 1.2); m.fillStyle = cols[(r + c) % 5]; m.fillRect(X, Y, 6*kk*k, 2.4*kk*k*2.4); }
+      m.fillStyle = '#8f6a4a'; for (const sz of [-1, 1]){ const [X, Y] = Q(-44, 32*sz - 7); m.fillRect(X, Y, 24*kk*k, 14*kk*k); }
+      { const [X, Y] = Q(58, -30); m.fillStyle = '#3a4654'; m.fillRect(X, Y, 13*kk*k, 75*kk*k); }
+      m.fillStyle = '#c8a028'; for (const z of [-24, 26]){ const [X, Y] = Q(36, z - 5); m.fillRect(X, Y, 30*kk*k, 3); m.fillRect(X, Y + 10*kk*k, 30*kk*k, 3); }
+      m.fillStyle = '#2f4a2c'; for (let i = 0; i < 120; i++){ const a = R2()*6.28, r = 75 + Math.sqrt(R2())*40, x = Math.cos(a)*r, z = Math.sin(a)*r; if (x > -40) continue; const [X, Y] = Q(x, z); m.beginPath(); m.arc(X, Y, 3, 0, 6.29); m.fill(); }
+      { const [X, Y] = P(0, 0); m.fillStyle = '#f0a43a'; m.beginPath(); m.arc(X, Y, 1.4*k, 0, 6.29); m.fill(); } },
+    pass(m, P, R2, k){ const kk = 56/116, Q = (x, z) => P(x*kk, z*kk); m.fillStyle = '#4f6a34'; m.fillRect(0, 0, 400, 400);
+      for (let i = 0; i < 60; i++){ const x = (R2() < .5 ? -1 : 1)*(40 + R2()*70), z = (R2()*2 - 1)*110, [X, Y] = Q(x, z); m.fillStyle = Math.abs(x) > 80 ? '#e6eaee' : '#7a7468'; m.beginPath(); m.arc(X, Y, 10 + R2()*10, 0, 6.29); m.fill(); }
+      m.strokeStyle = '#7a6a52'; m.lineWidth = 5*k*kk; m.beginPath(); for (let z = -110; z <= 110; z += 4){ const [X, Y] = Q(Math.sin(z*.045)*12, z); z === -110 ? m.moveTo(X, Y) : m.lineTo(X, Y); } m.stroke();
+      m.fillStyle = '#9a9284'; { const [X, Y] = Q(-11, -11); m.strokeStyle = '#9a9284'; m.lineWidth = 3; m.strokeRect(X, Y, 22*kk*k, 22*kk*k); }
+      m.fillStyle = '#2e5a6a'; for (const [x, z, r] of [[-40, -24, 8], [42, 26, 7]]){ const [X, Y] = Q(x, z); m.beginPath(); m.arc(X, Y, r*kk*k, 0, 6.29); m.fill(); }
+      m.fillStyle = '#2a4a2c'; for (let i = 0; i < 260; i++){ const a = R2()*6.28, r = Math.sqrt(R2())*112, x = Math.cos(a)*r, z = Math.sin(a)*r; if (Math.abs(x - Math.sin(z*.045)*12) < 6 || Math.hypot(x, z) < 20) continue; const [X, Y] = Q(x, z); m.beginPath(); m.arc(X, Y, 2.6, 0, 6.29); m.fill(); }
+      { const [X, Y] = P(0, 0); m.fillStyle = '#f0a43a'; m.beginPath(); m.arc(X, Y, 1.4*k, 0, 6.29); m.fill(); } },
+    factory(m, P, R2, k){ const kk = 56/112, Q = (x, z) => P(x*kk, z*kk); m.fillStyle = '#5d6a3a'; m.fillRect(0, 0, 400, 400); { const [X, Y] = P(0, 0); m.fillStyle = '#6e6c66'; m.beginPath(); m.arc(X, Y, 80*kk*k, 0, 6.29); m.fill(); }
+      m.strokeStyle = '#4e4c48'; m.lineWidth = 6*k*kk; m.beginPath(); { const [a, b] = Q(0, -84), [c, d] = Q(0, 84), [e, f] = Q(-90, 0), [g, h] = Q(90, 0); m.moveTo(a, b); m.lineTo(c, d); m.moveTo(e, f); m.lineTo(g, h); } m.stroke();
+      m.fillStyle = '#8a8478'; for (const [x, z] of [[-30, -24], [30, 24]]){ const [X, Y] = Q(x - 13, z - 7.5); m.fillRect(X, Y, 26*kk*k, 15*kk*k); }
+      m.fillStyle = '#8a5a48'; for (const [x, z, r] of [[44, -56, 1.8], [52, -46, 1.4]]){ const [X, Y] = Q(x, z); m.beginPath(); m.arc(X, Y, r*2*kk*k, 0, 6.29); m.fill(); }
+      m.fillStyle = '#b8bcbc'; for (const [x, z, r] of [[36, -40, 3], [-52, -56, 2.6], [-46, -60, 2.6]]){ const [X, Y] = Q(x, z); m.beginPath(); m.arc(X, Y, r*kk*k, 0, 6.29); m.fill(); }
+      m.strokeStyle = '#6a6a68'; m.lineWidth = 2; { const [X1, Y1] = Q(62, -110), [X2, Y2] = Q(62, 110); m.beginPath(); m.moveTo(X1, Y1); m.lineTo(X2, Y2); m.stroke(); }
+      m.fillStyle = '#2f4a2c'; for (let i = 0; i < 150; i++){ const a = R2()*6.28, r = 84 + Math.sqrt(R2())*28, [X, Y] = Q(Math.cos(a)*r, Math.sin(a)*r); m.beginPath(); m.arc(X, Y, 3, 0, 6.29); m.fill(); }
+      { const [X, Y] = P(0, 0); m.fillStyle = '#f0a43a'; m.beginPath(); m.arc(X, Y, 1.4*k, 0, 6.29); m.fill(); } },
     village(m, P, R2, k){ m.strokeStyle = '#8a7350'; m.lineWidth = 5*k; m.lineCap = 'butt';
       m.beginPath(); { const [a,b] = P(0,-46), [c,d] = P(0,46); m.moveTo(a,b); m.lineTo(c,d); const [e,f] = P(-30,0), [g,h] = P(19,0); m.moveTo(e,f); m.lineTo(g,h); } m.stroke();
       { const [X,Y] = P(0,0); m.fillStyle = '#8a7350'; m.beginPath(); m.arc(X,Y,7.5*k,0,6.29); m.fill(); m.fillStyle = '#f0a43a'; m.beginPath(); m.arc(X,Y,1.2*k,0,6.29); m.fill(); }
