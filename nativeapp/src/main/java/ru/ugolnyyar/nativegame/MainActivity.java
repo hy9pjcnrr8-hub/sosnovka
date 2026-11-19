@@ -56,6 +56,8 @@ public class MainActivity extends Activity {
     private BarView bar;
     CityView city;
     private Thread gameThread;
+    /** Скрытый режим для автотеста: игра сама выбирает варианты. */
+    volatile boolean autoplay = false;
 
     // ───────────────────────── интерфейс ─────────────────────────
 
@@ -132,6 +134,7 @@ public class MainActivity extends Activity {
 
         setContentView(root);
 
+        autoplay = getIntent() != null && getIntent().getBooleanExtra("autoplay", false);
         gameThread = new Thread(this::gameLoop, "game");
         gameThread.start();
     }
@@ -305,6 +308,7 @@ public class MainActivity extends Activity {
 
     void pause(String label) {
         answers.clear();
+        if (autoplay) { sleep(2200); clear(); return; }
         post(() -> {
             ctl.removeAllViews();
             Button b = makeButton(label, null, 0, true, 1);
@@ -369,7 +373,20 @@ public class MainActivity extends Activity {
                 ctl.addView(b);
             }
         });
-        Opt o = (Opt) take();
+        Opt o;
+        if (autoplay) {
+            sleep(2200);
+            Opt pick = null;
+            if (title.startsWith("Что строим")) {
+                boolean wantFactory = support() <= housing;
+                for (Opt x : opts) if (x.key.equals(wantFactory ? "factory" : "block") && (x.cost <= 0 || budget >= x.cost)) pick = x;
+                if (pick == null) for (Opt x : opts) if (x.key.equals(wantFactory ? "block" : "factory") && (x.cost <= 0 || budget >= x.cost)) pick = x;
+                if (pick == null) pick = opts[opts.length - 1];
+            } else for (Opt x : opts) if (x.cost <= 0 || budget >= x.cost) { pick = x; break; }
+            final Opt fp = pick;
+            post(() -> ctl.removeAllViews());
+            o = fp;
+        } else o = (Opt) take();
         budget -= o.cost;
         hud();
         return o.key;

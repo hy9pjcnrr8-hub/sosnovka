@@ -1,39 +1,24 @@
 #!/bin/bash
-# Ставит нативный APK, делает несколько ходов, печатает текст экрана и скриншоты (base64).
+# Ставит нативный APK, запускает в режиме автоигры и снимает скриншоты по ходу партии.
 APK=nativeapp/build/outputs/apk/release/nativeapp-release.apk
 adb install -r $APK
 adb logcat -c
-adb shell am start -n ru.ugolnyyar.nativegame/.MainActivity
-sleep 10
-screen() {
-  adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
-  adb shell cat /sdcard/ui.xml | grep -o 'text="[^"]*"' | sed 's/text="//;s/"$//' | grep -v '^$'
-}
+adb shell wm size
+adb shell am start -n ru.ugolnyyar.nativegame/.MainActivity --ez autoplay true
 shot() {
   adb exec-out screencap -p > /tmp/s.png
   echo "===SHOT $1 BEGIN"; base64 -w 0 /tmp/s.png; echo; echo "===SHOT $1 END"
 }
-tap_text() {
-  adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
-  B=$(adb shell cat /sdcard/ui.xml | tr '>' '\n' | grep "text=\"$1" | head -1 | grep -o 'bounds="[^"]*"' | grep -o '[0-9]*' | tr '\n' ' ')
-  set -- $B
-  if [ -n "$4" ]; then adb shell input tap $(( ($1+$3)/2 )) $(( ($2+$4)/2 )); else echo "NOT FOUND"; fi
-  sleep ${2:-6}
-}
-echo "===== ЭКРАН 1"; screen; shot prolog
-tap_text "Начать"
-tap_text "Восстановить" ; sleep 1
-shot heat
-echo "===== ЭКРАН 2"; screen
-tap_text "Дальше"
-tap_text "Отсыпать"
-shot road
-tap_text "Дальше"
-tap_text "Купить и"
-tap_text "Дальше"
-sleep 4
-shot mine
+alive() { adb shell pidof ru.ugolnyyar.nativegame >/dev/null && echo "ALIVE at $1" || echo "DEAD at $1"; }
+sleep 12; shot t012; alive 12
+sleep 20; shot t032; alive 32
+sleep 30; shot t062; alive 62
+sleep 40; shot t102; alive 102
+sleep 60; shot t162; alive 162
+sleep 80; shot t242; alive 242
+sleep 90; shot t332; alive 332
+echo "===== FPS"
+adb shell dumpsys gfxinfo ru.ugolnyyar.nativegame | grep -E "Total frames|Janky|50th|90th" | head -5
 echo "===== CRASHES"
 adb logcat -d | grep -E "FATAL EXCEPTION" -A 25 | head -60
-echo "===== PROCESS"
-adb shell pidof ru.ugolnyyar.nativegame && echo "APP ALIVE" || echo "APP DEAD"
+alive end
