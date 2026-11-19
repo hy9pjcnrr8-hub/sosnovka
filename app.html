@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 500, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 510, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -457,6 +457,23 @@
   @media (max-height:500px){ #modes .card b{font-size:11.5px!important;letter-spacing:0!important} #modes .card{padding-left:38px!important;padding-right:6px!important} #modes .card .ic{left:7px!important} }
   @media (max-height:500px){ #modes .card{padding-top:5px!important;padding-bottom:5px!important} #modes{gap:5px!important} #modes .card span{font-size:10px!important;margin-top:0} }
   @media (max-width:640px){ .mActs{grid-column:1;grid-row:auto;justify-content:center} }
+  /* 0.51: thumb-friendly default layout around the fire button, per-button size */
+  #hud .btn{scale:var(--s,1)}
+  body.editing #hud .btn.esel{outline:3px solid #c7ff48!important;outline-offset:4px;box-shadow:0 0 18px rgba(199,255,72,.7)}
+  #editBar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;max-width:92vw}
+  #eSize{display:flex;align-items:center;gap:8px}#eSize.hidden{display:none}#eSize input{width:150px;accent-color:#c7ff48}#eVal{font-style:normal;min-width:40px;color:#c7ff48;font-weight:800}
+  #aim{width:58px;height:58px;right:calc(env(safe-area-inset-right) + 136px);bottom:calc(env(safe-area-inset-bottom) + 23px)}
+  #reload{width:50px;height:50px;right:calc(env(safe-area-inset-right) + 215px);bottom:calc(env(safe-area-inset-bottom) + 20px)}
+  #crouch{width:54px;height:54px;right:calc(env(safe-area-inset-right) + 123px);bottom:calc(env(safe-area-inset-bottom) + 103px)}
+  #jump{width:56px;height:56px;right:calc(env(safe-area-inset-right) + 34px);bottom:calc(env(safe-area-inset-bottom) + 144px)}
+  #swap{width:48px;height:48px;right:calc(env(safe-area-inset-right) + 202px);bottom:calc(env(safe-area-inset-bottom) + 94px)}
+  #knifeBtn{width:48px;height:48px;right:calc(env(safe-area-inset-right) + 176px);bottom:calc(env(safe-area-inset-bottom) + 162px)}
+  #nade{width:56px;height:56px;right:calc(env(safe-area-inset-right) + 282px);bottom:calc(env(safe-area-inset-bottom) + 20px)}
+  #nadeSw{width:36px;height:36px;right:calc(env(safe-area-inset-right) + 282px);bottom:calc(env(safe-area-inset-bottom) + 92px)}
+  #abil{width:52px;height:52px;right:calc(env(safe-area-inset-right) + 346px);bottom:calc(env(safe-area-inset-bottom) + 94px)}
+  #strikeBtn{right:calc(env(safe-area-inset-right) + 262px);bottom:calc(env(safe-area-inset-bottom) + 150px)}
+  #quadBtn{left:calc(50% - 120px)}
+  #radioBtn{right:calc(env(safe-area-inset-right) + 349px);bottom:calc(env(safe-area-inset-bottom) + 167px)}
 
   /* ---- Android app look ---- */
   body{font-family:Montserrat,"Arial Black",Arial,sans-serif}
@@ -486,7 +503,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 5 карт · 8 режимов · онлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 0.50 · Android</div></div></div>
+  <div class="spV">версия 0.51 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><div id="armorW"><div id="armor"></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -502,7 +519,7 @@
   <div id="crouch" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><circle cx="17" cy="7" r="3" fill="currentColor"/><path d="M17 11l-3 7h7l2 7M14 18l-4 3 2 5M17 13l5 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><em>ПРИСЕД</em></div>
   <div id="reload" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M25 13a9.5 9.5 0 1 0 1 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 6v7h-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="13" y="12" width="6" height="9" rx="1" fill="currentColor"/></svg><em>ЗАРЯД</em></div>
   <div id="swap" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 11h17l-4-4M27 21H10l4 4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><em>ОРУЖИЕ</em></div>
-  <div id="knifeBtn" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27l4-4 2 2-4 4z" fill="currentColor"/><path d="M10 22L25 5c2 3 1 7-3 11L12 24z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg></div>
+  <div id="knifeBtn" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27l4-4 2 2-4 4z" fill="currentColor"/><path d="M10 22L25 5c2 3 1 7-3 11L12 24z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg><em>НОЖ</em></div>
   <div id="nade" class="btn touch-only">ОСК<small>×1</small></div>
   <div id="nadeSw" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M9 9a10 10 0 1 1-2 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 5v6h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><em>ГРАНАТА</em></div>
   <div id="pause" class="btn"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="7" width="5" height="18" rx="1" fill="currentColor"/><rect x="18" y="7" width="5" height="18" rx="1" fill="currentColor"/></svg></div>
@@ -529,7 +546,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.50</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.51</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -576,7 +593,7 @@
     <div class="help">Онлайн-бой: живые игроки, синие против красных. <b>Серверы игры</b> работают из любой сети — мобильный интернет или Wi-Fi. «Своя комната» — отдельный сервер по коду только для ваших друзей. <b>Свой сервер</b> — если друг запустил server.js у себя: введите его адрес.</div>
   </div>
   <div class="help"><b>Телефон</b> (держите горизонтально): левая часть экрана — движение (до упора вперёд — бег), правая — обзор. Кнопки: огонь (две), прицел, прыжок, присесть, перезарядка, ⇄ смена оружия.<br>
-  <b>Компьютер:</b> клик — захват мыши · WASD · Shift бег · C присесть · пробел прыжок · ЛКМ огонь · ПКМ прицел · R · 1/2, Q или колесо — смена оружия · G граната · T выбор гранаты · F нож · I осмотр оружия · Esc пауза.<br>
+  <b>Компьютер:</b> клик — захват мыши · WASD · Shift бег · C присесть · пробел прыжок · ЛКМ огонь · ПКМ прицел · R · 1/2, Q или колесо — смена оружия · G граната · T выбор гранаты · X нож · I осмотр оружия · Esc пауза.<br>
   Синие — в тёмно-синей форме с синими повязками, красные — в бордовой с красными. Своих видно по именам над головой. Деньги (КР) даются за убийства, победы и миссии.</div>
   <div id="err"></div>
   <div class="mTip"><b>СОВЕТ</b><span id="mTip"></span></div>
@@ -669,7 +686,7 @@
   </div>
   <div class="row"><button class="big alt" id="sReset">Сбросить всё</button><button class="big" id="sClose">Готово</button></div>
 </div>
-<div id="editBar" class="hidden">Перетащите кнопки <button class="opt" id="eReset">Сбросить</button><button class="opt sel" id="eDone">Готово</button></div>
+<div id="editBar" class="hidden"><span id="eHint">Перетащите кнопку или нажмите на неё, чтобы изменить размер</span><span id="eSize" class="hidden"><b id="eName"></b><input type="range" id="eRange" min="50" max="200" step="5"><i id="eVal"></i></span><button class="opt" id="eReset">Сбросить</button><button class="opt sel" id="eDone">Готово</button></div>
 
 <div id="end" class="ov hidden"><h1 id="endT">ПОБЕДА</h1><div class="sub" id="endS"></div><div id="endEarn"></div><div id="board"></div>
   <div class="row"><button class="big" id="again">Ещё раз</button><button class="big alt" id="endMenu">В меню</button></div></div>
@@ -2869,7 +2886,9 @@ function progFrom(sv){ const P = freshProg();
     if (P.weapons[sv.primary] && WCAT[sv.primary] === 'primary') P.primary = sv.primary;
     if (sv.secondary && P.weapons[sv.secondary] && WCAT[sv.secondary] === 'secondary') P.secondary = sv.secondary;
     if (sv.missions && typeof sv.missions === 'object') P.missions = JSON.parse(JSON.stringify(sv.missions));
-    if (sv.team === 1) P.team = 1; }
+    if (sv.team === 1) P.team = 1;
+    // everything else (xp, level, stats, skins, clan, pass, season, dailies, campaign...) is kept as is and checked by ensureProgExtras
+    for (const k in sv) if (!(k in P) && sv[k] !== undefined) try { P[k] = JSON.parse(JSON.stringify(sv[k])); } catch(e){} }
   return P; }
 function loadoutFrom(sv){ const L = JSON.parse(JSON.stringify(DEFAULT_LOADOUT));
   if (sv && typeof sv === 'object') for (const k in SLOTS) for (const sl in SLOTS[k]) if (sv[k] && SLOTS[k][sl].some(o => (Array.isArray(o) ? o[0] : o) === sv[k][sl])) L[k][sl] = sv[k][sl];
@@ -2877,7 +2896,7 @@ function loadoutFrom(sv){ const L = JSON.parse(JSON.stringify(DEFAULT_LOADOUT));
 let LEGACY = null;
 try { const p = JSON.parse(localStorage.getItem(PROG_KEY) || 'null'), l = JSON.parse(localStorage.getItem('lr_loadout') || 'null'); if (p && (p.money > 0 || Object.keys(p.weapons || {}).length > 1)) LEGACY = {prog:p, loadout:l}; } catch(e){}
 let PROG = freshProg();
-function useAccount(key){ ACC = ACCS[key]; PROG = progFrom(ACC.prog); LOADOUT = loadoutFrom(ACC.loadout);
+function useAccount(key){ ACC = ACCS[key]; PROG = progFrom(ACC.prog); try { ensureProgExtras(); } catch(e){} LOADOUT = loadoutFrom(ACC.loadout); setTimeout(() => { try { lbRestore(); } catch(e){} }, 1500);
   for (const k in SLOTS) for (const sl in SLOTS[k]) if (!ownsOpt(k, sl, LOADOUT[k][sl])) LOADOUT[k][sl] = DEFAULT_LOADOUT[k][sl]; }
 { let ses = null; try { ses = localStorage.getItem(SES_KEY) || sessionStorage.getItem(SES_KEY); } catch(e){}
   if (ses && ACCS[ses]) useAccount(ses); else LOADOUT = JSON.parse(JSON.stringify(DEFAULT_LOADOUT)); }
@@ -3770,7 +3789,7 @@ addEventListener('keydown', e => { keys[e.code] = true;
   if (e.code === 'Space'){ jump(); e.preventDefault(); }
   if (e.code === 'KeyC' || e.code === 'ControlLeft') toggleCrouch();
   const n = ['Digit1','Digit2'].indexOf(e.code); if (n >= 0 && n < CARRY.length){ if (TUT && CARRY[n] !== cur) TUT.swapped = true; equip(CARRY[n]); }
-  if (e.code === 'KeyG') playerThrow(); if (e.code === 'KeyF' || e.code === 'KeyK') knifeAttack(); if (e.code === 'KeyI' && running && !aiming) inspectT = 2.4; if (e.code === 'KeyT') cycleNade(); if (e.code === 'KeyQ') swapCarry(); if (e.code === 'KeyB') callStrike(); if (e.code === 'KeyV') useAbility(); if (e.code === 'KeyE') toggleQuad(); if (e.code === 'KeyZ'){ renderEmotes(); $('emoteWheel').classList.toggle('hidden'); } });
+  if (e.code === 'KeyG') playerThrow(); if (e.code === 'KeyX' || e.code === 'KeyK') knifeAttack(); if (e.code === 'KeyI' && running && !aiming) inspectT = 2.4; if (e.code === 'KeyT') cycleNade(); if (e.code === 'KeyQ') swapCarry(); if (e.code === 'KeyB') callStrike(); if (e.code === 'KeyV') useAbility(); if (e.code === 'KeyE') toggleQuad(); if (e.code === 'KeyZ'){ renderEmotes(); $('emoteWheel').classList.toggle('hidden'); } });
 addEventListener('keyup', e => keys[e.code] = false);
 addEventListener('wheel', e => { if (running && !paused && player.alive) swapCarry(); });
 document.addEventListener('pointerlockchange', () => { locked = document.pointerLockElement === renderer.domElement; if (!locked && running && !isTouch && !matchOver && !paused) togglePause(true); });
@@ -3847,8 +3866,13 @@ $('play').addEventListener('click', () => {
 const ray = new THREE.Raycaster(), tv = new THREE.Vector3(), tv2 = new THREE.Vector3(), tv3 = new THREE.Vector3();
 function playerFire(){
   const w = WEAPONS[cur]; w.ammo--; fireCd = w.rate; recoil = 1; w.animT = w.model.pumpLate ? .55 : .09; semiReady = false;
-  const kick = w.kick * (1 - aimK*0.35) * (player.crouch ? (w.bipod ? .5 : .75) : 1);
-  player.pitch = Math.min(1.45, player.pitch + kick*(.7+Math.random()*.6)); player.yaw += (Math.random()-.5)*kick*.5;
+  const kick = w.kick * (1 - aimK*0.3) * (player.crouch ? (w.bipod ? .5 : .75) : 1) * (sprinting ? 1.3 : 1);
+  { const tNow = now(); if (tNow - lastShotT > w.rate*2.2 + .12){ shotIdx = 0; recPat = Math.random() < .5 ? -1 : 1; if (recP === 0) burstPitch = player.pitch; } lastShotT = tNow; shotIdx++;
+    // pattern: strong first shots up, then the climb slows and the barrel drifts left-right like a real burst
+    const up = kick * (shotIdx <= 3 ? 1.15 : shotIdx <= 10 ? .9 : .7) * (.88 + Math.random()*.24);
+    const side = kick * (.32*Math.sin(shotIdx*.55)*recPat + (Math.random() - .5)*.35) * (shotIdx > 4 ? 1.4 : .6);
+    const dp = Math.min(1.45, player.pitch + up) - player.pitch; player.pitch += dp; player.yaw += side; recP += dp; recY += side;
+    viewPunch = Math.min(.05, viewPunch + kick*.9); bloom = Math.min(1, bloom + (w.auto ? .1 : .22) * (w.pellets > 1 ? .3 : 1)); }
   vFlash.visible = !(w.scope && aimK > .9) && w.flash !== false; vFlash.rotation.z = Math.random()*3; vLight.intensity = w.flash === false ? .4 : 2.2;
   setTimeout(() => { vFlash.visible = false; vLight.intensity = 0; }, 45);
   boom(...w.snd); if (!w.sil) shotEcho(w.snd); if (mode !== 'online') botHearShot(player.pos.x, player.pos.z, !w.sil && w.key !== 'xbow');
@@ -3856,7 +3880,7 @@ function playerFire(){
   const parts = []; for (const b of bots) if (b.alive && b.team !== player.team) for (const p of b.parts) parts.push(p);
   if (mode === 'online') for (const rp of remotes.values()) if (rp.alive && rp.team !== player.team) for (const p of rp.parts) parts.push(p);
   const shotHits = new Map(); let firstEnd = null;
-  let spread = w.spread * lerp(w.hipMul || 1, w.adsMul, aimK) * (player.moving ? 1.6 : 1) * (player.crouch ? (w.bipod ? .5 : .7) : 1) * (player.onGround ? 1 : 2.5);
+  let spread = w.spread * lerp(w.hipMul || 1, w.adsMul, aimK) * (1 + bloom*lerp(1.3, .55, aimK)) * (sprinting ? 2.1 : player.moving ? 1.6 : 1) * (player.crouch ? (w.bipod ? .5 : .7) : 1) * (player.onGround ? 1 : 2.5);
   if (w.scope && aimK > .9 && player.moving) spread += .01;
   w.model.muzzle.getWorldPosition(tv2);
   let anyHit = false, head = false;
@@ -4046,7 +4070,7 @@ function updatePlayer(dt){
   sprinting = wantSprint && mz > .5 && !player.crouch && aimK < .3 && reloading <= 0;
   if (sprinting && player.crouch) player.crouch = false;
   if (quadFrame(dt, mx, mz)){ camera.position.set(player.pos.x, player.pos.y + 1.5, player.pos.z); camera.rotation.set(player.pitch, player.yaw, 0); if (WEAPONS[cur]) WEAPONS[cur].model.g.visible = false; $('scope').style.display = 'none'; return; }
-  let speed = (player.crouch ? 2.4 : sprinting ? 7.0 : 4.5) * classSpeed(); speed *= (1 - aimK*.35) * (w.mob || 1);
+  let speed = (player.crouch ? 2.4 : sprinting ? (runFireT > 0 ? 6.0 : 7.0) : 4.5) * classSpeed(); speed *= (1 - aimK*.35) * (w.mob || 1);
   { const q = pondAt(player.pos.x, player.pos.z); player.inWater = !!q && player.pos.y < q.y - .05; if (player.inWater) speed *= .55; }
   fwd.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw)); right.set(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
   const ox = player.pos.x, oz = player.pos.z;
@@ -4061,15 +4085,17 @@ function updatePlayer(dt){
   playerSteps(dt, Math.hypot(player.pos.x - ox, player.pos.z - oz));
   player.eyeH += ((player.crouch ? 1.12 : 1.65) - player.eyeH) * Math.min(1, dt*10);
   camera.position.set(player.pos.x, player.pos.y + player.eyeH, player.pos.z);
-  camera.rotation.set(player.pitch, player.yaw, 0);
+  camera.rotation.set(player.pitch + viewPunch, player.yaw, 0); viewPunch = Math.max(0, viewPunch - dt*.04 - viewPunch*dt*12);
   // regen
   if (now() - player.lastHurt > 5 && player.hp < 100){ player.hp = Math.min(100, player.hp + 9*dt*classRegen()); }
   // weapon
   fireCd -= dt; switching = Math.max(0, switching - dt);
   if (reloading > 0){ reloading -= dt; if (reloading <= 0){ reloading = 0; const need = w.mag - w.ammo, take = Math.min(need, w.res); w.ammo += take; if (w.res !== Infinity) w.res -= take; } }
   const wantFire = touchFire || (mouseDown && locked) || keys.KeyF || autoFireCheck(dt);
+  if (wantFire) runFireT = .35; else runFireT = Math.max(0, runFireT - dt);
+  recoilRecover(dt, wantFire, w);
   if (!wantFire) semiReady = true;
-  if (wantFire && fireCd <= 0 && w.ammo > 0 && reloading <= 0 && switching <= 0 && !sprinting && (w.auto || semiReady)) playerFire();
+  if (wantFire && fireCd <= 0 && w.ammo > 0 && reloading <= 0 && switching <= 0 && (w.auto || semiReady)) playerFire();
   if (wantFire && w.ammo <= 0 && reloading <= 0 && semiReady) startReload();
   const wantAim = aiming && reloading <= 0 && switching <= 0 && !sprinting;
   aimK = clamp(aimK + (wantAim ? 1 : -1)*dt*7*(w.adsSpd || 1), 0, 1);
@@ -4081,13 +4107,13 @@ function updatePlayer(dt){
   if (w.model.lenses) for (const l of w.model.lenses) l.visible = aimK < .5;
   $('cross').style.opacity = aimK > .5 ? 0 : 1;
   recoil = Math.max(0, recoil - dt*9);
-  const t = performance.now()*.001, bobA = (player.moving && player.onGround ? (sprinting ? .024 : .012) : .003) * (1 - aimK*.85);
+  const t = performance.now()*.001, bobA = (player.moving && player.onGround ? (sprinting ? (runFireT > 0 ? .014 : .024) : .012) : .003) * (1 - aimK*.85);
   const bob = Math.sin(t*(sprinting ? 13 : 9))*bobA, bobX = Math.cos(t*(sprinting ? 6.5 : 4.5))*bobA;
   const m = w.model;
   const rl = reloading > 0 ? Math.sin(Math.min(1, (w.reload-reloading)/w.reload)*Math.PI) : 0;
   m.g.visible = !scoped;
   m.g.position.set(lerp(m.pos.x, m.ads.x, aimK) + bobX, lerp(m.pos.y, m.ads.y, aimK) + bob - rl*.12 - switching*.5, lerp(m.pos.z, m.ads.z, aimK) + recoil*.05*(1-aimK*.5));
-  const sp = sprinting && player.moving;
+  const sp = sprinting && player.moving && runFireT <= 0;
   m.g.rotation.set(recoil*.08*(1-aimK*.6) - rl*.6 + (sp ? -.3 : 0), sp ? .4 : 0, rl*.4);
   if (inspectT > 0){ inspectT = (aimK > .1 || recoil > .2 || reloading > 0) ? 0 : inspectT - dt; const k = Math.sin(Math.min(1, (2.4 - inspectT)/2.4)*Math.PI), k2 = Math.sin(Math.min(1, (2.4 - inspectT)/2.4)*Math.PI*2);
     m.g.rotation.y += k*.9; m.g.rotation.z += k*.55 - k2*.25; m.g.rotation.x += k2*.15; m.g.position.x -= k*.06; m.g.position.y += k*.03; }
@@ -4095,7 +4121,7 @@ function updatePlayer(dt){
   if (m.mover){ w.animT = Math.max(0, w.animT - dt);
     let k; if (m.pumpLate){ const p = 1 - w.animT/.55; k = (p > .3 && p < 1) ? Math.sin((p-.3)/.7*Math.PI) : 0; } else k = w.animT/.09;
     m.mover.position[m.axis || 'z'] = m.baseZ + k*m.amp; }
-  $('cross').style.transform = `scale(${1 + recoil*.5 + (player.moving ? .35 : 0) + (w.pellets > 1 ? .8 : 0) + (w.key === 'sniper' ? 1.2 : 0)})`;
+  $('cross').style.transform = `scale(${1 + recoil*.35 + bloom*.9 + (sprinting ? .7 : player.moving ? .35 : 0) + (w.pellets > 1 ? .8 : 0) + (w.key === 'sniper' ? 1.2 : 0)})`;
 }
 let deathCamT = 0;
 function update(dt){
@@ -5657,8 +5683,9 @@ function applySettings(){
 function applyLayout(){
   for (const id of BTN_IDS){
     const el = $(id), L = settings.layout[id];
-    if (L && el.offsetWidth){ el.style.left = (L.x*innerWidth - el.offsetWidth/2) + 'px'; el.style.top = (L.y*innerHeight - el.offsetHeight/2) + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto'; }
-    else if (!L){ el.style.left = el.style.top = el.style.right = el.style.bottom = ''; }
+    el.style.setProperty('--s', L && L.s ? L.s : 1);
+    if (L && L.x !== undefined && el.offsetWidth){ el.style.left = (L.x*innerWidth - el.offsetWidth/2) + 'px'; el.style.top = (L.y*innerHeight - el.offsetHeight/2) + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto'; }
+    else if (!L || L.x === undefined){ el.style.left = el.style.top = el.style.right = el.style.bottom = ''; }
   }
 }
 addEventListener('resize', () => setTimeout(applyLayout, 50));
@@ -5694,19 +5721,25 @@ $('editLayout').addEventListener('click', () => {
   requestAnimationFrame(applyLayout);
 });
 $('eDone').addEventListener('click', () => {
-  editing = false; drag = null; document.body.classList.remove('editing'); $('editBar').classList.add('hidden');
+  editing = false; drag = null; editSelect(null); document.body.classList.remove('editing'); $('editBar').classList.add('hidden');
   if (!running) $('hud').classList.add('hidden'); $('settings').classList.remove('hidden'); saveSettings(); applyLayout();
 });
-$('eReset').addEventListener('click', () => { settings.layout = {}; applyLayout(); saveSettings(); });
+$('eReset').addEventListener('click', () => { settings.layout = {}; applyLayout(); saveSettings(); editSelect(null); });
+const BTN_NAMES = {fire:'Огонь', fireL:'Огонь слева', aim:'Прицел', jump:'Прыжок', crouch:'Присед', reload:'Перезарядка', swap:'Оружие', nade:'Граната', nadeSw:'Выбор гранаты', pause:'Пауза', chatBtn:'Чат', strikeBtn:'Авиаудар', abil:'Способность', quadBtn:'Транспорт', radioBtn:'Рация', emoteBtn:'Эмоции', knifeBtn:'Нож'};
+let editSel = null;
+function editSelect(id){ editSel = id; document.querySelectorAll('#hud .btn.esel').forEach(b => b.classList.remove('esel'));
+  $('eSize').classList.toggle('hidden', !id); $('eHint').classList.toggle('hidden', !!id); if (!id) return;
+  $(id).classList.add('esel'); const s = (settings.layout[id] || {}).s || 1; $('eName').textContent = BTN_NAMES[id] || id; $('eRange').value = Math.round(s*100); $('eVal').textContent = Math.round(s*100) + '%'; }
+$('eRange').addEventListener('input', () => { if (!editSel) return; const v = +$('eRange').value/100; settings.layout[editSel] = Object.assign({}, settings.layout[editSel], {s:v}); $('eVal').textContent = Math.round(v*100) + '%'; applyLayout(); saveSettings(); });
 for (const id of BTN_IDS){
   const el = $(id);
   el.addEventListener('pointerdown', e => { if (!editing) return; e.preventDefault(); e.stopPropagation();
-    drag = {el, id, dx:e.clientX - el.offsetLeft, dy:e.clientY - el.offsetTop}; try { el.setPointerCapture(e.pointerId); } catch(err){} });
+    drag = {el, id, dx:e.clientX - el.offsetLeft, dy:e.clientY - el.offsetTop, moved:false}; editSelect(id); try { el.setPointerCapture(e.pointerId); } catch(err){} });
   el.addEventListener('pointermove', e => { if (!editing || !drag || drag.el !== el) return; e.preventDefault();
     const x = clamp(e.clientX - drag.dx, 0, innerWidth - el.offsetWidth), y = clamp(e.clientY - drag.dy, 0, innerHeight - el.offsetHeight);
-    el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto'; });
-  const up = () => { if (!drag || drag.el !== el) return;
-    settings.layout[id] = {x:(el.offsetLeft + el.offsetWidth/2)/innerWidth, y:(el.offsetTop + el.offsetHeight/2)/innerHeight}; drag = null; saveSettings(); };
+    drag.moved = true; el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto'; });
+  const up = () => { if (!drag || drag.el !== el) return; if (!drag.moved){ drag = null; return; }
+    settings.layout[id] = {s:(settings.layout[id] || {}).s, x:(el.offsetLeft + el.offsetWidth/2)/innerWidth, y:(el.offsetTop + el.offsetHeight/2)/innerHeight}; drag = null; saveSettings(); };
   el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
 }
 // time of day & weather
@@ -5924,6 +5957,27 @@ function weekRewardCheck(list){ ensureWeek(); const prev = weekId(new Date(Date.
   if (place >= 1 && place <= 10){ const prize = place === 1 ? 1500 : place <= 3 ? 1000 : 500; addMoney(prize, `${place} место в турнире недели`); PROG.medals.push(`${place} место · турнир ${prev}`); toast(`Турнир недели: ${place} место, +${prize} КР`); }
   saveProg(); }
 tap('knifeBtn', () => knifeAttack());
+
+let burstPitch = 0, runFireT = 0, shotIdx = 0, lastShotT = -9, recPat = 1, recP = 0, recY = 0, viewPunch = 0, bloom = 0;
+function recoilRecover(dt, firing, w){
+  bloom = Math.max(0, bloom - dt*(firing ? .6 : 2.6));
+  // after the burst the sight drifts most of the way back (not all — the rest is on the player)
+  if (!firing && (recP > 0 || recY !== 0) && now() - lastShotT > Math.max(.08, (w ? w.rate : .1)*1.1)){
+    const k = Math.min(1, dt*9), dp = Math.max(0, Math.min(recP*k*.75, player.pitch - burstPitch)), dy = recY*k*.6; player.pitch -= dp; player.yaw -= dy; recP -= recP*k; recY -= recY*k;
+    if (recP < 1e-4) recP = 0; if (Math.abs(recY) < 1e-4) recY = 0; }
+  if (firing){ recP *= Math.pow(.985, dt*60); recY *= Math.pow(.985, dt*60); }
+}
+// level safety net: if this device published more progress to the rating than is stored locally, bring it back
+function lbRestore(){ if (!ACC || typeof WebSocket === 'undefined') return; ensureProgExtras();
+  const nick = ACC.nick, seasons = [PROG.season.id, prevSeasonId()], best = {xp:0, k:0, w:0, sxp:0};
+  mqttOnce(api => { for (const sid of seasons) api.subscribe(LB_BASE + sid + '/' + DEVICE_ID, (t, str) => { let o; try { o = JSON.parse(str); } catch(e){ return; }
+      if (!o || cleanName(o.n) !== cleanName(nick)) return; best.xp = Math.max(best.xp, clamp(num(o.xp), 0, 5e7)); best.k = Math.max(best.k, clamp(num(o.k), 0, 1e7)); best.w = Math.max(best.w, clamp(num(o.w), 0, 1e6));
+      if (t.indexOf(PROG.season.id) >= 0) best.sxp = Math.max(best.sxp, clamp(num(o.sxp), 0, 5e7)); });
+    setTimeout(() => { api.close(); if (!ACC || ACC.nick !== nick) return; let fixed = false;
+      if (best.xp > PROG.xp){ PROG.xp = best.xp; fixed = true; } if (best.k > PROG.stats.kills){ PROG.stats.kills = best.k; fixed = true; } if (best.w > PROG.stats.wins){ PROG.stats.wins = best.w; fixed = true; }
+      if (best.sxp > PROG.season.xp){ PROG.season.xp = best.sxp; fixed = true; }
+      if (fixed){ saveProg(); renderRankUi(); toast('Уровень восстановлен: ' + levelOf(PROG.xp)); } }, 3500); }, () => {});
+}
 
 equip(0); WEAPONS[0].model.g.visible = false;
 if (settings.gfx) $('gfxs').querySelector(`[data-gfx="${settings.gfx}"]`)?.click();
