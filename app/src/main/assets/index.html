@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Угольный Яр</title>
+<style>
+  :root{
+    --bg:#0d1220; --panel:#151c2e; --line:#26304a; --text:#e8ecf4; --dim:#8a93a8;
+    --gold:#f4c84a; --red:#ff5a4f; --green:#4fd17a; --blue:#6cc6ff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+    font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;}
+  body{display:flex;justify-content:center;
+    background:radial-gradient(circle at 50% 0%,#1b2440 0%,var(--bg) 60%);}
+  #app{width:100%;max-width:520px;height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden}
+  /* снег */
+  #snow{position:absolute;inset:0;pointer-events:none;z-index:0}
+  /* HUD */
+  #hud{z-index:1;padding:10px 12px 8px;background:rgba(13,18,32,.88);border-bottom:1px solid var(--line)}
+  .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .chip{font-size:11px;font-weight:700;letter-spacing:.3px;padding:3px 7px;border-radius:5px;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+  .chip.r{color:var(--red);border-color:#6b2a2a}
+  .chip.g{color:var(--green);border-color:#285c3a}
+  .chip.y{color:var(--gold);border-color:#6b5a22}
+  .chip.b{color:var(--blue);border-color:#24506b}
+  .bar{height:6px;background:#1f2840;border-radius:3px;margin-top:7px;overflow:hidden}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,#2fae5c,var(--green));width:0;transition:width .8s}
+  /* лог */
+  #log{z-index:1;flex:1;overflow-y:auto;padding:14px 16px 8px;scroll-behavior:smooth}
+  .p{margin:0 0 10px;line-height:1.45;font-size:16px;animation:in .35s ease both}
+  @keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .h{font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--gold);text-align:center;margin:6px 0 14px;text-shadow:0 2px 0 #000}
+  .big{font-size:42px;font-weight:900;text-align:center;color:var(--gold);margin:4px 0 10px;text-shadow:0 3px 0 #000}
+  .big.r{color:var(--red)}
+  .stamp{margin:12px auto;width:max-content;max-width:90%;padding:8px 18px;border:4px solid var(--red);color:var(--red);
+    font-weight:900;font-size:22px;letter-spacing:1px;transform:rotate(-6deg);border-radius:6px;text-align:center;opacity:.9}
+  .quote{color:var(--blue);font-style:italic;border-left:3px solid var(--blue);padding-left:10px}
+  .gold{color:var(--gold);font-weight:700}.red{color:var(--red);font-weight:700}.green{color:var(--green);font-weight:700}
+  .blue{color:var(--blue)}.dim{color:var(--dim);font-size:14px}
+  .delta{font-size:14px;font-weight:700;margin:-4px 0 8px}
+  /* кнопки */
+  #ctl{z-index:1;padding:10px 12px calc(12px + env(safe-area-inset-bottom));background:rgba(13,18,32,.92);border-top:1px solid var(--line)}
+  .q{font-weight:800;font-size:15px;margin:0 0 8px;color:var(--text)}
+  .btn{display:block;width:100%;text-align:left;margin:0 0 8px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);
+    background:var(--panel);color:var(--text);font-size:15px;line-height:1.3;cursor:pointer;font-family:inherit}
+  .btn:active{transform:scale(.98);background:#1d2640}
+  .btn .cost{display:block;margin-top:4px;font-size:13px;font-weight:800;color:var(--gold)}
+  .btn .cost.plus{color:var(--green)}
+  .btn:disabled{opacity:.45}
+  .btn:disabled .cost{color:var(--red)}
+  .btn.next{text-align:center;background:var(--gold);color:#1a1405;font-weight:900;border:none}
+  .btn.end{text-align:center;border-color:var(--gold);color:var(--gold);font-weight:800}
+  .caps{display:flex;gap:8px;margin-bottom:8px}
+  .cap{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 9px;font-size:12px;color:var(--dim)}
+  .cap b{display:block;font-size:17px;color:var(--text)}
+  .opts{max-height:52vh;overflow-y:auto}
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="snow"></canvas>
+  <div id="hud"></div>
+  <div id="log"></div>
+  <div id="ctl"></div>
+</div>
+<script>
+"use strict";
+// ───────────── утилиты ─────────────
+const $ = s => document.querySelector(s);
+const LOG = $("#log"), CTL = $("#ctl"), HUD = $("#hud");
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const fmt = n => Math.round(n).toLocaleString("ru-RU").replace(/,/g, " ");
+const money = n => (n < 0 ? "−" : "") + fmt(Math.abs(n)) + " ₽";
+
+const START = new Date(2026, 10, 13);
+const DEADLINE = 365, GOAL = 50000;
+
+let G;
+function newGame() {
+  G = { day: 0, budget: 12000000, pop: 312, trust: 50, income: {}, flags: {}, chapter: "ПРОЛОГ",
+        housing: 0, jobs: 0, factories: 0, blocks: 0, ads: 0 };
+}
+class Bankrupt extends Error {}
+
+const daysLeft = () => Math.max(0, DEADLINE - G.day);
+const monthly = () => Object.values(G.income).reduce((a, b) => a + b, 0) + G.pop * 25;
+const can = x => G.budget >= x;
+
+function hud() {
+  const d = new Date(START.getTime() + G.day * 864e5);
+  const ds = d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "2-digit" });
+  const inc = monthly(), left = daysLeft();
+  HUD.innerHTML = `
+    <div class="row">
+      <span class="chip">● ${ds}</span>
+      <span class="chip r">ДО СРОКА: ${left} ДН.</span>
+      <span class="chip y">${G.chapter}</span>
+    </div>
+    <div class="row" style="margin-top:6px">
+      <span class="chip g">ЖИТЕЛИ: ${fmt(G.pop)} / ${fmt(GOAL)}</span>
+      <span class="chip y">БЮДЖЕТ: ${money(G.budget)}</span>
+      <span class="chip ${inc >= 0 ? "g" : "r"}">${inc >= 0 ? "+" : ""}${money(inc)}/мес</span>
+      <span class="chip b">ДОВЕРИЕ: ${G.trust}</span>
+    </div>
+    <div class="bar"><i style="width:${Math.min(100, G.pop / GOAL * 100)}%"></i></div>`;
+}
+
+// ───────────── вывод текста ─────────────
+async function say(html, cls = "p", wait = 260) {
+  const el = document.createElement("div");
+  el.className = cls === "p" ? "p" : "p " + cls;
+  el.innerHTML = html;
+  LOG.appendChild(el);
+  LOG.scrollTop = LOG.scrollHeight;
+  hud();
+  await sleep(wait);
+}
+const H = t => say(t, "h", 350);
+const BIG = (t, red) => say(t, red ? "big r" : "big", 400);
+const STAMP = t => say(t, "stamp", 450);
+const Q = t => say("«" + t + "»", "quote", 320);
+const clear = () => { LOG.innerHTML = ""; };
+
+function waitClick(buttons) {
+  return new Promise(res => {
+    buttons.forEach(([el, val]) => el.addEventListener("click", () => res(val), { once: true }));
+  });
+}
+
+async function pause(label = "Дальше →") {
+  CTL.innerHTML = "";
+  const b = document.createElement("button");
+  b.className = "btn next"; b.textContent = label;
+  CTL.appendChild(b);
+  await waitClick([[b, 1]]);
+  CTL.innerHTML = "";
+  clear();
+}
+
+async function choose(title, options, extraHTML = "") {
+  CTL.innerHTML = extraHTML + `<div class="q">▶ ${title}</div>`;
+  const box = document.createElement("div"); box.className = "opts";
+  CTL.appendChild(box);
+  const pairs = [];
+  for (const [text, cost, key, cls] of options) {
+    const b = document.createElement("button");
+    b.className = "btn" + (cls ? " " + cls : "");
+    let cs = "";
+    if (cost > 0 && cost < 1e11) cs = `<span class="cost">${money(cost)}${can(cost) ? "" : " · не хватает денег"}</span>`;
+    else if (cost < 0) cs = `<span class="cost plus">+${money(-cost)}</span>`;
+    b.innerHTML = text + cs;
+    if (cost > 0 && !can(cost)) b.disabled = true;
+    box.appendChild(b);
+    pairs.push([b, [key, cost]]);
+  }
+  const [key, cost] = await waitClick(pairs);
+  G.budget -= cost;
+  CTL.innerHTML = "";
+  hud();
+  return key;
+}
+
+async function advance(days, quiet) {
+  days = Math.min(days, daysLeft());
+  G.budget += monthly() * days / 30;
+  G.day += days;
+  if (!quiet && days > 0) await say(`… прошло ${days} дн.`, "dim", 200);
+  hud();
+  if (G.budget < 0) throw new Bankrupt();
+}
+async function addPop(n, why = "") {
+  const old = G.pop; G.pop = Math.max(0, G.pop + n); const d = G.pop - old;
+  if (d) await say(`<span class="${d > 0 ? "green" : "red"}">${d > 0 ? "+" : "−"}${fmt(Math.abs(d))} жителей</span> <span class="dim">${why}</span>`, "delta", 300);
+}
+async function addTrust(n) {
+  G.trust = Math.max(0, Math.min(100, G.trust + n));
+  await say(`<span class="${n > 0 ? "blue" : "red"}">доверие жителей ${n > 0 ? "+" : ""}${n}</span>`, "delta", 250);
+}
+
+// ───────────── главы ─────────────
+async function prologue() {
+  clear(); hud();
+  await H("Угольный Яр");
+  await say("ЖИТЕЛЕЙ", "dim");
+  await BIG("50 000");
+  await say("Столько людей жило здесь, когда работала шахта «Северная».");
+  await BIG("312", true);
+  await say("Всего триста двенадцать. Тёмные окна, пустые подъезды.");
+  await STAMP("ЗАКРЫТО · 2014");
+  await say("Шахту закрыли. Работы нет. Молодые уехали. Через год, говорят, никто не останется.");
+  await say("Тебя назначили главой посёлка. Условие губернатора: <b>за 365 дней вернуть городу 50 000 жителей</b>. Иначе Угольный Яр расселят и сотрут с карты.");
+  await say(`На счету посёлка: <span class="gold">${money(G.budget)}</span>.`);
+  await pause("Начать →");
+}
+
+async function ch1() {
+  G.chapter = "1. ТЕПЛО"; await H("Часть 1 · Тепло");
+  await say("Ноябрь. −34°. Котельная стоит с 2014-го, в квартирах — как на улице.");
+  await say("На складе шахты лежит гора угля, которую так и не вывезли:");
+  await BIG("100 000 т угля");
+  const k = await choose("Как дать людям тепло?", [
+    ["Восстановить старую угольную котельную (уголь со склада бесплатный)", 5200000, "coal"],
+    ["Поставить электрокотлы (быстрее, но дорогое электричество)", 3000000, "elec"],
+    ["Раздать буржуйки и дрова — пусть греются сами", 600000, "stove"],
+  ]);
+  G.flags.heat = k;
+  if (k === "coal") {
+    await advance(37);
+    await say("Трубы гудят. Над котельной впервые за 12 лет поднимается дым.");
+    await say("Дед Матвей, бывший горный мастер, стоит у окна в шапке-ушанке:");
+    await Q("Двенадцать лет не слышал, как она шумит…");
+    await addTrust(15);
+  } else if (k === "elec") {
+    await advance(25); G.income["Электрокотлы"] = -250000;
+    await say("В квартирах тепло, но счёт за электричество кусается.");
+    await addTrust(5);
+  } else {
+    await advance(10);
+    await say("Люди топят буржуйки, в подъездах пахнет дымом. Несколько семей не выдерживают.");
+    await addPop(-60, "уехали от холода"); await addTrust(-15);
+  }
+  await pause();
+}
+
+async function ch2() {
+  G.chapter = "2. ДОРОГА"; await H("Часть 2 · Дорога");
+  await say("До трассы — 60 километров. Зимой дорогу заметает так, что даже вахтовый автобус не проходит неделями.");
+  await BIG("60 КМ");
+  const k = await choose("Что делать с дорогой?", [
+    ["Положить новый асфальт на все 60 км", 4500000, "asphalt"],
+    ["Отсыпать грейдером и поставить снегозащитные щиты", 1500000, "shields"],
+    ["Оставить зимник как есть", 0, "none"],
+  ]);
+  G.flags.road = { asphalt: 2, shields: 1, none: 0 }[k];
+  if (k === "asphalt") { await advance(45); await say("Ровная чёрная лента от трассы до самого посёлка."); }
+  else if (k === "shields") {
+    await advance(30);
+    await say("Вдоль дороги встают снегозащитные щиты. Метель бьётся о них — а дорога остаётся чистой.");
+  } else {
+    await advance(5); G.income["Доставка по зимнику"] = -100000;
+    await say("Дорога снова под снегом. Продукты везут втридорога."); await addTrust(-5);
+  }
+  if (G.flags.road >= 1) {
+    await say("К посёлку подъезжает жёлтый автобус с табличкой «ВАХТА».");
+    await addPop(G.flags.road === 1 ? 100 : 140, "приехали работать");
+  }
+  await pause();
+}
+
+async function ch3() {
+  G.chapter = "3. СВЕТ"; await H("Часть 3 · Свет");
+  await say("Свет в посёлке гаснет каждый вечер. Высокая линия ЛЭП цела — значит, дело в подстанции.");
+  await say("Открываешь дверь трансформаторной будки…");
+  await BIG("⚠ ВНУТРИ — ПУСТО", true);
+  await say("Медь, провода, трансформатор — всё давно сдано на металлолом.");
+  const k = await choose("Как вернуть свет?", [
+    ["Купить и поставить новый трансформатор", 2400000, "trafo"],
+    ["Дизель-генераторы (дёшево, но солярка каждый месяц)", 700000, "diesel"],
+  ]);
+  G.flags.light = k;
+  if (k === "trafo") { await advance(30); await say("Щелчок рубильника — и в окнах ДК «Шахтёр» загорается свет."); await addTrust(10); }
+  else { await advance(10); G.income["Солярка"] = -250000; await say("Генераторы тарахтят на весь посёлок, но свет есть."); }
+  await addPop(128, "вернулись, узнав, что есть свет");
+  await pause();
+}
+
+async function ch4() {
+  G.chapter = "4. ШАХТА?"; await H("Часть 4 · Шахта?");
+  await say("Шахта «Северная» закрыта двенадцать лет. Ворота заварены, табличка «ВХОД ЗАПРЕЩЁН».");
+  await say("А этой ночью, в 02:14, ты возвращаешься из райцентра и видишь у вентиляционного ствола…");
+  await say("…тёплый свет в окне. И дым из трубы.", "gold");
+  await pause();
+  await say("Ты подходишь к двери. Дёргаешь ручку — открыто.");
+  await say("На столе — толстая тетрадь: <b>«ЖУРНАЛ ВЕНТИЛЯТОРА»</b>. Последняя запись — всего несколько часов назад:");
+  await BIG("23:40", true);
+  await say("«Насосы в норме. Смену сдал.»", "quote");
+  await say("В полу — <b>люк</b>. Снизу доносится гул насосов. Кто-то спускается туда каждую ночь. Двенадцать лет.");
+  const k = await choose("Что будешь делать?", [
+    ["Дождаться у люка и встретить того, кто выйдет", 0, "meet"],
+    ["Вызвать полицию — посторонним в шахте не место", 0, "police"],
+    ["Уйти и сделать вид, что ничего не видел", 0, "ignore"],
+  ]);
+  await advance(1, true);
+  if (k === "meet") {
+    await say("03:00. Люк скрипит. Из темноты поднимается каска с фонарём. Свет падает на лицо…");
+    await BIG("ДЕД МАТВЕЙ");
+    await Q("Если насосы встанут — шахту затопит за неделю. Я её двенадцать лет держу. Думал, вернутся люди…");
+    await say("Шахта жива. Всё это время её спасал один старик.");
+    G.flags.mine = "alive"; G.flags.matvey = true; await addTrust(15);
+  } else if (k === "police") {
+    await say("Приезжает наряд. Матвея — а это был он — выводят под руки. Ночью насосы никто не включает.");
+    await STAMP("ШАХТА ЗАТОПЛЕНА");
+    await say("Посёлок узнаёт, кто вызвал полицию на старика.");
+    G.flags.mine = "flooded"; G.flags.matvey = false; await addTrust(-25);
+  } else {
+    await say("Через месяц выясняется: это был дед Матвей, и шахта цела только благодаря ему. Но он уже не верит, что ты на стороне людей.");
+    G.flags.mine = "alive"; G.flags.matvey = false;
+  }
+  await pause();
+  await say("Утро. У ворот шахты собираются мужики в старых касках.");
+  await H("Нужна работа. Других работ нет.");
+  await say("Рядом — электростанция, которой нужен уголь.");
+  let k2;
+  if (G.flags.mine === "alive") {
+    k2 = await choose("Что делать с шахтой?", [
+      ["Открыть угольный разрез и возить уголь на электростанцию", 1800000, "open"],
+      ["Сдать оборудование на металлолом", -1500000, "scrap"],
+    ]);
+  } else {
+    await say("Шахта затоплена. Остаётся только металлолом.", "red");
+    k2 = await choose("Что делать?", [["Сдать оборудование на металлолом", -1200000, "scrap"]]);
+  }
+  G.flags.mine_open = k2 === "open";
+  if (k2 === "open") {
+    await advance(25); G.income["Уголь"] = 700000; G.jobs += 700;
+    await say("Самосвалы с углём идут на электростанцию. Первые зарплаты.");
+    await addPop(320, "шахтёры с семьями"); await addTrust(10);
+  } else {
+    await advance(10);
+    await say("Подъёмные машины режут автогеном. Мужики молча расходятся.");
+    await addPop(-40, "уехали искать работу"); await addTrust(-10);
+  }
+  await pause();
+}
+
+async function ch5() {
+  G.chapter = "5. ВОДОПРОВОД"; await H("Часть 5 · Вода");
+  await say("Открываешь кран. Кран сухой.");
+  await STAMP("ВОДЫ НЕТ · С 2014");
+  if (G.flags.matvey) await Q("12 лет воду вёдрами носил.");
+  await say("В январе здесь <b>−41°</b>. Старая труба лежала на 2 метрах — а земля промерзает глубже. Ковш на трёх метрах звякает о железо: старый трубопровод.");
+  await say("Насос, провода, трансформатор насосной — <span class='red'>тоже сдали на металлолом</span>.");
+  const k = await choose("Как провести воду?", [
+    ["Пластиковая труба с утеплителем на 3 метрах + новый насос", 800000, "deep"],
+    ["Положить трубу по-старому, на 2 метрах (дешевле)", 400000, "shallow"],
+    ["Наладить подвоз воды водовозкой", 100000, "truck"],
+  ]);
+  G.flags.water = k;
+  if (k === "deep") { await advance(20); await say("Из крана с хрипом идёт ржавая вода… потом — чистая."); await addTrust(10); }
+  else if (k === "shallow") { await advance(12); await say("Вода есть. Пока тепло."); }
+  else { await advance(5); G.income["Водовозка"] = -120000; await say("По дворам ездит бочка. Очередь с вёдрами."); await addTrust(-5); }
+  await pause();
+  let good = 0;
+  good += ["coal", "elec"].includes(G.flags.heat);
+  good += G.flags.light === "trafo";
+  good += ["deep", "shallow"].includes(G.flags.water);
+  good += G.flags.road >= 1;
+  await say("В область уходит отчёт: тепло, свет, дорога, вода.");
+  let grant;
+  if (good >= 3) { grant = 12000000; await say("Губернатор впечатлён. Программа поддержки моногородов:"); }
+  else if (good >= 2) { grant = 7000000; await say("В области говорят «неплохо». Выделяют часть денег:"); }
+  else { grant = 3000000; await say("В области недовольны, но дают минимум:"); }
+  G.budget += grant;
+  await BIG("+" + money(grant));
+  await addPop(400 + good * 120, "узнали, что в Яру снова можно жить");
+  await pause();
+}
+
+async function ch6() {
+  G.chapter = "6. СВЯЗЬ"; await H("Часть 6 · Магазины и связь");
+  await say("Новые жители задают два вопроса:");
+  await say("«Где связь?» «Где магазины?»", "gold");
+  await say("Ближайшая вышка — у трассы, в 60 км.");
+  const k = await choose("Связь:", [
+    ["Построить свою вышку и протянуть оптику вдоль трассы", 900000, "tower"],
+    ["Спутниковый интернет в ДК (дёшево, но слабо)", 300000, "sat"],
+    ["Обойдутся", 0, "none"],
+  ]);
+  G.flags.comm = k;
+  if (k === "tower") { await advance(15); await say("На телефонах появляются полоски сети. В чатах — фото с подписью «я дома»."); await addTrust(5); }
+  else if (k === "sat") { await advance(5); G.income["Спутник"] = -50000; await say("В ДК стоит очередь к единственному Wi-Fi."); }
+  else { await say("Связи нет. Молодёжь крутит пальцем у виска."); await addTrust(-5); }
+  await say("Сети магазинов отвечают одинаково:");
+  await BIG("2,6 %", true);
+  await say("«Жителей — 2,6 % от нужного. Не приведём.»", "quote");
+  const k2 = await choose("Магазины:", [
+    ["Отремонтировать первые этажи и сдать за 1 ₽ — пекарня, аптека, парикмахерская", 2000000, "own"],
+    ["Доплачивать сети, чтобы зашла (субсидия каждый месяц)", 300000, "subsidy"],
+    ["Пусть ездят в райцентр", 0, "none"],
+  ]);
+  G.flags.shops = k2;
+  if (k2 === "own") { await advance(20); G.jobs += 150; await say("Пахнет хлебом. Над дверью — «ПЕКАРНЯ». Рядом — «АПТЕКА»."); await addTrust(10); }
+  else if (k2 === "subsidy") { await advance(15); G.income["Субсидия сети"] = -200000; G.jobs += 80; await say("Открылся сетевой магазин. Полки полные, ценник — городской."); }
+  else { await advance(3); await say("За хлебом — 60 км. Кто-то собирает чемоданы."); await addPop(-80, "уехали из-за бытовухи"); }
+  await pause();
+}
+
+async function ch7() {
+  G.chapter = "7. КУРОРТ"; await H("Часть 7 · Курорт");
+  await say("За посёлком — гора. Снег лежит <b>7 месяцев в году</b>. Лучшие склоны в области — и ни одного подъёмника.");
+  await say(`Новый подъёмник стоит <span class="red">60 000 000 ₽</span>. У нас — <span class="gold">${money(G.budget)}</span>.`);
+  const opts = [];
+  if (G.flags.mine === "alive") {
+    await say("Захар, механик шахты, чешет затылок:");
+    await Q("Поставим от шахтной лебёдки. 1957 года, но она вечная.");
+    const cost = G.flags.matvey ? 1200000 : 2200000;
+    if (G.flags.matvey) await say("Матвей за тебя поручился — Захар работает почти даром.", "dim");
+    opts.push(["Подъёмник на шахтной лебёдке 1957 года", cost, "winch"]);
+  }
+  opts.push(["Купить б/у подъёмник из Европы", 7000000, "used"]);
+  opts.push(["Забыть про курорт", 0, "none"]);
+  const k = await choose("Подъёмник:", opts);
+  G.flags.lift = k;
+  if (k === "none") { await say("Гора остаётся просто горой."); await pause(); return; }
+  await advance(20);
+  await say("Тросы натянуты. Кресла поползли вверх.");
+  await say("Но склоны надо ровнять. <span class='gold'>Нужен ратрак</span> — машина, которая ровняет снег.");
+  const k2 = await choose("Ратрак:", [
+    ["Купить новый ратрак", 3000000, "new"],
+    ["Сдать старое железо шахты на лом (+1,5 млн) и купить б/у ратрак (−1,2 млн)", -300000, "scrap"],
+  ]);
+  if (k2 === "scrap") await say("Старый ратрак ревёт и дымит. Ездит — и ладно.");
+  await advance(10);
+  await say("Остаётся гостиница «Яр». Стены облупились, окна заколочены.");
+  const k3 = await choose("Гостиница:", [
+    ["Покрасить стены, вставить окна, открыть 40 номеров", 500000, "hotel"],
+    ["Туристы пусть ездят на день", 0, "none"],
+  ]);
+  await advance(10);
+  const base = { winch: 1600000, used: 2400000 }[k];
+  const roadMult = { 0: 0.4, 1: 0.8, 2: 1.0 }[G.flags.road];
+  const hotelMult = k3 === "hotel" ? 1.25 : 0.8;
+  const rev = Math.round(base * roadMult * hotelMult / 10000) * 10000;
+  G.income["Курорт"] = rev; G.jobs += 900;
+  await say(`За первый месяц курорт приносит <span class="green">${money(rev)}</span>.`);
+  if (G.flags.road === 0) await say("Туристы жалуются на дорогу — доезжают не все.", "dim");
+  await addPop(250, "инструкторы, повара, горничные");
+  await pause();
+}
+
+async function ch8() {
+  G.chapter = "8. ЖИЛЬЁ"; await H("Часть 8 · Жильё");
+  await say("Курорт заметили в Москве. Приходит федеральный грант:");
+  G.budget += 20000000;
+  await BIG("+20 000 000 ₽");
+  await say("Хватит, чтобы отремонтировать <b>300 квартир</b> — целый квартал.");
+  await say("Но туристическая фирма предлагает: «Отдайте квартиры под апартаменты. Будете получать каждый месяц».");
+  const k = await choose("ТВОЙ ВЫБОР — кому отдать квартиры?", [
+    ["А. ЖИТЕЛЯМ — семьи, которые хотят вернуться", 15000000, "people", "people"],
+    ["Б. ТУРИСТАМ — апартаменты и доход каждый месяц", 15000000, "tourists"],
+  ]);
+  G.flags.housing_choice = k;
+  await advance(30);
+  if (k === "people") {
+    await say("В подъездах снова пахнет краской и пирогами. Ключи — на руках.");
+    await addPop(1900, "семьи въехали в квартиры");
+    G.housing = G.pop + 1500; await addTrust(15);
+  } else {
+    await say("Апартаменты заполняются лыжниками. Местные смотрят на это молча.");
+    G.income["Апартаменты"] = 1000000;
+    await addPop(400, "персонал апартаментов");
+    G.housing = G.pop + 600; await addTrust(-10);
+  }
+  await pause();
+}
+
+// ───────────── финальная фаза ─────────────
+const FACTORY_COST = 3500000, FACTORY_JOBS = 7500, FACTORY_INCOME = 600000;
+const BLOCK_COST = 3000000, BLOCK_HOMES = 7500, AD_COST = 800000;
+const FACTORY_NAMES = ["Углеобогатительная фабрика", "Лесопильный завод", "Завод стройматериалов",
+  "Цех ремонта горной техники", "Тепличный комбинат", "Завод минеральной воды",
+  "Дата-центр на угольном электричестве", "Мебельная фабрика", "Завод металлоконструкций",
+  "Логистический хаб", "Швейная фабрика", "Завод угольных брикетов"];
+
+function quality() {
+  const f = G.flags; let q = 0;
+  q += { coal: .10, elec: .08, stove: -.10 }[f.heat];
+  q += { 0: -.10, 1: .05, 2: .10 }[f.road];
+  q += { trafo: .06, diesel: .02 }[f.light];
+  q += { deep: .08, shallow: .06, truck: -.06 }[f.water];
+  q += { tower: .06, sat: .02, none: -.06 }[f.comm];
+  q += { own: .07, subsidy: .04, none: -.08 }[f.shops];
+  q += (f.lift && f.lift !== "none") ? .05 : 0;
+  q += (G.trust - 50) / 500;
+  return q;
+}
+function infraScore() {
+  const f = G.flags;
+  const pts = [f.heat === "coal", f.road >= 1, f.road === 2, f.light === "trafo", f.mine_open,
+    ["deep", "shallow"].includes(f.water), f.comm === "tower", ["own", "subsidy"].includes(f.shops),
+    f.lift && f.lift !== "none", f.housing_choice === "people", G.trust >= 70];
+  return 1 + pts.filter(Boolean).length;
+}
+const support = () => G.jobs + Math.floor(G.pop * 0.3);
+
+async function growthTick(days) {
+  const cap = Math.min(G.housing, support());
+  let rate = Math.max(.08, Math.min(.8, .2 + 1.2 * quality() + .1 * G.ads)) * days / 30;
+  if (cap > G.pop) await addPop(Math.floor((cap - G.pop) * rate), "переехали в город");
+  else if (cap < G.pop) await addPop(-Math.floor((G.pop - cap) * .25 * days / 30), G.housing < support() ? "негде жить" : "нет работы");
+  G.ads = 0;
+}
+
+async function freezeEvent() {
+  if (G.flags.water === "shallow" && !G.flags.frozen && G.day >= 320) {
+    G.flags.frozen = true; clear();
+    await H("Заморозки");
+    await say("Октябрь. Ударило −30°. Труба на двух метрах промерзает.");
+    await STAMP("ПОЛ-ГОРОДА БЕЗ ВОДЫ");
+    if (can(2500000)) { G.budget -= 2500000; await say(`Срочный ремонт: <span class="red">${money(2500000)}</span>.`); }
+    else { await say("Денег на ремонт нет. Люди уезжают."); await addPop(-Math.floor(G.pop * .12), "уехали без воды"); }
+    await addTrust(-10);
+    await pause();
+  }
+}
+
+async function ch9() {
+  G.chapter = "9. РАБОТА"; await H("Часть 9 · Работа");
+  G.jobs += Math.floor(G.pop * .5);
+  G.housing = Math.max(G.housing, G.pop);
+  await BIG("ПРОБЛЕМА №1", true);
+  await say("Дома есть, а работы нет. Люди хотят переехать, но им нужны работа и квартира. Теперь ты сам решаешь, что строить каждый месяц.");
+  await say(`🏭 <b>Завод</b> (${money(FACTORY_COST)}) — работа для ~${fmt(FACTORY_JOBS)} жителей с семьями и +${money(FACTORY_INCOME)}/мес.`);
+  await say(`🏠 <b>Жилой квартал</b> (${money(BLOCK_COST)}) — квартиры для ${fmt(BLOCK_HOMES)} жителей.`);
+  await say(`📣 <b>Реклама</b> (${money(AD_COST)}) — в этом месяце люди переезжают быстрее.`);
+  await say(`Население растёт к меньшему из двух чисел — «жильё» и «работа». Инвесторы готовы зайти максимум на <b>${infraScore()}</b> заводов: всё, что ты построил раньше, сейчас окупается.`, "dim");
+  await pause("К делу →");
+
+  const milestones = [[10000, 4000000], [25000, 6000000]];
+  let month = 0;
+  while (daysLeft() > 3) {
+    month++;
+    await say(`Месяц ${month}`, "h");
+    while (true) {
+      const fmax = infraScore();
+      const caps = `<div class="caps">
+        <div class="cap">🏠 Жильё на<b>${fmt(G.housing)}</b></div>
+        <div class="cap">🏭 Работа на<b>${fmt(support())}</b></div>
+        <div class="cap">Заводы<b>${G.factories}/${fmax}</b></div></div>`;
+      const fopt = G.factories < fmax
+        ? [`🏭 Завод: ${FACTORY_NAMES[G.factories % FACTORY_NAMES.length]}`, FACTORY_COST, "factory"]
+        : ["🏭 Завод — инвесторы не идут: не хватает инфраструктуры", 1e12, "factory"];
+      const k = await choose("Что строим?", [
+        fopt,
+        ["🏠 Жилой квартал (ремонт старых пятиэтажек)", BLOCK_COST, "block"],
+        ["📣 Рекламная кампания «Вернись в Яр»", AD_COST, "ad"],
+        ["Завершить месяц →", 0, "end", "end"],
+      ], caps);
+      if (k === "factory") {
+        G.factories++; G.jobs += FACTORY_JOBS;
+        G.income["Заводы"] = (G.income["Заводы"] || 0) + FACTORY_INCOME;
+        await say(`Строится: <b>${FACTORY_NAMES[(G.factories - 1) % FACTORY_NAMES.length]}</b>`, "green");
+      } else if (k === "block") {
+        G.blocks++; G.housing += BLOCK_HOMES;
+        await say("Пятиэтажки в лесах. Скоро — новые жильцы.", "green");
+      } else if (k === "ad") {
+        G.ads++; await say("Ролик про Угольный Яр набирает миллионы просмотров.", "green");
+      } else break;
+    }
+    const days = Math.min(30, daysLeft());
+    await advance(days);
+    await growthTick(days);
+    for (const [m, bonus] of milestones) {
+      if (G.pop >= m && !G.flags["ms" + m]) {
+        G.flags["ms" + m] = true; G.budget += bonus;
+        await say(`🎉 ${fmt(m)} жителей! Область добавляет ${money(bonus)}.`, "gold");
+      }
+    }
+    await freezeEvent();
+    await sleep(500);
+    clear();
+  }
+}
+
+// ───────────── финал ─────────────
+async function finale() {
+  G.chapter = "ФИНАЛ"; G.day = DEADLINE; clear();
+  await H("Последний день");
+  await say("Три ночи без сна. Ночь 1. Ночь 2. Ночь 3.");
+  await say("В ДК «Шахтёр» сидит комиссия из области и считает жителей.");
+  await sleep(800);
+  let shown = G.pop;
+  if (G.pop >= GOAL - 500 && G.pop < GOAL && G.trust >= 60) {
+    await say(`Комиссия насчитала ${fmt(G.pop)}. Не хватает ${fmt(GOAL - G.pop)}.`);
+    await say("Без пяти полночь. К ДК подъезжают машины, автобусы, такси. Жители всю ночь обзванивали родню: «Приезжай. Здесь снова живут».");
+    if (G.flags.matvey) await say("Последним заходит сын деда Матвея — двенадцать лет на северах.");
+    shown = G.pop = GOAL;
+  }
+  hud();
+  await BIG(fmt(shown), shown < GOAL);
+  if (shown >= GOAL) {
+    await STAMP("ЦЕЛЬ ДОСТИГНУТА");
+    await say("Угольный Яр остаётся на карте.");
+    if (G.flags.matvey) await Q("Ну вот. Не зря держал.");
+  } else if (shown >= 30000) {
+    await say("ЦЕЛЬ НЕ ДОСТИГНУТА — НО ГОРОД ЖИВ", "gold");
+    await say(`До плана далеко, но расселять город на ${fmt(shown)} человек никто не решится. Срок продлевают.`);
+  } else if (shown >= 5000) {
+    await say("ЦЕЛЬ НЕ ДОСТИГНУТА", "red");
+    await say("Город решено «оптимизировать». Но люди не уезжают. Огни в окнах горят — назло комиссии.");
+  } else {
+    await STAMP("ПОСЁЛОК РАССЕЛЁН");
+    await say("Последний автобус уходит к трассе. Окна гаснут одно за другим.");
+  }
+  await summary(shown);
+}
+
+async function summary(shown) {
+  await say(`<span class="dim">Итоги:</span><br>Жителей: <b>${fmt(shown)}</b> / ${fmt(GOAL)}<br>Бюджет: ${money(G.budget)}<br>Доверие: ${G.trust}/100<br>Заводов: ${G.factories}, кварталов: ${G.blocks}<br>Матвей: ${G.flags.matvey ? "встретил у люка" : "так и не поговорили"}`);
+  await say("СПАСИБО, ЧТО БЫЛИ С НАМИ!", "h");
+  await pause("Сыграть ещё раз ↻");
+}
+
+async function bankrupt() {
+  clear(); await H("Банкротство");
+  await say("Деньги на счету посёлка закончились. Котельная встаёт, свет отключают за долги.", "red");
+  await say("Область вводит внешнее управление. Твоя история здесь закончилась.");
+  await summary(G.pop);
+}
+
+async function main() {
+  while (true) {
+    newGame();
+    try {
+      await prologue();
+      for (const ch of [ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9]) await ch();
+      await finale();
+    } catch (e) {
+      if (e instanceof Bankrupt) await bankrupt(); else { console.error(e); await say("Ошибка: " + e.message, "red"); await pause("Заново"); }
+    }
+  }
+}
+
+// ───────────── снег ─────────────
+(function snow() {
+  const cv = $("#snow"), ctx = cv.getContext("2d");
+  let W, Hh, flakes = [];
+  const resize = () => { W = cv.width = cv.offsetWidth; Hh = cv.height = cv.offsetHeight; };
+  resize(); addEventListener("resize", resize);
+  for (let i = 0; i < 70; i++) flakes.push({ x: Math.random() * W, y: Math.random() * Hh, r: Math.random() * 2 + .5, s: Math.random() * .6 + .3, d: Math.random() * .6 - .3 });
+  (function tick() {
+    ctx.clearRect(0, 0, W, Hh); ctx.fillStyle = "rgba(255,255,255,.55)";
+    for (const f of flakes) {
+      f.y += f.s; f.x += f.d;
+      if (f.y > Hh) { f.y = -4; f.x = Math.random() * W; }
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 7); ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
+
+main();
+</script>
+</body>
+</html>
