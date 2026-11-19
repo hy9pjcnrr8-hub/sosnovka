@@ -9,6 +9,7 @@
 <meta property="og:description" content="312 жителей. 365 дней. Одна цель — 50 000. Скачай игру для Android.">
 <meta property="og:image" content="img/shot-1.jpg">
 <meta name="theme-color" content="#0b0f1c">
+<link rel="apple-touch-icon" href="app/icon-180.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 108 108'%3E%3Crect width='108' height='108' rx='24' fill='%230d1220'/%3E%3Cpath d='M0 78Q30 70 54 76T108 74V108H0Z' fill='%23e8ecf4'/%3E%3Cpath d='M38 76 54 22 70 76M44 56H64M47 44H61' stroke='%23c9302c' stroke-width='4' fill='none'/%3E%3Crect x='48' y='18' width='12' height='8' fill='%23c9302c'/%3E%3Crect x='70' y='58' width='16' height='18' fill='%23f4c84a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -158,6 +159,18 @@ h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,4.6vw,52px);l
 .card .btn{justify-content:center;margin-top:8px}
 @media(max-width:900px){.dl-cards{grid-template-columns:1fr}}
 
+
+/* iphone */
+.iph{display:grid;grid-template-columns:auto 1fr;gap:50px;align-items:center;background:linear-gradient(160deg,#16203d,var(--ink2) 60%);border:1px solid var(--line);border-radius:28px;padding:40px}
+.iph-icon{width:150px;height:150px;border-radius:34px;box-shadow:0 20px 50px -10px rgba(0,0,0,.7),0 0 60px -10px rgba(255,90,79,.35)}
+.iph ol{margin:18px 0 26px;padding:0;list-style:none;counter-reset:i}
+.iph li{counter-increment:i;display:flex;gap:12px;align-items:center;padding:7px 0;color:#cfd5e2}
+.iph li::before{content:counter(i);flex:none;width:28px;height:28px;border-radius:50%;background:var(--gold);color:#1b1404;font-weight:800;display:grid;place-items:center;font-size:14px}
+.iph li b{color:var(--text)}
+.share-ic{display:inline-flex;vertical-align:-3px;color:#4aa3ff}
+.iph .link{display:inline-block;margin-top:6px;font-family:ui-monospace,monospace;font-size:13px;color:var(--dim);word-break:break-all}
+@media(max-width:760px){.iph{grid-template-columns:1fr;gap:24px;padding:26px;text-align:left}.iph-icon{width:104px;height:104px;border-radius:24px}}
+
 /* установка */
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px;counter-reset:s}
 .step{background:var(--ink2);border:1px solid var(--line);border-radius:20px;padding:24px;position:relative}
@@ -195,7 +208,7 @@ footer a{color:var(--text)}
       Угольный Яр
     </a>
     <div class="links">
-      <a href="#story">История</a><a href="#city">Город</a><a href="#chapters">Главы</a><a href="#shots">Скриншоты</a><a href="#install">Установка</a>
+      <a href="#story">История</a><a href="#city">Город</a><a href="#chapters">Главы</a><a href="#shots">Скриншоты</a><a href="#iphone">iPhone</a><a href="#install">Android</a>
     </div>
     <a class="nav-cta" href="#download">Скачать</a>
   </div>
@@ -222,7 +235,8 @@ footer a{color:var(--text)}
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.48l1.84-3.18a.38.38 0 00-.66-.38l-1.86 3.22A11.4 11.4 0 0012 8.1c-1.77 0-3.43.38-4.92 1.04L5.22 5.92a.38.38 0 00-.66.38L6.4 9.48A10.8 10.8 0 001 18h22a10.8 10.8 0 00-5.4-8.52zM7 15.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zm10 0a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z"/></svg>
           <span>Скачать для Android<span class="sub">APK · 55 КБ · бесплатно</span></span>
         </a>
-        <a class="btn btn-ghost" href="play.html">▶ Играть в браузере</a>
+        <a class="btn btn-ghost" href="app/">▶ Играть в браузере</a>
+        <a class="btn btn-ghost" href="#iphone"> iPhone</a>
       </div>
       <div class="meta">Android 7.0 и новее · без рекламы · без интернета</div>
     </div>
@@ -339,10 +353,32 @@ footer a{color:var(--text)}
       </div>
       <div class="card reveal">
         <span class="tag alt">Без установки</span>
-        <h3>В браузере</h3>
-        <p>На iPhone, компьютере — где угодно. Можно добавить на главный экран.</p>
-        <ul><li>Любое устройство</li><li>Ничего не скачивать</li></ul>
-        <a class="btn btn-ghost" href="play.html">▶ Играть сейчас</a>
+        <h3>iPhone и браузер</h3>
+        <p>Добавь на экран «Домой» — откроется на весь экран, без панелей Safari, и работает без интернета.</p>
+        <ul><li>iPhone, iPad, компьютер</li><li>Ничего не скачивать</li></ul>
+        <a class="btn btn-ghost" href="app/">▶ Играть сейчас</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═════════════ IPHONE ═════════════ -->
+<section id="iphone" style="padding-bottom:30px">
+  <div class="wrap">
+    <div class="iph reveal">
+      <img class="iph-icon" src="app/icon-512.png" alt="Иконка Угольного Яра" width="150" height="150">
+      <div>
+        <p class="kicker">Для iPhone и iPad</p>
+        <h2 style="margin-bottom:6px">Как приложение — без панелей браузера</h2>
+        <p class="muted" style="margin:0">Открой ссылку в Safari и добавь игру на экран «Домой». Она запустится на весь экран со своей иконкой и будет работать даже без интернета.</p>
+        <ol>
+          <li><span>Открой <b>ссылку ниже</b> в Safari</span></li>
+          <li><span>Нажми <span class="share-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg></span> <b>«Поделиться»</b></span></li>
+          <li><span>Выбери <b>«На экран „Домой“»</b> → <b>«Добавить»</b></span></li>
+        </ol>
+        <a class="btn btn-main" href="app/">Открыть игру для iPhone</a>
+        <div class="link">hy9pjcnrr8-hub.github.io/sosnovka/ugolny-yar/app/</div>
       </div>
     </div>
   </div>
@@ -370,7 +406,7 @@ footer a{color:var(--text)}
     <h2 class="reveal">Частые вопросы</h2>
     <details class="reveal"><summary>Это бесплатно?</summary><p>Да, полностью. Без рекламы, покупок и регистрации.</p></details>
     <details class="reveal"><summary>Android пишет, что приложение может быть опасным</summary><p>Так Android реагирует на любое приложение не из Google Play. Игра не просит никаких разрешений — ни к контактам, ни к камере, ни к интернету.</p></details>
-    <details class="reveal"><summary>А на iPhone есть?</summary><p>APK работает только на Android. На iPhone играй в браузере: открой «Играть в браузере» в Safari → «Поделиться» → «На экран „Домой“».</p></details>
+    <details class="reveal"><summary>А на iPhone есть?</summary><p>Да. Открой в Safari <a href="app/" style="color:var(--gold)">игру для iPhone</a> → «Поделиться» → «На экран „Домой“». Появится иконка, игра откроется на весь экран без панелей браузера и будет работать без интернета.</p></details>
     <details class="reveal"><summary>Можно ли вообще выиграть?</summary><p>Можно, но не с первого раза. Подсказка: то, что ты построишь в первых главах, решит, сколько заводов готовы построить инвесторы. И не обижай деда Матвея.</p></details>
     <details class="reveal"><summary>Сохраняется ли прогресс?</summary><p>Партия короткая — около 15 минут, — поэтому сохранений нет. Закрыл игру — начинаешь новую историю.</p></details>
   </div>
