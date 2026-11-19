@@ -5,4 +5,4 @@ dependencyResolutionManagement {
     repositories { google(); mavenCentral() }
 }
 rootProject.name = "UgolnyYar"
-include ':app'
+include ':app', ':nativeapp'
