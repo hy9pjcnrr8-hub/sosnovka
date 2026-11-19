@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>\n<script>
+<head>
+<script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 223, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 230, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -263,6 +264,82 @@
   .ov>*{max-width:100%;box-sizing:border-box}
   html,body{width:100%;height:100%;overflow:hidden}
 
+  /* ---- main menu skin ---- */
+  #menu{background:radial-gradient(70% 60% at 0% 0%,rgba(199,255,72,.10),transparent 60%),radial-gradient(60% 70% at 100% 100%,rgba(42,108,240,.08),transparent 60%),radial-gradient(120% 100% at 50% 50%,rgba(6,9,8,.55),rgba(4,6,5,.92));animation:mIn .5s ease-out}
+  @keyframes mIn{from{opacity:0}to{opacity:1}}
+  .mDeco{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .mDeco .c{position:absolute;width:26px;height:26px;border-color:#c7ff48;border-style:solid;opacity:.75}
+  .mDeco .tl{top:calc(env(safe-area-inset-top) + 50px);left:calc(env(safe-area-inset-left) + 8px);border-width:2px 0 0 2px}
+  .mDeco .tr{top:calc(env(safe-area-inset-top) + 50px);right:calc(env(safe-area-inset-right) + 8px);border-width:2px 2px 0 0}
+  .mDeco .bl{bottom:calc(env(safe-area-inset-bottom) + 8px);left:calc(env(safe-area-inset-left) + 8px);border-width:0 0 2px 2px}
+  .mDeco .br{bottom:calc(env(safe-area-inset-bottom) + 8px);right:calc(env(safe-area-inset-right) + 8px);border-width:0 2px 2px 0}
+  .mDeco .scan{position:absolute;left:0;right:0;height:120px;top:-120px;background:linear-gradient(180deg,transparent,rgba(199,255,72,.05) 85%,rgba(199,255,72,.18));animation:scan 7s linear infinite}
+  @keyframes scan{to{top:110%}}
+  .mDeco .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(199,255,72,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(199,255,72,.035) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(80% 70% at 50% 45%,#000,transparent);mask-image:radial-gradient(80% 70% at 50% 45%,#000,transparent)}
+  #menu>*:not(.mDeco):not(.topbar){position:relative}
+  .mHead{display:flex;align-items:center;gap:12px;margin-bottom:6px;animation:mUp .55s ease-out both}
+  @keyframes mUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .mEmb{width:56px;height:56px;flex:none;filter:drop-shadow(0 0 10px rgba(199,255,72,.35))}
+  .mLogo{margin:0;font-size:34px!important;font-weight:900;letter-spacing:6px!important;color:#fff!important;line-height:1;text-align:left;text-shadow:0 2px 0 rgba(0,0,0,.6),0 0 24px rgba(199,255,72,.15)}
+  .mLogo b{color:#c7ff48}
+  .mSub{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:11px;font-weight:800;letter-spacing:5px;color:#c7ff48;text-align:left}
+  .mVer{font-size:9.5px;letter-spacing:1px;color:#0c1405;background:#c7ff48;padding:1px 6px;border-radius:2px}
+  #menu .tabs{animation:mUp .55s .05s ease-out both}
+  #menu .tab{clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);border-radius:0!important;padding:7px 22px;background:rgba(255,255,255,.06)}
+  #menu .tab.sel{background:#c7ff48;color:#0c1405;border-color:#c7ff48}
+  #modes{gap:8px;animation:mUp .55s .1s ease-out both}
+  #modes .card{position:relative;width:170px;padding:10px 12px 10px 50px;text-align:left;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(0,0,0,.35));border:1px solid rgba(255,255,255,.14)!important;border-radius:0!important;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));transition:transform .15s,background .2s}
+  #modes .card .ic{position:absolute;left:12px;top:50%;width:28px;height:28px;margin-top:-14px;color:rgba(255,255,255,.55);transition:color .2s}
+  #modes .card b{font-size:13.5px;letter-spacing:.5px}
+  #modes .card span{display:block;font-size:11px;margin-top:2px}
+  #modes .card:active{transform:scale(.97)}
+  #modes .card.sel{background:linear-gradient(135deg,rgba(199,255,72,.22),rgba(199,255,72,.04));border-color:#c7ff48!important;box-shadow:inset 3px 0 0 #c7ff48}
+  #modes .card.sel .ic{color:#c7ff48}
+  #secOff .row:not(#modes),#secOn .row{animation:mUp .55s .15s ease-out both}
+  #menu .lbl{text-transform:uppercase;letter-spacing:2px;font-size:10px;font-weight:800;color:#c7ff48;opacity:.8}
+  #menu .opt{border-radius:2px!important;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.16)}
+  #menu .opt.sel{background:rgba(199,255,72,.16);border-color:#c7ff48;color:#fff}
+  .mPlay{position:relative;margin-top:12px!important;padding:14px 54px 14px 46px!important;font-size:18px!important;letter-spacing:5px!important;font-weight:900!important;border-radius:0!important;
+    clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%);background:linear-gradient(90deg,#c7ff48,#e4ff9a 50%,#c7ff48);background-size:200% 100%;animation:mUp .55s .2s ease-out both,shine 3.5s linear infinite;box-shadow:0 0 30px rgba(199,255,72,.35)}
+  .mPlay .pa{display:inline-block;margin-right:12px;font-size:14px;transform:translateY(-1px)}
+  @keyframes shine{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  #playOn{clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%);border-radius:0!important;letter-spacing:3px}
+  .mTip{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:10px;font-size:11.5px;color:#a3a7a2;min-height:18px;max-width:640px}
+  .mTip b{font-size:9.5px;letter-spacing:2px;color:#0c1405;background:#c7ff48;padding:1px 6px;border-radius:2px;flex:none}
+  #mTip{transition:opacity .4s}
+  .user{display:inline-flex;align-items:center;gap:7px;padding:3px 10px 3px 3px!important}
+  .user .av{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:2px;font-style:normal;font-weight:900;font-size:12px;color:#fff}
+  .user .av.t0{background:#2a6cf0}.user .av.t1{background:#e0392b}
+  #menu .help{opacity:.5}
+  @media (max-height:430px){ .mEmb{width:44px;height:44px} .mLogo{font-size:27px!important} #modes .card{width:150px;padding:8px 10px 8px 44px} #modes .card .ic{width:24px;height:24px;margin-top:-12px;left:10px} .mPlay{padding:11px 44px 11px 38px!important;font-size:16px!important} }
+
+  #menu{justify-content:flex-start;padding-top:calc(env(safe-area-inset-top) + 54px)!important}
+  .mTopRow{display:flex;align-items:center;justify-content:space-between;gap:18px;width:min(860px,100%);margin-bottom:8px}
+  .mTopRow .mHead{margin:0}.mTopRow .tabs{margin:0}
+  #secOff{display:grid;grid-template-columns:auto 1fr;column-gap:16px;row-gap:2px;align-items:center;width:min(860px,100%)}
+  #secOff>#modes{grid-column:1;grid-row:1 / span 6;flex-direction:column;flex-wrap:nowrap;margin:0;align-self:stretch;justify-content:center}
+  #secOff>*:not(#modes){grid-column:2}
+  #secOff .row{justify-content:flex-start;margin:3px 0}
+  #secOff .lbl{width:82px;text-align:left}
+  #secOff .mPlay{justify-self:start;margin-left:90px}
+  #menu .opt{padding:5px 11px;font-size:12.5px}
+  #modes .card{width:210px}
+  @media (max-height:430px){ #menu .help{display:none} #modes .card{width:196px} .mTopRow{margin-bottom:4px} .mTip{margin-top:6px} }
+  @media (max-width:640px){ #secOff{grid-template-columns:1fr} #secOff>#modes{grid-column:1;grid-row:auto;flex-direction:row;flex-wrap:wrap} #secOff>*:not(#modes){grid-column:1} .mTopRow{flex-direction:column} #secOff .mPlay{margin-left:0;justify-self:center} }
+
+  #menu .topbar .opt,#menu .topbar .user,#menu .topbar .money{padding:4px 9px;font-size:11.5px}
+  #menu .topbar{gap:5px}
+  #secOff>#modes{grid-row:1 / span 6}
+  #secOff .mPlay{grid-row:6;justify-self:end;margin:6px 0 0 0!important}
+  @media (max-height:430px){
+    #menu{padding-top:calc(env(safe-area-inset-top) + 44px)!important}
+    .mEmb{width:40px;height:40px} .mLogo{font-size:24px!important;letter-spacing:4px!important} .mSub{font-size:9.5px;letter-spacing:4px;margin-top:3px}
+    #menu .tab{padding:5px 16px;font-size:11.5px}
+    #modes .card{width:190px;padding:6px 10px 6px 44px} #modes .card b{font-size:12.5px} #modes .card span{font-size:10.5px}
+    #secOff .row{margin:1px 0} #menu .opt{padding:4px 10px;font-size:12px}
+    .mPlay{padding:10px 40px 10px 34px!important;font-size:15px!important}
+    .mDeco .tl,.mDeco .tr{top:calc(env(safe-area-inset-top) + 40px)} }
+
   /* ---- Android app look ---- */
   body{font-family:Montserrat,"Arial Black",Arial,sans-serif}
   .ov{background:radial-gradient(120% 90% at 85% 10%,rgba(199,255,72,.07),transparent 55%),linear-gradient(180deg,rgba(8,11,13,.9),rgba(8,11,13,.82))}
@@ -292,7 +369,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 4 карты · онлайн и оффлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 0.22.2 · Android</div></div></div>
+  <div class="spV">версия 0.23 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -318,17 +395,20 @@
 </div>
 
 <div id="menu" class="ov">
-  <div class="topbar"><span class="appLogo">ЛЕСНОЙ<b>РУБЕЖ</b></span><span class="sp"></span>
+  <div class="mDeco" aria-hidden="true"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><i class="scan"></i><i class="grid"></i></div>
+  <div class="topbar"><span class="sp"></span>
     <span class="user" id="userChip"></span><button class="opt" id="accCodeBtn">Код аккаунта</button><button class="opt" id="logout">Выйти</button><button class="opt hidden" id="openAdmin">Админ</button>
     <span class="money" id="moneyMenu">0 КР</span>
     <button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
-  <h1 class="appH">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="sub appSub">ТАКТИЧЕСКИЙ ШУТЕР</div>
+  <div class="mTopRow">
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.23</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
+  </div>
   <div id="secOff">
   <div class="row" id="modes">
-    <button class="card sel" data-mode="tdm"><b>Командный бой</b><span>5 на 5 · до 35 убийств</span></button>
-    <button class="card" data-mode="dom"><b>Захват точки</b><span>5 на 5 · удержите лесной домик</span></button>
-    <button class="card" data-mode="surv"><b>Выживание</b><span>вы и 2 напарника против волн</span></button>
+    <button class="card sel" data-mode="tdm"><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M6 26 L22 10 M10 10 L26 26" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M19 7h6v6M7 19v6h6" stroke="currentColor" stroke-width="2.4" fill="none"/></svg><b>Командный бой</b><span>5 на 5 · до 35 убийств</span></button>
+    <button class="card" data-mode="dom"><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M9 28V5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M10 6h15l-4 5 4 5H10z" fill="currentColor"/><ellipse cx="16" cy="28" rx="10" ry="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><b>Захват точки</b><span>5 на 5 · удержите лесной домик</span></button>
+    <button class="card" data-mode="surv"><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l11 4v8c0 7-5 12-11 14C10 27 5 22 5 15V7z" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M11 16l4 4 7-8" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg><b>Выживание</b><span>вы и 2 напарника против волн</span></button>
   </div>
 <div class="row" id="maps"><span class="lbl">Карта</span>
     <button class="opt sel" data-map="forest">Сосновая падь</button><button class="opt" data-map="fields">Поля</button><button class="opt" data-map="front">Фронт</button><button class="opt" data-map="village">Деревня</button></div>
@@ -339,7 +419,7 @@
     <button class="opt" data-diff="easy">Лёгкая</button><button class="opt sel" data-diff="normal">Нормальная</button><button class="opt" data-diff="hard">Сложная</button></div>
   <div class="row" id="gfxs"><span class="lbl">Графика</span>
     <button class="opt sel" data-gfx="high">Высокая</button><button class="opt" data-gfx="mid">Средняя</button><button class="opt" data-gfx="low">Низкая</button></div>
-  <button class="big" id="play">В БОЙ</button>
+  <button class="big mPlay" id="play"><span class="pa">▶</span>В БОЙ</button>
   </div>
   <div id="secOn" class="hidden">
     <div class="row" id="netKinds"><span class="lbl">Сервер</span><button class="opt" data-net="pub">Серверы игры</button><button class="opt" data-net="ws">Свой сервер</button></div>
@@ -363,6 +443,7 @@
   <b>Компьютер:</b> клик — захват мыши · WASD · Shift бег · C присесть · пробел прыжок · ЛКМ огонь · ПКМ прицел · R · 1/2, Q или колесо — смена оружия · G граната · T выбор гранаты · Esc пауза.<br>
   Синие — в тёмно-синей форме с синими повязками, красные — в бордовой с красными. Своих видно по именам над головой. Деньги (КР) даются за убийства, победы и миссии.</div>
   <div id="err"></div>
+  <div class="mTip"><b>СОВЕТ</b><span id="mTip"></span></div>
 </div>
 
 <div id="pauseMenu" class="ov hidden"><h1>ПАУЗА</h1><div id="pboard"></div><div class="row" style="margin-top:14px">
@@ -3302,7 +3383,7 @@ window.addEventListener('pagehide', () => { if (room && mode === 'online') room.
 $('endMenu').addEventListener('click', () => { clearBots(); $('end').classList.add('hidden'); $('hud').classList.add('hidden'); $('menu').classList.remove('hidden'); });
 function bindGroup(id, attr, fn){ const g = $(id); g.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
   g.querySelectorAll('button').forEach(x => x.classList.remove('sel')); b.classList.add('sel'); fn(b.dataset[attr]); }); }
-bindGroup('modes', 'mode', v => mode = v); bindGroup('myteam', 'team', v => { PROG.team = +v; saveProg(); });
+bindGroup('modes', 'mode', v => mode = v); bindGroup('myteam', 'team', v => { PROG.team = +v; saveProg(); const av = document.querySelector('#userChip .av'); if (av) av.className = 'av t' + PROG.team; });
 $('myteam').querySelectorAll('button').forEach(b => b.classList.toggle('sel', +b.dataset.team === PROG.team)); renderMoney(); updateMsBadge(); CARRY = carryList(); bindGroup('diffs', 'diff', v => diff = v); bindGroup('gfxs', 'gfx', v => { setGraphics(v); settings.gfx = v; saveSettings(); });
 $('play').addEventListener('click', () => {
   leaveOnline(); mode = ($('modes').querySelector('.sel') || {dataset:{mode:'tdm'}}).dataset.mode;
@@ -3641,7 +3722,7 @@ function enterAccount(remember){
   try { if (remember){ localStorage.setItem(SES_KEY, accKey(ACC.nick)); sessionStorage.removeItem(SES_KEY); } else { sessionStorage.setItem(SES_KEY, accKey(ACC.nick)); localStorage.removeItem(SES_KEY); } } catch(e){}
   WEAPONS.forEach((w, i) => applyLoadout(i)); CARRY = carryList(); if (!CARRY.length) CARRY = [0];
   myName = cleanName(ACC.nick); $('nick').value = myName; $('nick').readOnly = true;
-  $('userChip').textContent = '● ' + ACC.nick; renderMoney(); updateMsBadge();
+  $('userChip').innerHTML = `<i class="av t${PROG.team}">${esc(ACC.nick.slice(0,1).toUpperCase())}</i>${esc(ACC.nick)}`; renderMoney(); updateMsBadge();
   $('myteam').querySelectorAll('button').forEach(b => b.classList.toggle('sel', +b.dataset.team === PROG.team));
   $('auth').classList.add('hidden'); $('menu').classList.remove('hidden'); saveProg();
   if (typeof tryAutoAdmin === 'function') tryAutoAdmin();
@@ -4264,6 +4345,16 @@ updateAdminUi();
 if (settings.gyro){ if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') addEventListener('touchend', () => enableGyro(true), {once:true}); else enableGyro(true); }
 
 
+
+
+// ---- menu tips ticker ----
+{ const TIPS = ['Голова — двойной урон и +10 КР за убийство.', 'Светошумовая ослепляет и ботов: пока они не видят, заходите с фланга.',
+    'Сквозь дым не видят ни боты, ни игроки — прикрывайте им переход.', 'Глушитель убирает вспышку выстрела, и вас труднее заметить.',
+    'В приседе разброс меньше, а с сошками — вдвое меньше отдача.', 'Забирайте награды во вкладке «Миссии»: каждый уровень даёт больше КР.',
+    'Код аккаунта переносит прогресс на другое устройство.', '«Своя комната» в онлайне — сервер по коду только для друзей.',
+    'Гироскоп можно включить в настройках: поворачивайте телефон, чтобы целиться.', 'Через 5 секунд без урона здоровье начинает восстанавливаться.'];
+  let ti = (Math.random()*TIPS.length)|0; const show = () => { const el = $('mTip'); el.style.opacity = 0; setTimeout(() => { el.textContent = TIPS[ti++ % TIPS.length]; el.style.opacity = 1; }, 350); };
+  show(); setInterval(() => { if (!$('menu').classList.contains('hidden')) show(); }, 7000); }
 
 // =============== SETTINGS ===============
 const BTN_IDS = ['fire','fireL','aim','jump','crouch','reload','swap','nade','nadeSw','pause','chatBtn'];
