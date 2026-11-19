@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,3 +34,20 @@ jobs:
         with:
           name: UgolnyYar-apk
           path: UgolnyYar.apk
+
+      - name: Check APK
+        run: |
+          AAPT=$(ls $ANDROID_HOME/build-tools/*/aapt | sort -V | tail -1)
+          $AAPT dump badging UgolnyYar.apk | head -5
+          $(dirname $AAPT)/apksigner verify --print-certs UgolnyYar.apk | head -3
+          unzip -l UgolnyYar.apk | grep index.html
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest UgolnyYar.apk \
+            --title "Угольный Яр — APK" \
+            --notes "Скачай UgolnyYar.apk и установи на Android (разреши установку из неизвестных источников)." \
+            --target "${{ github.sha }}"
