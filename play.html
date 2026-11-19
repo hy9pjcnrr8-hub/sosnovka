@@ -436,6 +436,11 @@
   .stf.dev{color:#ffd24a;box-shadow:0 0 8px rgba(255,210,74,.55)}.stf.mod{color:#7ec8ff;box-shadow:0 0 8px rgba(126,200,255,.45)}
   .pfId .stf{width:22px;height:22px;font-size:13px}
   #stfTip{position:fixed;z-index:60;padding:7px 12px;background:rgba(10,16,12,.95);border:1px solid #c7ff48;border-radius:6px;color:#fff;font-size:13px;pointer-events:none;transform:translate(-50%,-100%);white-space:nowrap}#stfTip b{color:#c7ff48}
+  .ping{position:absolute;left:0;top:0;z-index:4;pointer-events:none;display:flex;flex-direction:column;align-items:center;font-weight:900;text-shadow:0 1px 3px #000}.ping i{font-style:normal;font-size:22px;line-height:1}.ping span{font-size:11px;color:#fff}
+  .pingB{font-weight:800!important}
+  .achG{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}.ach{display:grid;grid-template-columns:30px 1fr;column-gap:6px;align-items:center;padding:6px 8px;border:1px solid rgba(255,255,255,.1);border-radius:6px;opacity:.45;filter:grayscale(1)}
+  .ach.on{opacity:1;filter:none;border-color:rgba(199,255,72,.5);background:rgba(199,255,72,.07)}.ach i{grid-row:span 2;font-style:normal;font-size:20px;text-align:center}.ach b{font-size:12.5px}.ach span{font-size:10.5px;opacity:.7}
+  .wchG{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px}.wch{padding:6px 8px;border:1px solid rgba(255,255,255,.1);border-radius:6px;text-align:left}.wch b{font-size:12.5px}.wch span{display:block;font-size:10.5px;opacity:.75;margin-top:3px}
 </style>
 </head>
 <body>
@@ -481,7 +486,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.53</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.60</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -591,6 +596,8 @@
       <label>В прицеле <input type="range" id="sAds" min="20" max="200"><span id="vAds"></span></label>
       <label class="ck"><input type="checkbox" id="sInv"> Инверсия по вертикали</label>
       <label class="ck"><input type="checkbox" id="sHold"> Прицел только пока зажата кнопка</label>
+      <label class="ck"><input type="checkbox" id="sAssist"> Помощь в прицеливании на телефоне</label>
+      <label class="ck"><input type="checkbox" id="sAdapt"> Боты подстраиваются под ваш уровень</label>
       <label class="ck"><input type="checkbox" id="sGyro"> Гироскоп: поворот телефоном</label>
       <label class="ck"><input type="checkbox" id="sGyroInv"> Гироскоп: инверсия влево-вправо</label>
       <label class="ck"><input type="checkbox" id="sGyroInvY"> Гироскоп: инверсия вверх-вниз</label>
@@ -2833,7 +2840,7 @@ function loadoutFrom(sv){ const L = JSON.parse(JSON.stringify(DEFAULT_LOADOUT));
 let LEGACY = null;
 try { const p = JSON.parse(localStorage.getItem(PROG_KEY) || 'null'), l = JSON.parse(localStorage.getItem('lr_loadout') || 'null'); if (p && (p.money > 0 || Object.keys(p.weapons || {}).length > 1)) LEGACY = {prog:p, loadout:l}; } catch(e){}
 let PROG = freshProg();
-function useAccount(key){ ACC = ACCS[key]; PROG = progFrom(ACC.prog); try { ensureProgExtras(); } catch(e){} LOADOUT = loadoutFrom(ACC.loadout); setTimeout(() => { try { lbRestore(); } catch(e){} }, 1500);
+function useAccount(key){ ACC = ACCS[key]; PROG = progFrom(ACC.prog); try { ensureProgExtras(); } catch(e){} setTimeout(() => { try { xmasCheck(); checkAch(); } catch(e){} }, 2500); LOADOUT = loadoutFrom(ACC.loadout); setTimeout(() => { try { lbRestore(); } catch(e){} }, 1500);
   for (const k in SLOTS) for (const sl in SLOTS[k]) if (!ownsOpt(k, sl, LOADOUT[k][sl])) LOADOUT[k][sl] = DEFAULT_LOADOUT[k][sl]; }
 { let ses = null; try { ses = localStorage.getItem(SES_KEY) || sessionStorage.getItem(SES_KEY); } catch(e){}
   if (ses && ACCS[ses]) useAccount(ses); else LOADOUT = JSON.parse(JSON.stringify(DEFAULT_LOADOUT)); }
@@ -2884,10 +2891,11 @@ function rewardKill(victim, wname, head, online){
   const w = WEAPONS.find(x => x.feed === wname), cat = w ? w.key : '';
   let n = online ? 25 : 15; if (head) n += 10; if (wname === 'граната') n += 10;
   addMoney(n, online ? 'убийство игрока' : head ? 'в голову' : 'убийство');
-  statKill(cat, head, wname === 'граната'); addXp(100 + (head ? 50 : 0) + (wname === 'граната' ? 50 : 0) + (online ? 50 : 0), 'убийство'); onPlayerKill();
+  statKill(cat, head, wname === 'граната'); if (wname === 'нож'){ PROG.stats.knife = (PROG.stats.knife || 0) + 1; } addXp(100 + (head ? 50 : 0) + (wname === 'граната' ? 50 : 0) + (online ? 50 : 0), 'убийство'); onPlayerKill();
   mission('kills'); if (head) mission('heads'); if (wname === 'граната') mission('nades'); if (online) mission('online');
   if (cat === 'pistol' || cat === 'hpistol' || cat === 'revolver') mission('pistol');
   if (cat === 'smg' || cat === 'mp' || cat === 'shotgun') mission('close');
+  if (!rewardKill.t || now() - rewardKill.t > 2){ rewardKill.t = now(); setTimeout(() => { try { checkAch(); } catch(e){} }, 50); }
 }
 function carryList(){ const l = [WEAPON_KEYS.indexOf(PROG.primary)]; if (PROG.secondary) l.push(WEAPON_KEYS.indexOf(PROG.secondary)); return l.filter(i => i >= 0); }
 
@@ -3457,7 +3465,7 @@ function hitTick(head){
 }
 
 // =============== GAME STATE ===============
-const DEFAULTS = {vol:.8, enemyVol:1, hitSound:true, sens:1, ads:.8, invertY:false, aimHold:false, btnScale:1, btnAlpha:.9, leftFire:true, fov:72, names:true, fps:false, layout:{}, gfx:null, time:'day', rain:false, flashlight:true, gyro:false, gyroSens:1, gyroInv:false, gyroInvY:false, music:.6, autoFire:false, vibrate:true, joySize:1, weather:'clear', autoQ:true, weak:false, lang:'ru'};
+const DEFAULTS = {vol:.8, enemyVol:1, hitSound:true, sens:1, ads:.8, invertY:false, aimHold:false, aimAssist:true, adapt:true, btnScale:1, btnAlpha:.9, leftFire:true, fov:72, names:true, fps:false, layout:{}, gfx:null, time:'day', rain:false, flashlight:true, gyro:false, gyroSens:1, gyroInv:false, gyroInvY:false, music:.6, autoFire:false, vibrate:true, joySize:1, weather:'clear', autoQ:true, weak:false, lang:'ru'};
 const settings = JSON.parse(JSON.stringify(DEFAULTS));
 try { const sv = JSON.parse(localStorage.getItem('lr_settings') || 'null'); if (sv && typeof sv === 'object') for (const k in DEFAULTS) if (k in sv && typeof sv[k] === typeof DEFAULTS[k] || (k === 'gfx' && typeof sv[k] === 'string')) settings[k] = sv[k]; } catch(e){}
 if (!settings.layout || typeof settings.layout !== 'object') settings.layout = {};
@@ -3539,6 +3547,8 @@ function drawRadar(){
     const [X,Y] = P(b.pos.x, b.pos.z); rc.fillStyle = b.team===player.team ? '#6ea0ff' : '#ff4a3d'; rc.beginPath(); rc.arc(X,Y,6,0,6.29); rc.fill(); }
   if (mode === 'online') for (const rp of remotes.values()){ if (!rp.alive) continue; const ally = rp.team === player.team;
     if (!ally && rp.spotted <= 0) continue; const [X,Y] = P(rp.pos.x, rp.pos.z); rc.fillStyle = ally ? '#6ea0ff' : '#ff4a3d'; rc.beginPath(); rc.arc(X,Y,6,0,6.29); rc.fill(); }
+  for (const pg of PINGS){ const [X,Y] = P(pg.x, pg.z); rc.fillStyle = PING_TYPES[pg.type].c; rc.font = 'bold 20px sans-serif'; rc.textAlign = 'center'; rc.textBaseline = 'middle'; rc.fillText(PING_TYPES[pg.type].i, X, Y); }
+  if (mode === 'ctf' && CTF) for (const f of CTF.flags){ const [X,Y] = P(f.pos.x, f.pos.z); rc.fillStyle = f.team === 0 ? '#5b8cff' : '#ff6a5c'; rc.fillRect(X-2, Y-10, 3, 18); rc.fillRect(X+1, Y-10, 10, 7); }
   rc.fillStyle = '#d9f99d'; rc.beginPath(); rc.moveTo(c,c-11); rc.lineTo(c-7,c+7); rc.lineTo(c+7,c+7); rc.closePath(); rc.fill();
 }
 
@@ -3596,7 +3606,7 @@ function clearBots(){ for (const b of bots) scene.remove(b.root); bots = []; }
 function startMatch(){
   ZMB = mode === 'zomb'; if (ZMB) mode = 'surv'; ctfClear();
   if (curMap !== selMap) buildWorld(selMap);
-  initAudio(); clearBots(); ensureWeek(); if (knifeMesh) knifeMesh.visible = false; knifeT = 0;
+  initAudio(); clearBots(); ensureWeek(); clearBirds(); clearPings(); myPing = null; if (knifeMesh) knifeMesh.visible = false; knifeT = 0;
   for (const f of fx) scene.remove(f.obj); fx = [];
   feedItems.length = 0; renderFeed();
   teamScore = [0,0]; timeLeft = MATCH_TIME; domCap = 0; domOwner = -1; domAcc = 0; matchOver = false;
@@ -3630,6 +3640,7 @@ function startMatch(){
     const loadout = ['rifle','rifle','sniper','shotgun','rifle'];
     for (let i=0;i<4;i++) createBot(AT, ALLY_NAMES[i], loadout[i]);
     for (let i=0;i<5;i++) createBot(ET, ENEMY_NAMES[i], loadout[(i+1)%5]);
+    pairBots();
     if (mode === 'ctf'){ ctfSetup(); showMsg('Захват флага: доставьте 3 вражеских флага на свою базу · ' + MAPS[curMap].name); }
     else if (mode === 'bomb'){ bombSetup(); showMsg('Подрыв: заложите бомбу на точке A или B · без возрождения'); }
     else showMsg(MODE_INFO[mode].name + (mode === 'dom' ? ': захватите точку в центре' : mode === 'koth' ? ': точка перемещается каждые 45 с' : '') + ' · ' + MAPS[curMap].name);
@@ -3657,7 +3668,7 @@ function startWave(){
   if (wave > 1){ addMoney(40, 'волна пройдена'); addXp(80, 'волна'); mission('waves'); }
 }
 function endMatch(win, draw){
-  if (matchOver) return; matchOver = true; running = false; document.body.classList.remove('sprint'); try { campaignEnd(mode === 'surv' && CAMP && CAMP.m.goal ? wave > CAMP.m.goal.waves : win); } catch(e){}
+  if (matchOver) return; matchOver = true; running = false; document.body.classList.remove('sprint'); try { adaptAfterMatch(); if (ZMB){ PROG.best = PROG.best || {}; PROG.best.zw = Math.max(PROG.best.zw || 0, wave); } } catch(e){} try { campaignEnd(mode === 'surv' && CAMP && CAMP.m.goal ? wave > CAMP.m.goal.waves : win); } catch(e){}
   try { document.exitPointerLock && document.exitPointerLock(); } catch(e){}
   { const played = now() - (matchStart || now()) > 45;
     if (mode === 'tut'){ }
@@ -3674,7 +3685,7 @@ function endMatch(win, draw){
     .map(u => `<tr class="${u.isPlayer?'me':''}"><td class="c${t}">${u.name}</td><td>${u.kills}</td><td>${u.deaths}</td></tr>`).join('');
   $('board').innerHTML = mode === 'surv' ? '' : `<div class="row" style="gap:24px;align-items:flex-start">
     <table><tr><th>Синие</th><th>У</th><th>С</th></tr>${rows(0)}</table><table><tr><th>Красные</th><th>У</th><th>С</th></tr>${rows(1)}</table></div>`;
-  $('end').classList.remove('hidden');
+  $('end').classList.remove('hidden'); try { checkAch(); } catch(e){}
 }
 function hostiles(team){ const r = []; for (const b of bots) if (b.alive && b.team !== team) r.push(b); if (player.alive && player.team !== team) r.push(player); return r; }
 const chest = (u, v) => v.set(u.pos.x, u.pos.y + (u.isPlayer ? (player.crouch ? 0.8 : 1.25) : 1.3), u.pos.z);
@@ -3705,10 +3716,11 @@ function damage(victim, dmg, attacker, head, wname){
     }
     updateHud();
   } else {
-    victim.hp -= dmg; victim.alertT = 3;
+    victim.hp -= dmg; victim.alertT = 3; victim.flinchT = .28;
+    if (attacker && attacker.pos){ const ax = attacker.pos.x - victim.pos.x, az = attacker.pos.z - victim.pos.z, l = Math.hypot(ax, az) || 1; victim.hitFront = (Math.sin(victim.yaw)*ax + Math.cos(victim.yaw)*az)/l; victim.hitSide = (Math.cos(victim.yaw)*ax - Math.sin(victim.yaw)*az)/l; }
     if (attacker && !victim.target){ victim.lastKnown = attacker.pos.clone(); victim.lkT = 8; }
     if (victim.hp <= 0){
-      victim.alive = false; victim.deadT = 0; victim.respawnT = NO_RESPAWN() || victim.dummy ? 1e9 : 5; victim.fallSide = rand(-0.25,0.25);
+      victim.alive = false; victim.deadT = 0; victim.respawnT = NO_RESPAWN() || victim.dummy ? 1e9 : 5; victim.fallSide = rand(-0.2,0.2) - (victim.hitSide || 0)*.35; victim.fallX = (victim.hitFront === undefined || victim.hitFront > -.2) ? 1 : -1; victim.fallFast = head ? 1.7 : 1;
       registerKill(attacker, victim, wname, head);
     }
   }
@@ -3812,7 +3824,7 @@ function playerFire(){
     viewPunch = Math.min(.05, viewPunch + kick*.9); bloom = Math.min(1, bloom + (w.auto ? .1 : .22) * (w.pellets > 1 ? .3 : 1)); }
   vFlash.visible = !(w.scope && aimK > .9) && w.flash !== false; vFlash.rotation.z = Math.random()*3; vLight.intensity = w.flash === false ? .4 : 2.2;
   setTimeout(() => { vFlash.visible = false; vLight.intensity = 0; }, 45);
-  boom(...w.snd); if (!w.sil) shotEcho(w.snd); if (mode !== 'online') botHearShot(player.pos.x, player.pos.z, !w.sil && w.key !== 'xbow');
+  boom(...w.snd); if (!w.sil) shotEcho(w.snd); if (mode !== 'online') botHearShot(player.pos.x, player.pos.z, !w.sil && w.key !== 'xbow'); if (!w.sil && w.key !== 'xbow') spawnBirds(player.pos.x, player.pos.z);
   camera.updateMatrixWorld();
   const parts = []; for (const b of bots) if (b.alive && b.team !== player.team) for (const p of b.parts) parts.push(p);
   if (mode === 'online') for (const rp of remotes.values()) if (rp.alive && rp.team !== player.team) for (const p of rp.parts) parts.push(p);
@@ -3824,13 +3836,16 @@ function playerFire(){
   for (let i=0;i<w.pellets;i++){
     ray.setFromCamera({x:(Math.random()-.5)*spread*2, y:(Math.random()-.5)*spread*2}, camera);
     const o = ray.ray.origin, d = ray.ray.direction;
-    const tMax = rayHit(o, d, 220), kind = hitKind;
+    let tMax = rayHit(o, d, 220), kind = hitKind, pen = 1;
+    if (hitType === 'b' && hitObj && hitObj.kind === 'wood' && !hitObj.dest && Math.min(hitObj.maxX - hitObj.minX, hitObj.maxZ - hitObj.minZ) < .4 && tMax < 150){   // thin planks: bullet goes through, weaker
+      const entry = o.clone().addScaledVector(d, tMax); puff(entry, KIND_COL.wood, 2, .5); if (i === 0) bulletImpact(entry, d, 'wood');
+      const th = .45, t2 = rayHit(entry.clone().addScaledVector(d, th), d, 200 - tMax); tMax = tMax + th + t2; kind = hitKind; pen = w.pellets > 1 ? .3 : .55; }
     const hits = ray.intersectObjects(parts, false);
     let end;
     if (hits.length && hits[0].distance < tMax){
       const h = hits[0], b = h.object.userData.bot, rp = h.object.userData.remote; end = h.point;
       const isHead = !!h.object.userData.head;
-      let dmg = w.dmg * (isHead ? 2.5 : 1);
+      let dmg = w.dmg * (isHead ? 2.5 : 1) * pen;
       if (w.pellets > 1) dmg *= Math.max(.25, 1 - Math.max(0, h.distance-8)/25);
       if (isHead) head = true; anyHit = true;
       puff(end, 0x6a0f0f, isHead ? 7 : 3, .7);
@@ -3859,10 +3874,11 @@ function botFire(b, t, dist){
   b.muzzle.getWorldPosition(tv); b.mflash.visible = true; setTimeout(() => b.mflash.visible = false, 50);
   b.spotted = Math.max(b.spotted, 1.2);
   const pd = Math.hypot(b.pos.x-player.pos.x, b.pos.z-player.pos.z);
-  boom(Math.max(0, .32*(1-pd/75))*settings.enemyVol, b.w.snd[0], b.w.snd[1]);
+  boom3d(Math.max(0, .36*(1-pd/120))*settings.enemyVol, b.w.snd[0], b.w.snd[1], b.pos.x, b.pos.z, pd); if (Math.random() < .2) spawnBirds(b.pos.x, b.pos.z);
   let ch = b.w.acc * DIFF[diff].acc * clamp(1.15 - dist/b.w.range, .25, 1) * atmoVisibility();
   if (t.isPlayer && flashlight.intensity > 0) ch *= 1.15;
   if (mode === 'surv' && b.team !== player.team) ch *= .8 + wave*.05;
+  if (b.team !== player.team) ch *= adaptMul();
   const tm = t.isPlayer ? player.moving : t.moving; if (tm) ch *= .75;
   if (t.isPlayer && player.crouch) ch *= .8;
   if (t.isPlayer && !player.onGround) ch *= .6;
@@ -3884,8 +3900,8 @@ const v1 = new THREE.Vector3(), v2 = new THREE.Vector3();
 function angDiff(a, b){ let d = b - a; while (d > Math.PI) d -= Math.PI*2; while (d < -Math.PI) d += Math.PI*2; return d; }
 function updateBot(b, dt){
   if (!b.alive){
-    b.deadT += dt; const k = Math.min(1, b.deadT*2.6);
-    b.body.rotation.x = -k*Math.PI/2*.97; b.body.rotation.z = b.fallSide*k; b.body.position.y = k*.12; botAnimExtras(b, dt);
+    b.deadT += dt; const k = Math.min(1, b.deadT*2.6*(b.fallFast || 1));
+    b.body.rotation.x = -k*Math.PI/2*.97*(b.fallX || 1); b.body.rotation.z = b.fallSide*k; b.body.position.y = k*.12; botAnimExtras(b, dt);
     if (mode === 'surv'){ if (b.team !== player.team && b.deadT > 4){ scene.remove(b.root); b.gone = true; } }
     else if (b.deadT > b.respawnT) respawnBot(b);
     return;
@@ -3936,6 +3952,7 @@ function updateBot(b, dt){
     } else if (DOM_LIKE()){ goal = v2.set(capX + b.goalOff.x, 0, capZ + b.goalOff.z).clone(); }
     else if (mode === 'bomb'){ goal = bombBotGoal(b); }
     else if (mode === 'ctf'){ goal = ctfBotGoal(b); }
+    else if (b.follow && b.follow.alive && b.follow.target !== undefined && TDM_LIKE() && Math.hypot(b.follow.pos.x - b.pos.x, b.follow.pos.z - b.pos.z) > 3.5){ goal = v2.copy(b.follow.pos).add(b.followOff).clone(); if (b.follow.target && b.follow.target.alive && !b.lastKnown){ b.lastKnown = b.follow.target.pos.clone(); b.lkT = 3; } }
     else if (mode === 'ffa'){ if (!b.wp || Math.hypot(b.wp.x-b.pos.x, b.wp.z-b.pos.z) < 3){ const w = WAYPOINTS[(Math.random()*WAYPOINTS.length)|0]; b.wp = new THREE.Vector3(w[0]+rand(-3,3), 0, w[1]+rand(-3,3)); } goal = b.wp; }
     else {
       if (!b.wp || Math.hypot(b.wp.x-b.pos.x, b.wp.z-b.pos.z) < 3){
@@ -3977,6 +3994,7 @@ function updateBot(b, dt){
   b.aimPose += ((t && b.los ? 1 : 0) - b.aimPose) * Math.min(1, dt*6);
   let bp = 0; if (t && b.los){ const dy = chest(t, v2).y - (b.pos.y+1.3), hd = Math.hypot(t.pos.x-b.pos.x, t.pos.z-b.pos.z); bp = Math.atan2(dy, hd); }
   animateSoldier(b, b.moving ? Math.min(1, spd/3) : 0, b.phase, b.aimPose, false, bp); botAnimExtras(b, dt);
+  if (b.flinchT > 0){ b.flinchT -= dt; const k = Math.sin(Math.max(0, b.flinchT)/.28*Math.PI)*.5; b.body.rotation.x -= k*.35*(b.hitFront === undefined ? 1 : Math.sign(b.hitFront) || 1); b.body.rotation.z += k*.25*(b.hitSide || 0); b.head.rotation.x -= k*.4; }
   // shoot
   b.cd -= dt;
   if (t && b.los && b.cd <= 0 && !(b.reloadT > 0)){
@@ -4086,7 +4104,7 @@ function update(dt){
   if (bots.some(b => b.gone)) bots = bots.filter(b => !b.gone);
   // mode logic
   if (mode === 'bomb') bombTick(dt);
-  if (mode === 'ctf') ctfTick(dt); knifeFrame(dt); campaignTick(); postFrame();
+  if (mode === 'ctf') ctfTick(dt); knifeFrame(dt); birdsFrame(dt); pingsFrame(dt); aimAssist(dt); campaignTick(); postFrame();
   if (mode === 'tut') tutTick(dt);
   if (mode === 'ffa' && !matchOver){ const left = bots.filter(b => b.alive).length;
     if (!player.alive && !update.ffaEnd){ update.ffaEnd = true; setTimeout(() => { update.ffaEnd = false; endMatch(false); }, 1800); }
@@ -4165,7 +4183,7 @@ function enterAccount(remember){
   WEAPONS.forEach((w, i) => applyLoadout(i)); CARRY = carryList(); if (!CARRY.length) CARRY = [0];
   myName = cleanName(ACC.nick); $('nick').value = myName; $('nick').readOnly = true;
   ensureProgExtras(); renderRankUi(); applyOwnSleeve();
-  $('userChip').innerHTML = `<i class="av t${PROG.team}">${esc(ACC.nick.slice(0,1).toUpperCase())}</i>${esc(ACC.nick)}${staffBadge(ACC.nick, true)}`; renderMoney(); updateMsBadge();
+  $('userChip').innerHTML = `<i class="av t${PROG.team}">${esc(ACC.nick.slice(0,1).toUpperCase())}</i>${esc(ACC.nick)}${staffBadge(ACC.nick, staffMe())}`; renderMoney(); updateMsBadge();
   $('myteam').querySelectorAll('button').forEach(b => b.classList.toggle('sel', +b.dataset.team === PROG.team));
   $('auth').classList.add('hidden'); $('menu').classList.remove('hidden'); saveProg();
   if (typeof tryAutoAdmin === 'function') tryAutoAdmin();
@@ -4357,7 +4375,7 @@ function sendPresence(){
   room.presence({ g:GAME_ID, on:true, m:curMap, n:myName, t:player.team,
     x:+player.pos.x.toFixed(2), y:+player.pos.y.toFixed(2), z:+player.pos.z.toFixed(2), yw:+player.yaw.toFixed(3), pt:+player.pitch.toFixed(3),
     cr:player.crouch ? 1 : 0, w:cur, hp:Math.max(0, Math.round(player.hp)), al:player.alive ? 1 : 0,
-    k:player.kills, d:player.deaths, ds:deathSeq, kb:killerPeer, kw:killerW, sh:shotSeq, fx:lastShotEnd, hits:myHits, gn:myNades, rk:rankOf(levelOf(PROG.xp || 0)), cl:PROG.clan || '', sk:PROG.skin || 'std', gr:PROG.gear || 'nvg-mask-1', mn:myMines, mb:blownMines, db:destBroken, em:myEmote || undefined, vh:player.vehicle ? [+player.vehicle.yaw.toFixed(2)] : undefined, dv:DEVICE_ID, cm:myChat, adm:sanForPresence(), ap:isAdmin ? adminProof : undefined }).catch(() => {});
+    k:player.kills, d:player.deaths, ds:deathSeq, kb:killerPeer, kw:killerW, sh:shotSeq, fx:lastShotEnd, hits:myHits, gn:myNades, rk:rankOf(levelOf(PROG.xp || 0)), cl:PROG.clan || '', sk:PROG.skin || 'std', gr:PROG.gear || 'nvg-mask-1', mn:myMines, mb:blownMines, db:destBroken, em:myEmote || undefined, vh:player.vehicle ? [+player.vehicle.yaw.toFixed(2)] : undefined, dv:DEVICE_ID, cm:myChat, adm:sanForPresence(), ap:(isAdmin || isMod) ? adminProof : undefined, pg:myPing || undefined }).catch(() => {});
 }
 function addRemote(peer, team, w, sk, gr){
   const s = buildSoldier(team, W3P[WEAPON_KEYS[w]] || 'rifle', undefined, undefined, skinPalette(team, sk, gr));
@@ -4416,7 +4434,7 @@ function onlineTick(dt){
     else { rp.body.rotation.set(0,0,0); rp.phase += dt*spd*2.3;
       animateSoldier(rp, spd > .4 ? Math.min(1, spd/3) : 0, rp.phase, 1, rp.crouch, clamp(num(pr.pt), -1.4, 1.4)); }
     rp.spotted -= dt;
-    receiveMines(rp, pr, tr); receiveDest(rp, pr); remoteEmote(rp, pr, tr); remoteEmoteAnim(rp, dt);
+    receiveMines(rp, pr, tr); receiveDest(rp, pr); remoteEmote(rp, pr, tr); remotePing(rp, pr, tr); remoteEmoteAnim(rp, dt);
     if (Array.isArray(pr.vh)){ if (!rp.quad){ rp.quad = quadMesh(rp.team === 0 ? 0x2c3a52 : 0x52302c); rp.root.add(rp.quad); rp.quad.rotation.y = Math.PI; } rp.quad.visible = true; } else if (rp.quad) rp.quad.visible = false;
     // shots
     const sh = num(pr.sh, -1);
@@ -4424,7 +4442,7 @@ function onlineTick(dt){
       rp.muzzle.getWorldPosition(tv); rp.mflash.visible = true; setTimeout(() => rp.mflash.visible = false, 50);
       if (Array.isArray(pr.fx) && pr.fx.length === 3){ tv3.set(clamp(num(pr.fx[0]),-200,200), clamp(num(pr.fx[1]),-20,80), clamp(num(pr.fx[2]),-200,200)); tracer(tv, tv3, .06); }
       const pd = Math.hypot(rp.pos.x-player.pos.x, rp.pos.z-player.pos.z), snd = WEAPONS[w].snd;
-      boom(Math.max(0, snd[0]*.75*(1-pd/80))*settings.enemyVol, snd[1], snd[2]);
+      boom3d(Math.max(0, snd[0]*.8*(1-pd/120))*settings.enemyVol, snd[1], snd[2], rp.pos.x, rp.pos.z, pd);
       if (rp.team !== player.team) rp.spotted = Math.max(rp.spotted, 1.2);
     }
     tr.sh = sh;
@@ -4481,11 +4499,12 @@ $('playOn').addEventListener('click', () => {
 });
 // =============== CHAT & ADMIN TOOLS ===============
 const ADMIN_NICK = 'paralysax';
+const MOD_PUBS = {'иксов':{x:'NEEC0EF5Wqgfsn7-vug7Q9FfNe_EJYapJfF35phuZz0', y:'04t6uFssfPUT5pIFCHVvWplIsntBvuR8CXsWyknvZv4'}, 'stepan2010_ok':{x:'jr3iiG66V6Swhu_KHwVMouykAN6yKouHPSag-GiKRgM', y:'a4Pa1g9GIgXJw77_9glFa2lb0MjllRcN4zbkFoF4Jw8'}};
 const ADMIN_PUB = {kty:'EC', crv:'P-256', x:'9gtV2EgKA2Fg8BVE8HCZoAePq3VXY0PkEX2C90QIivE', y:'6WvF5ddaucnIcN1sK6X71kxvR2tNCBs8V48VBP0Ia4c', ext:true};
 let DEVICE_ID = ''; try { DEVICE_ID = localStorage.getItem('lr_dev') || ''; } catch(e){}
 if (!/^[a-z0-9]{12}$/.test(DEVICE_ID)){ DEVICE_ID = Array.from({length:12}, () => 'abcdefghijklmnopqrstuvwxyz0123456789'[Math.random()*36|0]).join(''); try { localStorage.setItem('lr_dev', DEVICE_ID); } catch(e){} }
 const subtle = window.crypto && window.crypto.subtle;
-let adminPub = null, adminPriv = null, isAdmin = false, adminProof = null, joinedAt = 0, spectate = null;
+let isMod = false, modNick = '', adminPub = null, adminPriv = null, isAdmin = false, adminProof = null, joinedAt = 0, spectate = null;
 const adminPeers = new Map(), sigCache = new Map();
 function b64e(buf){ let s = ''; for (const c of new Uint8Array(buf)) s += String.fromCharCode(c); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
 function b64d(s){ s = String(s).replace(/-/g,'+').replace(/_/g,'/'); while (s.length % 4) s += '='; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
@@ -4494,21 +4513,28 @@ const enc8 = t => new TextEncoder().encode(t);
 const pubReady = subtle ? subtle.importKey('jwk', ADMIN_PUB, {name:'ECDSA', namedCurve:'P-256'}, false, ['verify']).then(k => adminPub = k).catch(() => null) : Promise.resolve(null);
 async function verifySig(e){
   if (!e || typeof e.s !== 'string' || typeof e.k !== 'string' || !Number.isFinite(e.ts)) return false;
-  const key = e.s + sanStr(e); if (sigCache.has(key)) return sigCache.get(key);
-  await pubReady; if (!adminPub) return false;
-  let ok = false; try { ok = await subtle.verify({name:'ECDSA', hash:'SHA-256'}, adminPub, b64d(e.s), enc8(sanStr(e))); } catch(err){}
+  const by = typeof e.by === 'string' ? e.by : '';
+  if (by && (!MOD_PUBS[by] || e.k === 'ban' || e.k === 'unban' || e.k === 'admin')) return false;   // moderators can kick and mute, never ban
+  const key = by + '|' + e.s + sanStr(e); if (sigCache.has(key)) return sigCache.get(key);
+  let pk = null; if (by) pk = await modPubKey(by); else { await pubReady; pk = adminPub; } if (!pk) return false;
+  let ok = false; try { ok = await subtle.verify({name:'ECDSA', hash:'SHA-256'}, pk, b64d(e.s), enc8(sanStr(e))); } catch(err){}
   sigCache.set(key, ok); if (sigCache.size > 500) sigCache.clear(); return ok;
 }
-async function signSan(e){ e.ts = Date.now(); e.s = b64e(await subtle.sign({name:'ECDSA', hash:'SHA-256'}, adminPriv, enc8(sanStr(e)))); return e; }
+const modKeyCache = new Map();
+function modPubKey(nick){ if (!subtle || !MOD_PUBS[nick]) return Promise.resolve(null); if (!modKeyCache.has(nick)) modKeyCache.set(nick, subtle.importKey('jwk', Object.assign({kty:'EC', crv:'P-256', ext:true}, MOD_PUBS[nick]), {name:'ECDSA', namedCurve:'P-256'}, false, ['verify']).catch(() => null)); return modKeyCache.get(nick); }
+async function signSan(e){ if (isMod && modNick) e.by = modNick; e.ts = Date.now(); e.s = b64e(await subtle.sign({name:'ECDSA', hash:'SHA-256'}, adminPriv, enc8(sanStr(e)))); return e; }
 async function activateAdmin(d){
   if (!subtle) throw new Error('nocrypto');
-  const priv = await subtle.importKey('jwk', Object.assign({}, ADMIN_PUB, {d:String(d).trim()}), {name:'ECDSA', namedCurve:'P-256'}, false, ['sign']);
-  adminPriv = priv; const proof = await signSan({k:'admin', d:DEVICE_ID});
-  if (!(await verifySig(proof))){ adminPriv = null; throw new Error('bad'); }
-  adminProof = proof; isAdmin = true; return true;
+  const mn = ACC ? accKey(ACC.nick) : '', mod = mn !== ADMIN_NICK && !!MOD_PUBS[mn];
+  const pubj = mod ? Object.assign({kty:'EC', crv:'P-256', ext:true}, MOD_PUBS[mn]) : ADMIN_PUB;
+  let priv; try { priv = await subtle.importKey('jwk', Object.assign({}, pubj, {d:String(d).trim()}), {name:'ECDSA', namedCurve:'P-256'}, false, ['sign']); } catch(err){ throw new Error('bad'); }
+  adminPriv = priv; isMod = mod; modNick = mod ? mn : '';
+  const proof = await signSan(mod ? {k:'mod', d:DEVICE_ID, n:mn} : {k:'admin', d:DEVICE_ID});
+  if (!(await verifySig(proof))){ adminPriv = null; isMod = false; modNick = ''; throw new Error('bad'); }
+  adminProof = proof; if (!mod) isAdmin = true; return true;
 }
-function canBeAdmin(){ return !!(ACC && accKey(ACC.nick) === ADMIN_NICK); }
-function tryAutoAdmin(){ isAdmin = false; adminPriv = null; adminProof = null; updateAdminUi();
+function canBeAdmin(){ return !!(ACC && (accKey(ACC.nick) === ADMIN_NICK || MOD_PUBS[accKey(ACC.nick)])); }
+function tryAutoAdmin(){ isAdmin = false; isMod = false; modNick = ''; adminPriv = null; adminProof = null; updateAdminUi();
   if (canBeAdmin() && ACC.adminKey) activateAdmin(ACC.adminKey).then(updateAdminUi).catch(() => { isAdmin = false; updateAdminUi(); }); }
 
 // ---- sanctions (signed by the admin key, gossiped between all players) ----
@@ -4561,7 +4587,7 @@ function sendChat(text){
   const t = cleanMsg(text); if (!t) return;
   const mu = mutedUntil(DEVICE_ID); if (mu && !isAdmin){ chatSys('Вы в муте до ' + new Date(mu).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'})); return; }
   const tag = isAdmin ? '<b class="adm">[АДМИН]</b> ' : '';
-  chatAdd(`${tag}<b class="c${player.team}">${esc((PROG.clan ? '[' + PROG.clan + '] ' : '') + (myName || 'Вы'))}</b>${ACC ? staffBadge(ACC.nick, true) : ''}: ${esc(t)}`);
+  chatAdd(`${tag}<b class="c${player.team}">${esc((PROG.clan ? '[' + PROG.clan + '] ' : '') + (myName || 'Вы'))}</b>${ACC ? staffBadge(ACC.nick, staffMe()) : ''}: ${esc(t)}`);
   if (mode === 'online' && room){ myChat.push([++chatSeq, t]); if (myChat.length > 3) myChat.shift(); sendPresence(); }
   else if (!sendChat.hinted){ sendChat.hinted = true; chatSys('Сообщения видят живые игроки только в онлайн-бою'); }
 }
@@ -4570,7 +4596,7 @@ function receiveChat(peer, pr, tr){
   const dv = typeof pr.dv === 'string' ? pr.dv : '', team = pr.t === 1 ? 1 : 0, cl = typeof pr.cl === 'string' && /^[A-ZА-ЯЁ0-9]{2,5}$/.test(pr.cl) ? '[' + pr.cl + '] ' : '', nm = cl + cleanName(pr.n), adm = adminPeers.get(peer) === true;
   for (const m of pr.cm.slice(-3)){ if (!Array.isArray(m)) continue; const id = num(m[0], -1); if (id < 0) continue;
     if (tr.cm !== undefined && id > tr.cm && (adm || (!mutedUntil(dv) && !banOf(dv, accKey(nm))))){ const t = cleanMsg(m[1]);
-      if (t) chatAdd(`${adm ? '<b class="adm">[АДМИН]</b> ' : ''}<b class="c${team}">${esc(nm)}</b>${staffBadge(cleanName(pr.n), adm)}: ${esc(t)}`); }
+      if (t) chatAdd(`${adm ? '<b class="adm">[АДМИН]</b> ' : ''}<b class="c${team}">${esc(nm)}</b>${staffBadge(cleanName(pr.n), adm || (!!modPeers.get(peer) && modPeers.get(peer) === accKey(cleanName(pr.n))))}: ${esc(t)}`); }
     if (id > mx) mx = id; }
   tr.cm = mx;
 }
@@ -4587,13 +4613,15 @@ addEventListener('keydown', e => { if (e.code === 'Enter' && running && !paused 
 // ---- per-peer social data (runs for every peer in the room, any map) ----
 function socialPeer(peer, pr){
   let tr = track.get(peer); if (!tr){ tr = {}; track.set(peer, tr); }
-  if (pr.ap && typeof pr.ap === 'object' && pr.ap.d === pr.dv && pr.ap.k === 'admin'){ if (!adminPeers.has(peer)){ adminPeers.set(peer, false); verifySig(pr.ap).then(ok => adminPeers.set(peer, ok)); } }
+  if (pr.ap && typeof pr.ap === 'object' && pr.ap.d === pr.dv && pr.ap.k === 'admin' && !pr.ap.by){ if (!adminPeers.has(peer)){ adminPeers.set(peer, false); verifySig(pr.ap).then(ok => adminPeers.set(peer, ok)); } }
+  if (pr.ap && typeof pr.ap === 'object' && pr.ap.k === 'mod' && !modPeers.has(peer)){ modPeers.set(peer, ''); staffProofOk(pr.ap, cleanName(pr.n), pr.dv).then(ok => modPeers.set(peer, ok ? accKey(cleanName(pr.n)) : '')); }
   receiveChat(peer, pr, tr); receiveSan(pr.adm);
 }
 
 // ---- admin panel ----
 function updateAdminUi(){ const can = canBeAdmin(); $('openAdmin').classList.toggle('hidden', !can); $('pAdmin').classList.toggle('hidden', !isAdmin);
-  $('openAdmin').textContent = isAdmin ? '★ Админ' : 'Админ'; renderAdmin(); }
+  $('openAdmin').textContent = isAdmin ? '★ Админ' : isMod ? '★ Модератор' : (ACC && MOD_PUBS[accKey(ACC.nick)] ? 'Модератор' : 'Админ'); $('pAdmin').classList.toggle('hidden', !(isAdmin || isMod));
+  { const uc = $('userChip'); if (ACC && uc && uc.firstChild){ const old = uc.querySelector('.stf'); if (old) old.remove(); uc.insertAdjacentHTML('beforeend', staffBadge(ACC.nick, staffMe())); } } renderAdmin(); }
 function roomPlayers(){ const out = []; if (!room) return out;
   for (const p of room.peers()){ if (p.sameTab) continue; const pr = p.presence; if (!pr || pr.g !== GAME_ID || !pr.on) continue;
     out.push({peer:p.peer, n:cleanName(pr.n), dv:typeof pr.dv === 'string' ? pr.dv : '', t:pr.t === 1 ? 1 : 0, m:String(pr.m || ''), hp:Math.round(num(pr.hp)), k:Math.round(num(pr.k)), d:Math.round(num(pr.d)), adm:adminPeers.get(p.peer) === true}); }
@@ -4601,8 +4629,9 @@ function roomPlayers(){ const out = []; if (!room) return out;
 const fmtT = t => new Date(t).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
 function renderAdmin(){
   if (!$('adminPanel') || $('adminPanel').classList.contains('hidden')) return;
-  if (!isAdmin){
-    $('admBody').innerHTML = canBeAdmin() ? `<p class="help" style="max-width:460px">Чтобы включить права главного администратора на этом устройстве, введите ключ администратора. Его нужно ввести один раз — он сохранится в аккаунте ${esc(ACC.nick)}.</p>
+  if (!isAdmin && !isMod){
+    const modAcc = ACC && MOD_PUBS[accKey(ACC.nick)] && accKey(ACC.nick) !== ADMIN_NICK;
+    $('admBody').innerHTML = canBeAdmin() ? `<p class="help" style="max-width:460px">${modAcc ? 'Чтобы включить права модератора (кик и мут) и подтверждённую звёздочку, введите ваш ключ модератора.' : 'Чтобы включить права главного администратора на этом устройстве, введите ключ администратора.'} Его нужно ввести один раз — он сохранится в аккаунте ${esc(ACC.nick)}.</p>
       <div class="row"><input class="nick" id="admKey" type="password" style="width:300px" placeholder="Ключ администратора" autocomplete="off"><button class="big" id="admKeyGo" style="margin:0">Активировать</button></div><div id="admErr" style="color:#ff8a7e;font-weight:700;min-height:18px"></div>`
       : '<p>Панель доступна только главному администратору.</p>';
     return; }
@@ -4613,17 +4642,18 @@ function renderAdmin(){
       <td>${ban ? '<i class="st b">бан</i>' : ''}${mu ? `<i class="st m">мут до ${fmtT(mu)}</i>` : ''}</td>
       <td class="acts" data-p="${esc(p.peer)}">${p.adm ? '' : `<button class="opt" data-a="spy" ${here ? '' : 'disabled title="Другая карта"'}>👁 Следить</button><button class="opt" data-a="kick">Кик</button>
         ${mu ? '<button class="opt" data-a="unmute">Снять мут</button>' : '<button class="opt" data-a="mute5">Мут 5 мин</button><button class="opt" data-a="mute30">Мут 30 мин</button>'}
-        ${ban ? '<button class="opt" data-a="unban">Разбан</button>' : '<button class="opt bad" data-a="ban">Бан</button>'}`}</td></tr>`; }).join('')
+        ${isMod ? '' : ban ? '<button class="opt" data-a="unban">Разбан</button>' : '<button class="opt bad" data-a="ban">Бан</button>'}`}</td></tr>`; }).join('')
     : '<tr><td colspan="4" style="opacity:.6">Сейчас в онлайне никого нет</td></tr>';
   const bans = Object.values(SAN).filter(e => e.k === 'ban' || e.k === 'mute');
   $('admBody').innerHTML = `<div class="admTop"><span>Ваш ID: ${DEVICE_ID.slice(0,6)}</span><span>Игроков онлайн: ${ps.length}</span>${mode === 'online' && running ? '' : '<span style="color:#ffd27a">Следить можно, когда вы сами в онлайн-бою</span>'}</div>
     <table class="admT"><tr><th>Игрок</th><th>Здоровье · У/С</th><th>Статус</th><th>Действия</th></tr>${rows}</table>
     <h3 style="margin:14px 0 6px">Блокировки и муты</h3>
     ${bans.length ? `<table class="admT">${bans.map(e => `<tr><td><b>${esc(e.n || '?')}</b><small>ID ${esc(e.d.slice(0,6))}</small></td><td>${e.k === 'ban' ? 'бан с ' + new Date(e.ts).toLocaleDateString('ru-RU') : 'мут до ' + fmtT(e.u)}</td>
-      <td class="acts" data-d="${esc(e.d)}" data-n="${esc(e.n)}"><button class="opt" data-a="${e.k === 'ban' ? 'unban' : 'unmute'}">Снять</button></td></tr>`).join('')}</table>` : '<p style="opacity:.6;margin:0">Нет</p>'}`;
+      <td class="acts" data-d="${esc(e.d)}" data-n="${esc(e.n)}">${isMod && e.k === 'ban' ? '' : `<button class="opt" data-a="${e.k === 'ban' ? 'unban' : 'unmute'}">Снять</button>`}</td></tr>`).join('')}</table>` : '<p style="opacity:.6;margin:0">Нет</p>'}`;
 }
 async function adminDo(act, target){
-  if (!isAdmin || !target.dv) return toast(target.dv ? 'Нет прав' : 'У игрока старая версия игры');
+  if (!(isAdmin || isMod) || !target.dv) return toast(target.dv ? 'Нет прав' : 'У игрока старая версия игры');
+  if (isMod && (act === 'ban' || act === 'unban')) return toast('Бан доступен только главному администратору');
   const k = act.startsWith('mute') ? 'mute' : act, mins = act === 'mute5' ? 5 : act === 'mute30' ? 30 : 0;
   const e = await signSan({k, d:target.dv, n:accKey(target.n || ''), u:mins ? Date.now() + mins*60000 : 0}); mergeSan(e);
   const label = {kick:'исключён из боя', mute:'получил мут на ' + mins + ' мин', unmute:'мут снят', ban:'заблокирован', unban:'разблокирован'}[k];
@@ -4632,7 +4662,7 @@ async function adminDo(act, target){
 $('adminPanel').addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.id === 'admClose'){ $('adminPanel').classList.add('hidden'); $(admFrom).classList.remove('hidden'); return; }
-  if (b.id === 'admKeyGo'){ const d = $('admKey').value.trim(); try { await activateAdmin(d); ACC.adminKey = d; saveAccs(); toast('Права администратора включены'); updateAdminUi(); sendPresence(); }
+  if (b.id === 'admKeyGo'){ const d = $('admKey').value.trim(); try { await activateAdmin(d); ACC.adminKey = d; saveAccs(); toast(isMod ? 'Права модератора включены' : 'Права администратора включены'); updateAdminUi(); sendPresence(); }
     catch(err){ $('admErr').textContent = err.message === 'nocrypto' ? 'Шифрование недоступно в этом окне — откройте игру по защищённой ссылке (https)' : 'Неверный ключ'; } return; }
   const a = b.dataset.a; if (!a) return; const cell = b.closest('.acts');
   if (cell.dataset.d){ return adminDo(a, {dv:cell.dataset.d, n:cell.dataset.n}); }
@@ -4646,7 +4676,7 @@ let admFrom = 'menu';
 function openAdmin(from){ admFrom = from; ['menu','pauseMenu'].forEach(id => $(id).classList.add('hidden')); $('adminPanel').classList.remove('hidden'); renderAdmin(); }
 $('openAdmin').addEventListener('click', () => openAdmin('menu'));
 $('pAdmin').addEventListener('click', () => openAdmin('pauseMenu'));
-setInterval(() => { if (!$('adminPanel').classList.contains('hidden') && isAdmin && !document.activeElement.closest?.('#adminPanel input')) renderAdmin(); }, 1500);
+setInterval(() => { if (!$('adminPanel').classList.contains('hidden') && (isAdmin || isMod) && !document.activeElement.closest?.('#adminPanel input')) renderAdmin(); }, 1500);
 // ---- spectate ----
 function startSpectate(peer){ if (!remotes.has(peer) || mode !== 'online' || !running){ toast('Наблюдать можно в онлайн-бою на той же карте'); return; }
   spectate = peer; $('adminPanel').classList.add('hidden'); togglePause(false); $('specBar').classList.remove('hidden'); updateSpecBar(); }
@@ -4868,11 +4898,12 @@ function renderProfile(){
   const tiles = [['Убийств', s.kills], ['Смертей', s.deaths], ['У/С', kd], ['Точность', acc + '%'], ['В голову', hs + '%'], ['Побед', s.wins], ['Матчей', s.matches], ['Побед, %', wr + '%'],
     ['Лучшая серия', s.bestStreak], ['Гранатой', s.nadeKills], ['Время в бою', fmtDur(s.playSec)], ['Любимое оружие', fav ? (BASE[fav[0]] ? BASE[fav[0]].name : fav[0]) : '—']];
   const nick = ACC ? ACC.nick : myName;
-  $('profBody').innerHTML = `<div class="pfTop"><i class="av t${PROG.team}">${esc(nick.slice(0,1).toUpperCase())}</i><div class="pfId"><b>${PROG.clan ? `<span class="clt">[${esc(PROG.clan)}]</span> ` : ''}${esc(nick)}${staffBadge(nick, true)}</b>
+  $('profBody').innerHTML = `<div class="pfTop"><i class="av t${PROG.team}">${esc(nick.slice(0,1).toUpperCase())}</i><div class="pfId"><b>${PROG.clan ? `<span class="clt">[${esc(PROG.clan)}]</span> ` : ''}${esc(nick)}${staffBadge(nick, ACC ? staffMe() : false)}</b>
       <span>${rankBadge(r, 26)} ${RANKS[r]} · уровень ${L}${L >= MAX_LVL ? ' (максимум)' : ''}</span>
       <div class="xpb"><i style="width:${Math.round(k*100)}%"></i></div><div id="accCloud" class="cloud ${ACC && ACC.cloud ? 'ok' : 'err'}">${ACC && ACC.cloud ? '☁ аккаунт на сервере — войти можно с любого устройства по нику и паролю' : '☁ аккаунт пока только на этом устройстве'}</div><div class="pfAcc"><button class="opt" id="pfCode">Код аккаунта</button><button class="opt" id="pfOut">Выйти из аккаунта</button></div><small>${L >= MAX_LVL ? 'Максимальный уровень' : `${(PROG.xp - a).toLocaleString('ru-RU')} / ${(b - a).toLocaleString('ru-RU')} опыта до уровня ${L + 1}`}</small></div>
       ${PROG.medals.length ? `<div class="medals">${PROG.medals.map(m => `<span title="${esc(m)}">🏅</span>`).join('')}</div>` : ''}</div>
     <div class="pfGrid">${tiles.map(([n, v]) => `<div><b>${esc(String(v))}</b><span>${n}</span></div>`).join('')}</div>
+    ${achHtml()}
     <h3>Клан</h3><div class="row" style="justify-content:flex-start"><input class="nick" id="clanIn" maxlength="5" placeholder="ТЕГ" value="${esc(PROG.clan)}" style="width:90px;text-transform:uppercase" autocomplete="off" spellcheck="false">
       <button class="opt" id="clanSave">Сохранить тег</button>${PROG.clan ? '<button class="opt sel" id="clanRoom">Комната клана</button><button class="opt" id="clanLeave">Выйти из клана</button>' : ''}</div>
     <p class="help" style="margin:2px 0 0;text-align:left">Тег из 2–5 букв или цифр появится перед ником в онлайне, в чате и в рейтинге. «Комната клана» — отдельный онлайн-сервер для всех с этим тегом.</p>
@@ -5063,7 +5094,7 @@ function mqttOnce(onReady, onFail){
 const LB_BASE = 'lesnoyrubezh/lb2/';
 let lbT = 0;
 function lbEntry(){ ensureProgExtras(); const L = levelOf(PROG.xp);
-  return {n:(ACC ? ACC.nick : myName).slice(0, 16), cl:PROG.clan, rk:rankOf(L), lvl:L, xp:PROG.xp, k:PROG.stats.kills, w:PROG.stats.wins, sxp:PROG.season.xp, sk:PROG.season.k, sw:PROG.season.w, wk:(ensureWeek(), PROG.week.id), wx:PROG.week.xp, t:Date.now()}; }
+  return {n:(ACC ? ACC.nick : myName).slice(0, 16), cl:PROG.clan, rk:rankOf(L), lvl:L, xp:PROG.xp, k:PROG.stats.kills, w:PROG.stats.wins, sxp:PROG.season.xp, sk:PROG.season.k, sw:PROG.season.w, wk:(ensureWeek(), PROG.week.id), wx:PROG.week.xp, sp:(isAdmin || isMod) ? adminProof : undefined, t:Date.now()}; }
 function lbDirty(){ if (!ACC) return; clearTimeout(lbT); lbT = setTimeout(lbPublish, 4000); }
 function lbPublish(){ if (!ACC || typeof WebSocket === 'undefined') return; const e = lbEntry();
   mqttOnce(api => { api.publish(LB_BASE + PROG.season.id + '/' + DEVICE_ID, JSON.stringify(e), true); setTimeout(() => api.close(), 800); }); }
@@ -5073,13 +5104,13 @@ function lbFetch(season, cb){
   mqttOnce(api => { api.subscribe(LB_BASE + season + '/+', (topic, s) => { if (!s) return; let o; try { o = JSON.parse(s); } catch(e){ return; }
       if (!o || typeof o !== 'object') return; const id = topic.slice(topic.lastIndexOf('/') + 1);
       out.set(id, {id, n:cleanName(o.n), cl:typeof o.cl === 'string' && /^[A-ZА-ЯЁ0-9]{2,5}$/.test(o.cl) ? o.cl : '', rk:clamp(Math.round(num(o.rk)), 0, RANKS.length - 1), lvl:clamp(Math.round(num(o.lvl)), 1, MAX_LVL),
-        xp:clamp(num(o.xp), 0, 5e7), k:clamp(num(o.k), 0, 1e7), w:clamp(num(o.w), 0, 1e6), sxp:clamp(num(o.sxp), 0, 5e7), sk:clamp(num(o.sk), 0, 1e7), sw:clamp(num(o.sw), 0, 1e6), wk:typeof o.wk === 'string' ? o.wk.slice(0, 10) : '', wx:clamp(num(o.wx), 0, 5e6)}); });
+        xp:clamp(num(o.xp), 0, 5e7), k:clamp(num(o.k), 0, 1e7), w:clamp(num(o.w), 0, 1e6), sxp:clamp(num(o.sxp), 0, 5e7), sk:clamp(num(o.sk), 0, 1e7), sw:clamp(num(o.sw), 0, 1e6), wk:typeof o.wk === 'string' ? o.wk.slice(0, 10) : '', wx:clamp(num(o.wx), 0, 5e6), sp:o.sp && typeof o.sp === 'object' ? o.sp : null}); });
     setTimeout(() => { api.close(); fin(); }, 3000); }, () => fin());
   setTimeout(fin, 9000);
 }
 let lbTab = 'season', lbData = null;
 function openBoard(){ $('menu').classList.add('hidden'); $('lboard').classList.remove('hidden'); lbData = null; renderBoard(); applyLang(); lbPublish();
-  lbFetch(PROG.season.id, list => { lbData = list; renderBoard(); weekRewardCheck(list); }); seasonRewardCheck(); }
+  lbFetch(PROG.season.id, list => { lbData = list; renderBoard(); weekRewardCheck(list); verifyStaffRows(list).then(renderBoard); }); seasonRewardCheck(); }
 function renderBoard(){
   const sid = PROG.season.id, end = new Date(Date.UTC(+sid.slice(0, 4), +sid.slice(5, 7), 0));
   $('lbHead').innerHTML = `<b>Сезон: ${seasonName(sid)}</b><span>до ${end.getUTCDate()} ${SEASON_MONTHS[end.getUTCMonth()]} · топ-10 сезона получат награды: 1 место — 3000 КР, 2–3 — 2000 КР, 4–10 — 1000 КР и форму «Чемпион»</span>`;
@@ -5088,12 +5119,12 @@ function renderBoard(){
   if (lbTab === 'clans'){ const per = {}; for (const r of lbData) if (r.cl){ const c = per[r.cl] || (per[r.cl] = {cl:r.cl, n:0, sxp:0, k:0, w:0}); c.n++; c.sxp += r.sxp; c.k += r.sk; c.w += r.sw; }
     const cl = Object.values(per).sort((a, b) => b.sxp - a.sxp).slice(0, 30);
     $('lbList').innerHTML = cl.length ? `<table class="admT lbT"><tr><th>#</th><th>Клан</th><th>Бойцов</th><th>Опыт за сезон</th><th>Убийств</th><th>Побед</th></tr>${cl.map((c, i) => `<tr class="${c.cl === PROG.clan ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td><span class="clt">[${esc(c.cl)}]</span></td><td>${c.n}</td><td>${Math.round(c.sxp).toLocaleString('ru-RU')}</td><td>${c.k}</td><td>${c.w}</td></tr>`).join('')}</table>` : '<p style="opacity:.6">Пока ни у кого нет клана. Задайте тег в профиле.</p>'; return; }
-  if (lbTab === 'week'){ ensureWeek(); const wk = PROG.week.id, rows = lbData.filter(r => r.wk === wk && r.wx > 0); if (ACC && !rows.some(r => r.id === DEVICE_ID) && PROG.week.xp > 0) rows.push(Object.assign({id:DEVICE_ID}, lbEntry())); rows.sort((a, b) => b.wx - a.wx);
-    $('lbList').innerHTML = `<p style="margin:0 0 8px;font-size:12.5px;opacity:.8">Турнир идёт с понедельника по воскресенье. Награды в начале новой недели: 1 место — 1500 КР, 2–3 — 1000 КР, 4–10 — 500 КР.</p>` + (rows.length ? `<table class="admT lbT"><tr><th>#</th><th>Игрок</th><th>Звание</th><th>Опыт за неделю</th></tr>${rows.slice(0, 50).map((r, i) => `<tr class="${r.id === DEVICE_ID ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td>${r.cl ? `<span class="clt">[${esc(r.cl)}]</span> ` : ''}${esc(r.n)}${staffBadge(r.n)}</td><td>${rankBadge(r.rk, 18)} ${r.lvl}</td><td>${Math.round(r.wx).toLocaleString('ru-RU')}</td></tr>`).join('')}</table>` : '<p style="opacity:.6">На этой неделе ещё никто не играл — станьте первым.</p>'); return; }
+  if (lbTab === 'week'){ ensureWeek(); const wk = PROG.week.id, rows = lbData.filter(r => r.wk === wk && r.wx > 0); if (ACC && !rows.some(r => r.id === DEVICE_ID) && PROG.week.xp > 0) rows.push(Object.assign({id:DEVICE_ID, stf:staffMe()}, lbEntry())); rows.sort((a, b) => b.wx - a.wx);
+    $('lbList').innerHTML = `<p style="margin:0 0 8px;font-size:12.5px;opacity:.8">Турнир идёт с понедельника по воскресенье. Награды в начале новой недели: 1 место — 1500 КР, 2–3 — 1000 КР, 4–10 — 500 КР.</p>` + (rows.length ? `<table class="admT lbT"><tr><th>#</th><th>Игрок</th><th>Звание</th><th>Опыт за неделю</th></tr>${rows.slice(0, 50).map((r, i) => `<tr class="${r.id === DEVICE_ID ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td>${r.cl ? `<span class="clt">[${esc(r.cl)}]</span> ` : ''}${esc(r.n)}${staffBadge(r.n, r.stf === true)}</td><td>${rankBadge(r.rk, 18)} ${r.lvl}</td><td>${Math.round(r.wx).toLocaleString('ru-RU')}</td></tr>`).join('')}</table>` : '<p style="opacity:.6">На этой неделе ещё никто не играл — станьте первым.</p>'); return; }
   const key = lbTab === 'season' ? 'sxp' : 'xp', rows = lbData.filter(r => r[key] > 0).sort((a, b) => b[key] - a[key]).slice(0, 50);
-  if (!rows.some(r => r.id === DEVICE_ID) && ACC){ const me = Object.assign({id:DEVICE_ID}, lbEntry()); if (me[key] > 0){ rows.push(me); rows.sort((a, b) => b[key] - a[key]); } }
+  if (!rows.some(r => r.id === DEVICE_ID) && ACC){ const me = Object.assign({id:DEVICE_ID, stf:staffMe()}, lbEntry()); if (me[key] > 0){ rows.push(me); rows.sort((a, b) => b[key] - a[key]); } }
   $('lbList').innerHTML = rows.length ? `<table class="admT lbT"><tr><th>#</th><th>Игрок</th><th>Звание</th><th>${lbTab === 'season' ? 'Опыт за сезон' : 'Опыт'}</th><th>Убийств</th><th>Побед</th></tr>${rows.map((r, i) =>
-    `<tr class="${r.id === DEVICE_ID ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td>${r.cl ? `<span class="clt">[${esc(r.cl)}]</span> ` : ''}${esc(r.n)}${staffBadge(r.n)}</td><td>${rankBadge(r.rk, 18)} ${r.lvl}</td>
+    `<tr class="${r.id === DEVICE_ID ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td>${r.cl ? `<span class="clt">[${esc(r.cl)}]</span> ` : ''}${esc(r.n)}${staffBadge(r.n, r.stf === true)}</td><td>${rankBadge(r.rk, 18)} ${r.lvl}</td>
       <td>${Math.round(r[key]).toLocaleString('ru-RU')}</td><td>${lbTab === 'season' ? r.sk : r.k}</td><td>${lbTab === 'season' ? r.sw : r.w}</td></tr>`).join('')}</table>`
     : '<p style="opacity:.6">Пока здесь пусто — сыграйте бой и станьте первым. Рейтинг виден, когда есть интернет.</p>';
 }
@@ -5331,8 +5362,8 @@ $('msDaily').addEventListener('click', e => { const b = e.target.closest('button
 let emoteSeq = 0, myEmote = null;
 function emoteUnlocked(e){ return e.tier === 0 || (PROG.emotes && PROG.emotes[e.id]); }
 function doEmote(id){ const e = EMOTES.find(x => x.id === id); if (!e || !emoteUnlocked(e) || !running) return; myEmote = [++emoteSeq, id]; showMsg(tr(e.name)); $('emoteWheel').classList.add('hidden'); if (mode === 'online') sendPresence(); }
-function renderEmotes(){ $('emoteWheel').innerHTML = EMOTES.map(e => `<button class="opt${emoteUnlocked(e) ? '' : ' lock'}" data-e="${e.id}" ${emoteUnlocked(e) ? '' : 'disabled'}>${esc(tr(e.name))}${emoteUnlocked(e) ? '' : ' 🔒'}</button>`).join(''); }
-$('emoteWheel').addEventListener('click', e => { const b = e.target.closest('button[data-e]'); if (b) doEmote(b.dataset.e); });
+function renderEmotes(){ $('emoteWheel').innerHTML = Object.entries(PING_TYPES).map(([k, T]) => `<button class="opt pingB" data-ping="${k}" style="border-color:${T.c};color:${T.c}">${T.i} ${esc(T.n)}</button>`).join('') + EMOTES.map(e => `<button class="opt${emoteUnlocked(e) ? '' : ' lock'}" data-e="${e.id}" ${emoteUnlocked(e) ? '' : 'disabled'}>${esc(tr(e.name))}${emoteUnlocked(e) ? '' : ' 🔒'}</button>`).join(''); }
+$('emoteWheel').addEventListener('click', e => { const p = e.target.closest('button[data-ping]'); if (p) return doPing(p.dataset.ping); const b = e.target.closest('button[data-e]'); if (b) doEmote(b.dataset.e); });
 function remoteEmote(rp, pr, tr2){ if (!Array.isArray(pr.em)) return; const id = num(pr.em[0]); if (tr2.em === id) return; const first = tr2.em === undefined; tr2.em = id; if (first) return;
   const e = EMOTES.find(x => x.id === pr.em[1]); if (!e) return; rp.emT = 2.2; rp.emType = e.id;
   const t = makeTag(tr(e.name), '#c7ff48'); t.position.y = 2.55; rp.root.add(t); setTimeout(() => rp.root.remove(t), 2200); }
@@ -5627,7 +5658,7 @@ function applyLayout(){
 }
 addEventListener('resize', () => setTimeout(applyLayout, 50));
 const SL = [ ['sVol','vol',100,'%'], ['sEnemyVol','enemyVol',100,'%'], ['sSens','sens',100,'%'], ['sAds','ads',100,'%'], ['sBtn','btnScale',100,'%'], ['sAlpha','btnAlpha',100,'%'], ['sFov','fov',1,'°'], ['sGyroS','gyroSens',100,'%'], ['sMusic','music',100,'%'], ['sJoy','joySize',100,'%'] ];
-const CK = [ ['sHit','hitSound'], ['sInv','invertY'], ['sHold','aimHold'], ['sLeft','leftFire'], ['sNames','names'], ['sFps','fps'], ['sFlash','flashlight'], ['sGyro','gyro'], ['sGyroInv','gyroInv'], ['sGyroInvY','gyroInvY'], ['sAuto','autoFire'], ['sVib','vibrate'], ['sAutoQ','autoQ'] ];
+const CK = [ ['sHit','hitSound'], ['sInv','invertY'], ['sHold','aimHold'], ['sAssist','aimAssist'], ['sAdapt','adapt'], ['sLeft','leftFire'], ['sNames','names'], ['sFps','fps'], ['sFlash','flashlight'], ['sGyro','gyro'], ['sGyroInv','gyroInv'], ['sGyroInvY','gyroInvY'], ['sAuto','autoFire'], ['sVib','vibrate'], ['sAutoQ','autoQ'] ];
 function fillSettings(){
   for (const [id,key,mul,u] of SL){ $(id).value = Math.round(settings[key]*mul); $('v'+id.slice(1)).textContent = Math.round(settings[key]*mul) + u; }
   for (const [id,key] of CK) $(id).checked = !!settings[key];
@@ -5921,7 +5952,7 @@ function lbRestore(){ if (!ACC || typeof WebSocket === 'undefined') return; ensu
 
 
 // staff stars: main developer and testers/moderators listed on the site
-function staffBadge(nick, verified){ const k = accKey(String(nick || '')), st = (STAFF || {})[k]; if (!st) return '';
+function staffBadge(nick, verified){ if (verified !== true) return ''; const k = accKey(String(nick || '')), st = (STAFF || {})[k]; if (!st) return '';
   if (st[0] === 'dev' && verified === false) return '';   // in online chat the developer star needs the signed admin proof
   return `<button type="button" class="stf ${st[0]}" data-staff="${esc(k)}" data-nick="${esc(String(nick))}" aria-label="${esc(st[1])}">★</button>`; }
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.stf')){ e.preventDefault(); e.stopPropagation(); } }, true);
@@ -5930,6 +5961,133 @@ document.addEventListener('pointerdown', e => { const b = e.target.closest && e.
   const r = b.getBoundingClientRect(); tip.innerHTML = `<b>${esc(b.dataset.nick || b.dataset.staff)}</b> — ${esc(st[1])}`;
   tip.style.left = Math.min(innerWidth - 90, Math.max(90, r.left + r.width/2)) + 'px'; const below = r.top < 60; tip.style.top = (below ? r.bottom + 8 : r.top - 6) + 'px'; tip.style.transform = below ? 'translate(-50%,0)' : ''; tip.style.display = 'block';
   clearTimeout(tip.t); tip.t = setTimeout(() => tip.style.display = 'none', 2600); }, true);
+
+// =============================== 0.60 ===============================
+// ---- positional gunfire: delay by distance, muffled far away, panned left/right ----
+let panOK = true;
+function boom3d(vol, lp, dur, x, z, dist){
+  if (!actx || vol < 0.01) return;
+  try { const delay = Math.min(.45, dist/340), t = actx.currentTime + delay, s = actx.createBufferSource(), f = actx.createBiquadFilter(), gn = actx.createGain();
+    s.buffer = noiseBuf; f.type = 'lowpass'; f.frequency.value = lp * clamp(1.1 - dist/90, .22, 1); gn.gain.setValueAtTime(0.0001, actx.currentTime); gn.gain.setValueAtTime(vol, t); gn.gain.exponentialRampToValueAtTime(0.001, t + dur*(1 + dist/120));
+    let out = gn; s.connect(f); f.connect(gn);
+    if (panOK && actx.createStereoPanner){ const dx = x - player.pos.x, dz = z - player.pos.z, rx = dx*Math.cos(player.yaw) - dz*Math.sin(player.yaw), l = Math.hypot(dx, dz) || 1;
+      const p = actx.createStereoPanner(); p.pan.value = clamp(rx/l, -1, 1)*.8; gn.connect(p); out = p; }
+    out.connect(master || actx.destination); s.start(t); s.stop(t + dur*(1 + dist/120) + .05);
+    if (dist > 35 && Math.random() < .7){ const s2 = actx.createBufferSource(), f2 = actx.createBiquadFilter(), g2 = actx.createGain(), t2 = t + .18 + dist/900;   // forest echo
+      s2.buffer = noiseBuf; f2.type = 'lowpass'; f2.frequency.value = 500; g2.gain.setValueAtTime(0.0001, actx.currentTime); g2.gain.setValueAtTime(vol*.35, t2); g2.gain.exponentialRampToValueAtTime(0.001, t2 + .9);
+      s2.connect(f2); f2.connect(g2); g2.connect(master || actx.destination); s2.start(t2); s2.stop(t2 + .95); }
+  } catch(e){ panOK = false; }
+}
+
+// ---- birds take off from the trees when someone shoots nearby ----
+const birds = [], BIRD_GEO = new THREE.PlaneGeometry(.34, .09), BIRD_MAT = new THREE.MeshBasicMaterial({color:0x15130f, side:THREE.DoubleSide, fog:true});
+let birdCd = 0;
+function spawnBirds(x, z){
+  if (birdCd > 0 || gfx === 'low' || ATMO.time === 'night') return; let trees = 0, tx = 0, tz = 0;
+  for (const c of circles){ if (c.kind !== 'wood' || c.top - c.base < 4) continue; if (Math.abs(c.x - x) < 14 && Math.abs(c.z - z) < 14){ trees++; tx = c.x; tz = c.z; if (trees > 3) break; } }
+  if (trees < 3) return; birdCd = 9;
+  const n = 5 + (Math.random()*5|0), dir = Math.random()*6.28, y0 = terrainH(tx, tz) + 7;
+  for (let i = 0; i < n; i++){ const m = new THREE.Mesh(BIRD_GEO, BIRD_MAT); m.position.set(tx + rand(-3, 3), y0 + rand(0, 3), tz + rand(-3, 3)); scene.add(m);
+    birds.push({m, t:0, ph:Math.random()*6, v:new THREE.Vector3(Math.cos(dir + rand(-.5, .5))*rand(5, 8), rand(2.5, 4.5), Math.sin(dir + rand(-.5, .5))*rand(5, 8))}); }
+  if (Math.hypot(tx - player.pos.x, tz - player.pos.z) < 45) for (let i = 0; i < 3; i++) setTimeout(() => tone(2600 + Math.random()*900, .07, .025, 'triangle'), i*120 + Math.random()*200);
+}
+function birdsFrame(dt){ birdCd -= dt;
+  for (let i = birds.length - 1; i >= 0; i--){ const b = birds[i]; b.t += dt; b.m.position.addScaledVector(b.v, dt); b.v.y *= .995;
+    b.m.scale.y = .4 + Math.abs(Math.sin(b.t*18 + b.ph))*1.6; b.m.lookAt(camera.position);
+    if (b.t > 9){ scene.remove(b.m); birds.splice(i, 1); } } }
+function clearBirds(){ for (const b of birds) scene.remove(b.m); birds.length = 0; birdCd = 0; }
+
+// ---- aim assist for touch screens (gentle, can be turned off) ----
+let aaT = 0, aaTarget = null;
+function aimAssist(dt){
+  if (!isTouch || !settings.aimAssist || !player.alive || player.vehicle || !(touchFire || aimK > .5)) { aaTarget = null; return; }
+  aaT -= dt; const eye = v3tmp.set(player.pos.x, player.pos.y + player.eyeH, player.pos.z);
+  const fx = -Math.sin(player.yaw)*Math.cos(player.pitch), fy = Math.sin(player.pitch), fz = -Math.cos(player.yaw)*Math.cos(player.pitch);
+  if (aaT <= 0){ aaT = .15; aaTarget = null; let best = aimK > .5 ? .085 : .06;
+    const cand = bots.filter(b => b.alive && b.team !== player.team); if (mode === 'online') for (const rp of remotes.values()) if (rp.alive && rp.team !== player.team) cand.push(rp);
+    for (const u of cand){ const dx = u.pos.x - eye.x, dy = u.pos.y + 1.3 - eye.y, dz = u.pos.z - eye.z, d = Math.hypot(dx, dy, dz); if (d > 90 || d < 1) continue;
+      const ang = Math.acos(clamp((dx*fx + dy*fy + dz*fz)/d, -1, 1)); if (ang < best && !blocked(eye, chest(u, v2))){ best = ang; aaTarget = u; } } }
+  const u = aaTarget; if (!u || !u.alive) return;
+  const dx = u.pos.x - eye.x, dy = u.pos.y + 1.3 - eye.y, dz = u.pos.z - eye.z, hd = Math.hypot(dx, dz);
+  const wy = Math.atan2(-dx, -dz), wp = Math.atan2(dy, hd), k = Math.min(1, dt*(aimK > .5 ? 4 : 2.6));
+  player.yaw += angDiff(player.yaw, wy)*k; player.pitch += (wp - player.pitch)*k*.7;
+}
+
+// ---- adaptive bots: they shoot a bit better if you keep winning, worse if you keep losing ----
+function adaptMul(){ return settings.adapt === false ? 1 : clamp(+PROG.adapt || 1, .8, 1.2); }
+function adaptAfterMatch(){ if (mode === 'online' || mode === 'tut') return; const kd = player.kills / Math.max(1, player.deaths);
+  PROG.adapt = clamp((+PROG.adapt || 1) * (kd > 2.2 ? 1.05 : kd < .7 ? .95 : 1), .8, 1.2); }
+
+// ---- bots in pairs: the second one follows and covers the first ----
+function pairBots(){ if (!TDM_LIKE() && !DOM_LIKE()) return; for (const t of [0, 1]){ const list = bots.filter(b => b.team === t);
+  for (let i = 0; i + 1 < list.length; i += 2){ list[i + 1].follow = list[i]; list[i + 1].followOff.set(rand(-3, 3), 0, rand(-3, 3)); } } }
+
+// ---- quick team pings ----
+const PINGS = [], PING_TYPES = {enemy:{n:'Враг здесь!', c:'#ff5a4a', i:'⚠'}, help:{n:'Нужна помощь!', c:'#ffd24a', i:'✚'}, go:{n:'Иду на точку!', c:'#7ec8ff', i:'➤'}};
+let myPing = null, pingSeq = 0;
+function addPing(type, x, y, z, from){ const T = PING_TYPES[type]; if (!T) return; const el = document.createElement('div'); el.className = 'ping'; el.style.color = T.c; el.innerHTML = `<i>${T.i}</i><span>${esc(from)}</span>`; $('hud').appendChild(el);
+  PINGS.push({type, x, y, z, t:8, el}); if (PINGS.length > 6){ const o = PINGS.shift(); o.el.remove(); } chatAdd(`<b style="color:${T.c}">${esc(from)}: ${esc(T.n)}</b>`); tone(type === 'enemy' ? 880 : 660, .12, .05, 'triangle'); }
+function doPing(type){ if (!running || !player.alive) return; $('emoteWheel').classList.add('hidden');
+  let x = player.pos.x, y = player.pos.y + 1, z = player.pos.z;
+  if (type !== 'help'){ camera.updateMatrixWorld(); ray.setFromCamera({x:0, y:0}, camera); const t = rayHit(ray.ray.origin, ray.ray.direction, 150); const p = ray.ray.origin.clone().addScaledVector(ray.ray.direction, Math.min(t, 150)); x = p.x; y = p.y + .3; z = p.z; }
+  if (type === 'go' && DOM_LIKE()){ x = capX; z = capZ; y = terrainH(capX, capZ) + 1; }
+  addPing(type, x, y, z, myName || 'Вы'); myPing = [++pingSeq, type, +x.toFixed(1), +y.toFixed(1), +z.toFixed(1)];
+  if (mode !== 'online'){ const allies = bots.filter(b => b.alive && b.team === player.team);
+    if (type === 'enemy') for (const b of allies) if (!b.target){ b.lastKnown = new THREE.Vector3(x, 0, z); b.lkT = 10; b.alertT = 3; }
+    if (type === 'help') allies.sort((a, b) => a.pos.distanceTo(player.pos) - b.pos.distanceTo(player.pos)).slice(0, 2).forEach(b => { b.lastKnown = player.pos.clone(); b.lkT = 10; }); }
+  else sendPresence(); }
+function remotePing(rp, pr, tr2){ if (!Array.isArray(pr.pg) || rp.team !== player.team) return; const id = num(pr.pg[0]); if (tr2.pg === id) return; const first = tr2.pg === undefined; tr2.pg = id; if (first) return;
+  const type = String(pr.pg[1]); if (!PING_TYPES[type]) return; addPing(type, clamp(num(pr.pg[2]), -200, 200), clamp(num(pr.pg[3]), -20, 80), clamp(num(pr.pg[4]), -200, 200), rp.name || 'Союзник'); }
+const _pgv = new THREE.Vector3();
+function pingsFrame(dt){ for (let i = PINGS.length - 1; i >= 0; i--){ const p = PINGS[i]; p.t -= dt; if (p.t <= 0 || !running){ p.el.remove(); PINGS.splice(i, 1); continue; }
+    _pgv.set(p.x, p.y, p.z).project(camera); let sx = (_pgv.x*.5 + .5)*innerWidth, sy = (-_pgv.y*.5 + .5)*innerHeight; if (_pgv.z > 1){ sx = innerWidth - sx; sy = innerHeight - 40; }
+    sx = clamp(sx, 24, innerWidth - 24); sy = clamp(sy, 40, innerHeight - 30); p.el.style.transform = `translate(${sx}px,${sy}px) translate(-50%,-100%)`;
+    p.el.style.opacity = p.t < 1 ? p.t : 1; p.el.querySelector('span').textContent = Math.round(Math.hypot(p.x - player.pos.x, p.z - player.pos.z)) + ' м'; } }
+function clearPings(){ for (const p of PINGS) p.el.remove(); PINGS.length = 0; }
+
+// ---- achievements and weapon challenges ----
+const ACHS = [
+  {id:'k1', n:'Первая кровь', d:'Первое убийство', ok:s => s.kills >= 1},
+  {id:'k100', n:'Сотня', d:'100 убийств', ok:s => s.kills >= 100},
+  {id:'k1000', n:'Тысячник', d:'1000 убийств', ok:s => s.kills >= 1000},
+  {id:'h100', n:'Меткий глаз', d:'100 попаданий в голову', ok:s => s.heads >= 100},
+  {id:'w10', n:'Победитель', d:'10 побед', ok:s => s.wins >= 10},
+  {id:'w100', n:'Ветеран', d:'100 побед', ok:s => s.wins >= 100},
+  {id:'st10', n:'Неудержимый', d:'Серия из 10 убийств', ok:s => s.bestStreak >= 10},
+  {id:'n50', n:'Гранатомётчик', d:'50 убийств гранатой', ok:s => s.nadeKills >= 50},
+  {id:'kn10', n:'Тихий убийца', d:'10 убийств ножом', ok:s => (s.knife || 0) >= 10},
+  {id:'zw10', n:'Охотник на нежить', d:'Дойти до 10-й волны зомби', ok:() => (PROG.best && PROG.best.zw || 0) >= 10},
+  {id:'camp', n:'Герой кампании', d:'Пройти всю кампанию', ok:() => (PROG.camp && PROG.camp.done || 0) >= 5},
+  {id:'l20', n:'Опытный боец', d:'Уровень 20', ok:() => levelOf(PROG.xp) >= 20},
+  {id:'l50', n:'Легенда', d:'Уровень 50', ok:() => levelOf(PROG.xp) >= 50},
+  {id:'t10', n:'Старожил', d:'10 часов в бою', ok:s => s.playSec >= 36000},
+];
+const ACH_ICON = {k1:'🩸', k100:'💯', k1000:'⚔', h100:'🎯', w10:'🏆', w100:'🎖', st10:'🔥', n50:'💥', kn10:'🔪', zw10:'🧟', camp:'🗺', l20:'⭐', l50:'👑', t10:'⏱'};
+const WCH_TIERS = [[25, 200], [100, 500], [250, 1000]];
+function checkAch(){ if (!ACC) return; ensureProgExtras(); if (!PROG.ach || typeof PROG.ach !== 'object') PROG.ach = {}; const s = PROG.stats; let got = false;
+  for (const a of ACHS) if (!PROG.ach[a.id]){ let ok = false; try { ok = a.ok(s); } catch(e){} if (ok){ PROG.ach[a.id] = Date.now(); PROG.money += 300; got = true; setTimeout(() => toast(`Достижение «${a.n}» · +300 КР`), 400); } }
+  if (!PROG.wch || typeof PROG.wch !== 'object') PROG.wch = {};
+  for (const k of WEAPON_KEYS){ const kills = s.wk[k] || 0; let tier; while ((tier = PROG.wch[k] || 0) < WCH_TIERS.length && kills >= WCH_TIERS[tier][0]){ PROG.wch[k] = tier + 1; PROG.money += WCH_TIERS[tier][1]; got = true;
+      if (tier + 1 === WCH_TIERS.length && SLOTS[k] && SLOTS[k].finish && SLOTS[k].finish.some(o => (Array.isArray(o) ? o[0] : o) === 'gold')){ PROG.att[k] = PROG.att[k] || {}; PROG.att[k]['finish:gold'] = true; }
+      const nm = (BASE[k] && BASE[k].name) || k; setTimeout(() => toast(`Испытание «${nm}» ${tier + 1}/3 · +${WCH_TIERS[tier][1]} КР${tier + 1 === 3 ? ' и золотая раскраска' : ''}`), 900); } }
+  if (got) saveProg(); }
+function achHtml(){ ensureProgExtras(); const A = PROG.ach || {}, W = PROG.wch || {}, s = PROG.stats;
+  const ach = ACHS.map(a => `<div class="ach${A[a.id] ? ' on' : ''}" title="${esc(a.d)}"><i>${ACH_ICON[a.id] || '★'}</i><b>${esc(a.n)}</b><span>${esc(a.d)}</span></div>`).join('');
+  const wch = WEAPON_KEYS.filter(k => PROG.weapons[k]).map(k => { const t = W[k] || 0, kills = s.wk[k] || 0, goal = t < 3 ? WCH_TIERS[t][0] : WCH_TIERS[2][0];
+    return `<div class="wch"><b>${esc(SHORT_W[k] || k)}</b><div class="msBar"><i style="width:${Math.min(100, kills/goal*100)}%"></i></div><span>${t >= 3 ? 'Пройдено · золото' : `${kills} / ${goal} убийств · этап ${t + 1}/3`}</span></div>`; }).join('');
+  return `<h3>Достижения · ${Object.keys(A).length}/${ACHS.length}</h3><div class="achG">${ach}</div><h3>Испытания оружия</h3><p class="help" style="margin:0 0 6px;text-align:left">25, 100 и 250 убийств из оружия — награды 200, 500 и 1000 КР, за последний этап золотая раскраска.</p><div class="wchG">${wch}</div>`; }
+
+// ---- New Year season: free festive uniform from 20 Dec to 10 Jan ----
+USKINS.push({id:'xmas', name:'Новогодний', desc:'Праздничная форма. Выдаётся бесплатно с 20 декабря по 10 января и остаётся навсегда.', uni:0x8a1f1f, pants:0x6e1818, helm:0xd8d8d8});
+function xmasSeason(d = new Date()){ const m = d.getMonth(), day = d.getDate(); return (m === 11 && day >= 20) || (m === 0 && day <= 10); }
+function xmasCheck(){ if (!ACC || !xmasSeason()) return; ensureProgExtras(); if (!PROG.skins.xmas){ PROG.skins.xmas = true; saveProg(); setTimeout(() => toast('С Новым годом! Вам выдана форма «Новогодний»'), 1500); } }
+
+// ---- moderators: personal keys, verified star, kick and mute ----
+const modPeers = new Map();
+function staffMe(){ return !!ACC && ((isAdmin && accKey(ACC.nick) === ADMIN_NICK) || isMod); }
+function staffProofOk(sp, nick, dev){ if (!sp || typeof sp !== 'object' || sp.d !== dev) return Promise.resolve(false); const k = accKey(String(nick || ''));
+  if (sp.k === 'admin' && !sp.by && k === ADMIN_NICK) return verifySig(sp); if (sp.k === 'mod' && sp.by === k && sp.n === k && MOD_PUBS[k]) return verifySig(sp); return Promise.resolve(false); }
+async function verifyStaffRows(list){ for (const r of list) if (r.sp && STAFF[accKey(r.n)]) r.stf = await staffProofOk(r.sp, r.n, r.id); }
 
 equip(0); WEAPONS[0].model.g.visible = false;
 if (settings.gfx) $('gfxs').querySelector(`[data-gfx="${settings.gfx}"]`)?.click();
