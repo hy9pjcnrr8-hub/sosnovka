@@ -173,14 +173,14 @@ public class CityView extends View {
         k.put("ratrak", g.ratrak ? "on" : "off");
         k.put("hotel", g.hotel ? "on" : "off");
         k.put("renov", g.housingChoice == null ? "off" : g.housingChoice);
-        int nF = Math.max(12, g.factories), nB = Math.max(12, g.blocks);
+        int nF = Math.min(40, Math.max(12, g.factories)), nB = Math.max(12, g.blocks);
         for (int i = 0; i < nF; i++) k.put("fac" + i, i < g.factories ? "on" : "off");
         for (int i = 0; i < nB; i++) k.put("blk" + i, i < g.blocks ? "on" : "off");
         k.put("rail", g.rail == null ? "off" : g.rail); k.put("energy", g.energy == null ? "off" : g.energy); k.put("airport", g.airport == null ? "off" : g.airport);
         k.put("uni", g.uni ? "on" : "off"); k.put("med", g.med ? "on" : "off"); k.put("tram", g.tram ? "on" : "off");
         k.put("museum", g.museum ? "on" : (g.demolished ? "gone" : "off")); k.put("mineFate", g.mineFate == null ? "off" : g.mineFate);
         k.put("cup", g.cup ? "on" : "off"); k.put("filters", g.filters ? "on" : "off");
-        for (int i = 0; i < 30; i++) k.put("mic" + i, i < g.micro ? "on" : "off");
+        for (int i = 0; i < 24; i++) k.put("mic" + i, i < g.micro ? "on" : "off");
         for (int i = 0; i < 12; i++) { k.put("sch" + i, i < g.schools ? "on" : "off"); k.put("hos" + i, i < g.hospitals ? "on" : "off"); k.put("par" + i, i < g.parks ? "on" : "off"); k.put("mal" + i, i < g.malls ? "on" : "off"); }
         k.put("sky", g.pop >= 200000 ? String.valueOf(Math.min(9, (g.pop - 200000) / 100000 + 1)) : "off");
         return k;
@@ -345,8 +345,8 @@ public class CityView extends View {
             {860, 90, 76}, {370, 70, 60}, {650, 74, 62}, {980, 84, 70}, {-60, 80, 64}, {520, 66, 58}};
     void drawFactories() {
         layer(.78f);
-        for (int i = 0; i < Math.max(FAC.length, g.factories); i++) {
-            if (i >= g.factories) continue;
+        int nFac = Math.min(g.factories, 40);
+        for (int i = 0; i < nFac; i++) {
             float[] fp = facPos(i); float x = fp[0], w = fp[1], h = fp[2];
             float pr = prog("fac" + i, 2), hh = h * pr, top = GROUND - 40 - hh;
             R(x, top, w, hh, "#2b3350");
@@ -795,7 +795,7 @@ public class CityView extends View {
         }
     }
     void drawMicro() {
-        int n = g.micro; if (n == 0) return;
+        int n = Math.min(24, g.micro); if (n == 0) return;
         layer(.9f);
         for (int i = 0; i < n; i++) {
             float x0 = micPos(i), pr = prog("mic" + i, 2.6f);

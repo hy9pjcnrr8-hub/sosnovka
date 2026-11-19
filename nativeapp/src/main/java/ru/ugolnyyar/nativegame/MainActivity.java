@@ -55,6 +55,7 @@ public class MainActivity extends Activity {
     private TextView hud1, hud2, hud3;
     private BarView bar;
     CityView city;
+    int stageH; LinearLayout colView;
     private Thread gameThread;
     /** Скрытый режим для автотеста: игра сама выбирает варианты. */
     volatile boolean autoplay = false;
@@ -113,6 +114,7 @@ public class MainActivity extends Activity {
         int screenH = getResources().getDisplayMetrics().heightPixels;
         int stageH = Math.max(dp(230), Math.min(dp(460), (int) (screenH * 0.44f)));
         col.addView(stage, new LinearLayout.LayoutParams(-1, stageH));
+        this.stageH = stageH; colView = col;
 
         // лог
         scroll = new ScrollView(this);
@@ -406,7 +408,13 @@ public class MainActivity extends Activity {
                 ctl.addView(pinned, plp);
             }
             final int maxH = (int) (getResources().getDisplayMetrics().heightPixels * 0.34f);
-            sv.post(() -> { if (sv.getHeight() > maxH) { svlp.height = maxH; sv.setLayoutParams(svlp); } });
+            sv.post(() -> {
+                int h = Math.min(sv.getHeight(), maxH);
+                int avail = colView.getHeight() - stageH - dp(44);
+                int over = ctl.getHeight() - (sv.getHeight() - h) - avail;
+                if (over > 0) h = Math.max(dp(64), h - over);
+                if (h < sv.getHeight()) { svlp.height = h; sv.setLayoutParams(svlp); }
+            });
         });
         Opt o;
         if (autoplay) {
