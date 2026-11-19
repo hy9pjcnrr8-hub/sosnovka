@@ -54,6 +54,7 @@ public class MainActivity extends Activity {
     private ScrollView scroll;
     private TextView hud1, hud2, hud3;
     private BarView bar;
+    CityView city;
     private Thread gameThread;
 
     // ───────────────────────── интерфейс ─────────────────────────
@@ -82,34 +83,40 @@ public class MainActivity extends Activity {
 
         FrameLayout root = new FrameLayout(this);
         root.setBackgroundColor(BG);
-        root.addView(new SnowView(this), new FrameLayout.LayoutParams(-1, -1));
 
         LinearLayout col = new LinearLayout(this);
         col.setOrientation(LinearLayout.VERTICAL);
         root.addView(col, new FrameLayout.LayoutParams(-1, -1));
 
-        // HUD
+        // сцена: нарисованный город + HUD поверх
+        FrameLayout stage = new FrameLayout(this);
+        stage.setBackgroundColor(Color.parseColor("#070b1d"));
+        city = new CityView(this, this);
+        stage.addView(city, new FrameLayout.LayoutParams(-1, -1));
         LinearLayout hud = new LinearLayout(this);
         hud.setOrientation(LinearLayout.VERTICAL);
-        hud.setPadding(dp(14), dp(10), dp(14), dp(10));
-        hud.setBackgroundColor(Color.argb(225, 13, 18, 32));
+        hud.setPadding(dp(10), dp(8), dp(10), dp(14));
+        hud.setBackground(new android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{Color.argb(215, 7, 10, 22), Color.argb(110, 7, 10, 22), Color.argb(0, 7, 10, 22)}));
         hud1 = hudText(hud);
         hud2 = hudText(hud);
         hud3 = hudText(hud);
+        hud3.setVisibility(View.GONE);
         bar = new BarView(this);
-        LinearLayout.LayoutParams blp = new LinearLayout.LayoutParams(-1, dp(6));
-        blp.topMargin = dp(7);
+        LinearLayout.LayoutParams blp = new LinearLayout.LayoutParams(-1, dp(5));
+        blp.topMargin = dp(6);
         hud.addView(bar, blp);
-        col.addView(hud, new LinearLayout.LayoutParams(-1, -2));
-        View sep = new View(this);
-        sep.setBackgroundColor(LINE);
-        col.addView(sep, new LinearLayout.LayoutParams(-1, 1));
+        stage.addView(hud, new FrameLayout.LayoutParams(-1, -2));
+        int screenH = getResources().getDisplayMetrics().heightPixels;
+        int stageH = Math.max(dp(230), Math.min(dp(460), (int) (screenH * 0.44f)));
+        col.addView(stage, new LinearLayout.LayoutParams(-1, stageH));
 
         // лог
         scroll = new ScrollView(this);
         logBox = new LinearLayout(this);
         logBox.setOrientation(LinearLayout.VERTICAL);
-        logBox.setPadding(dp(16), dp(14), dp(16), dp(10));
+        logBox.setPadding(dp(16), dp(8), dp(16), dp(10));
         scroll.addView(logBox, new ScrollView.LayoutParams(-1, -2));
         col.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1f));
 
@@ -132,8 +139,9 @@ public class MainActivity extends Activity {
     TextView hudText(LinearLayout parent) {
         TextView t = new TextView(this);
         t.setTextColor(DIM);
-        t.setTextSize(12.5f);
+        t.setTextSize(11.5f);
         t.setTypeface(Typeface.DEFAULT_BOLD);
+        t.setShadowLayer(dp(3), 0, 0, Color.BLACK);
         t.setPadding(0, dp(1), 0, dp(1));
         parent.addView(t);
         return t;
@@ -159,8 +167,8 @@ public class MainActivity extends Activity {
         TextView t = new TextView(this);
         t.setText(html(text));
         t.setTextColor(TEXT);
-        t.setTextSize(16);
-        t.setLineSpacing(0, 1.15f);
+        t.setTextSize(15);
+        t.setLineSpacing(0, 1.12f);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, -2);
         lp.bottomMargin = dp(10);
         View view = t;
@@ -168,7 +176,7 @@ public class MainActivity extends Activity {
             case H:
                 t.setText(html(text.toUpperCase()));
                 t.setTextColor(GOLD);
-                t.setTextSize(22);
+                t.setTextSize(20);
                 t.setTypeface(Typeface.DEFAULT_BOLD);
                 t.setGravity(Gravity.CENTER);
                 t.setShadowLayer(0, 0, dp(2), Color.BLACK);
@@ -178,7 +186,7 @@ public class MainActivity extends Activity {
             case BIG:
             case BIGR:
                 t.setTextColor(kind == BIG ? GOLD : RED);
-                t.setTextSize(36);
+                t.setTextSize(32);
                 t.setTypeface(Typeface.DEFAULT_BOLD);
                 t.setGravity(Gravity.CENTER);
                 t.setShadowLayer(0, 0, dp(3), Color.BLACK);
@@ -235,7 +243,7 @@ public class MainActivity extends Activity {
         b.setAllCaps(false);
         b.setTextSize(15);
         b.setGravity(style == 0 ? (Gravity.START | Gravity.CENTER_VERTICAL) : Gravity.CENTER);
-        b.setPadding(dp(14), dp(12), dp(14), dp(12));
+        b.setPadding(dp(13), dp(10), dp(13), dp(10));
         b.setStateListAnimator(null);
         String full = escape(text);
         if (costLine != null) {
@@ -257,7 +265,7 @@ public class MainActivity extends Activity {
         b.setEnabled(enabled);
         if (!enabled) b.setAlpha(0.45f);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, -2);
-        lp.bottomMargin = dp(8);
+        lp.bottomMargin = dp(7);
         b.setLayoutParams(lp);
         return b;
     }
@@ -293,6 +301,7 @@ public class MainActivity extends Activity {
     }
 
     void clear() { post(() -> logBox.removeAllViews()); }
+    void focus(String key) { post(() -> city.focus(key, 6000)); }
 
     void pause(String label) {
         answers.clear();
@@ -371,13 +380,13 @@ public class MainActivity extends Activity {
 
     static final int DEADLINE = 365, GOAL = 50000;
 
-    int day, pop, trust, factories, blocks, ads;
+    volatile int day, pop, trust, factories, blocks, ads;
     double budget;
     long housing, jobs;
     final Map<String, Long> income = new LinkedHashMap<>();
-    String chapter, heat, light, water, comm, shops, lift, housingChoice, mine;
+    volatile String chapter, heat, light, water, comm, shops, lift, housingChoice, mine;
     int road;
-    boolean matvey, mineOpen, frozen, ms10, ms25;
+    volatile boolean matvey, mineOpen, frozen, ms10, ms25, roadSet, ratrak, hotel, ventLit, matveyVis;
 
     void newGame() {
         day = 0; budget = 12_000_000; pop = 312; trust = 50; chapter = "ПРОЛОГ";
@@ -386,6 +395,8 @@ public class MainActivity extends Activity {
         heat = light = water = comm = shops = housingChoice = mine = null;
         lift = "none"; road = 0;
         matvey = mineOpen = frozen = ms10 = ms25 = false;
+        roadSet = ratrak = hotel = ventLit = matveyVis = false;
+        post(() -> city.reset());
     }
 
     int daysLeft() { return Math.max(0, DEADLINE - day); }
@@ -415,9 +426,9 @@ public class MainActivity extends Activity {
         c.add(Calendar.DAY_OF_YEAR, day);
         String date = String.format("%02d.%02d.%02d", c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR) % 100);
         long inc = monthly();
-        String l1 = "● " + date + "   " + col(C_RED, "ДО СРОКА: " + daysLeft() + " ДН.") + "   " + col(C_GOLD, chapter);
-        String l2 = col(C_GREEN, "ЖИТЕЛИ: " + fmt(pop) + " / " + fmt(GOAL)) + "    " + col(C_GOLD, "БЮДЖЕТ: " + money(budget));
-        String l3 = col(inc >= 0 ? C_GREEN : C_RED, (inc >= 0 ? "+" : "") + money(inc) + "/мес") + "    " + col(C_BLUE, "ДОВЕРИЕ: " + trust);
+        String l1 = col(C_RED, date + " · " + daysLeft() + " ДН.") + "   " + col(C_GOLD, chapter) + "   " + col(C_BLUE, "♥ " + trust);
+        String l2 = col(C_GREEN, "👥 " + fmt(pop) + " / " + fmt(GOAL)) + "   " + col(C_GOLD, money(budget)) + " " + col(inc >= 0 ? C_GREEN : C_RED, (inc >= 0 ? "+" : "") + fmt(inc) + "/мес");
+        String l3 = "";
         float frac = Math.min(1f, pop / (float) GOAL);
         post(() -> {
             hud1.setText(html(l1));
@@ -441,6 +452,7 @@ public class MainActivity extends Activity {
         int old = pop;
         pop = (int) Math.max(0, pop + n);
         int d = pop - old;
+        if (d != 0) { final String fs = (d > 0 ? "+" : "−") + fmt(Math.abs(d)) + " жителей"; final int fc = d > 0 ? GREEN : RED; post(() -> city.addFloat(fs, fc)); }
         if (d != 0) say(col(d > 0 ? C_GREEN : C_RED, (d > 0 ? "+" : "−") + fmt(Math.abs(d)) + " жителей") + " <font color='" + C_DIM + "'>" + why + "</font>", DELTA, 300);
     }
 
@@ -469,6 +481,7 @@ public class MainActivity extends Activity {
 
     void ch1() {
         chapter = "1. ТЕПЛО";
+        focus("boiler");
         say("Часть 1 · Тепло", H);
         say("Ноябрь. −34°. Котельная стоит с 2014-го, в квартирах — как на улице.");
         say("На складе шахты лежит гора угля, которую так и не вывезли:");
@@ -499,6 +512,7 @@ public class MainActivity extends Activity {
 
     void ch2() {
         chapter = "2. ДОРОГА";
+        focus("road");
         say("Часть 2 · Дорога", H);
         say("До трассы — 60 километров. Зимой дорогу заметает так, что даже вахтовый автобус не проходит неделями.");
         say("60 КМ", BIG);
@@ -507,6 +521,7 @@ public class MainActivity extends Activity {
                 new Opt("Отсыпать грейдером и поставить снегозащитные щиты", 1_500_000, "shields"),
                 new Opt("Оставить зимник как есть", 0, "none"));
         road = k.equals("asphalt") ? 2 : k.equals("shields") ? 1 : 0;
+        roadSet = true;
         if (road == 2) {
             advance(45);
             say("Ровная чёрная лента от трассы до самого посёлка.");
@@ -528,6 +543,7 @@ public class MainActivity extends Activity {
 
     void ch3() {
         chapter = "3. СВЕТ";
+        focus("light");
         say("Часть 3 · Свет", H);
         say("Свет в посёлке гаснет каждый вечер. Высокая линия ЛЭП цела — значит, дело в подстанции.");
         say("Открываешь дверь трансформаторной будки…");
@@ -551,9 +567,11 @@ public class MainActivity extends Activity {
 
     void ch4() {
         chapter = "4. ШАХТА?";
+        focus("mine");
         say("Часть 4 · Шахта?", H);
         say("Шахта «Северная» закрыта двенадцать лет. Ворота заварены, табличка «ВХОД ЗАПРЕЩЁН».");
         say("А этой ночью, в 02:14, ты возвращаешься из райцентра и видишь у вентиляционного ствола…");
+        ventLit = true;
         say("…тёплый свет в окне. И дым из трубы.", GOLDK);
         pause();
         say("Ты подходишь к двери. Дёргаешь ручку — открыто.");
@@ -567,6 +585,7 @@ public class MainActivity extends Activity {
                 new Opt("Уйти и сделать вид, что ничего не видел", 0, "ignore"));
         advance(1, true);
         if (k.equals("meet")) {
+            matveyVis = true;
             say("03:00. Люк скрипит. Из темноты поднимается каска с фонарём. Свет падает на лицо…");
             say("ДЕД МАТВЕЙ", BIG);
             say("Если насосы встанут — шахту затопит за неделю. Я её двенадцать лет держу. Думал, вернутся люди…", QUOTE);
@@ -574,6 +593,7 @@ public class MainActivity extends Activity {
             mine = "alive"; matvey = true;
             addTrust(15);
         } else if (k.equals("police")) {
+            ventLit = false;
             say("Приезжает наряд. Матвея — а это был он — выводят под руки. Ночью насосы никто не включает.");
             say("ШАХТА ЗАТОПЛЕНА", STAMP);
             say("Посёлок узнаёт, кто вызвал полицию на старика.");
@@ -615,6 +635,7 @@ public class MainActivity extends Activity {
 
     void ch5() {
         chapter = "5. ВОДОПРОВОД";
+        focus("water");
         say("Часть 5 · Вода", H);
         say("Открываешь кран. Кран сухой.");
         say("ВОДЫ НЕТ · С 2014", STAMP);
@@ -657,6 +678,7 @@ public class MainActivity extends Activity {
 
     void ch6() {
         chapter = "6. СВЯЗЬ";
+        focus("shops");
         say("Часть 6 · Магазины и связь", H);
         say("Новые жители задают два вопроса:");
         say("«Где связь?» «Где магазины?»", GOLDK);
@@ -704,6 +726,7 @@ public class MainActivity extends Activity {
 
     void ch7() {
         chapter = "7. КУРОРТ";
+        focus("lift");
         say("Часть 7 · Курорт", H);
         say("За посёлком — гора. Снег лежит <b>7 месяцев в году</b>. Лучшие склоны в области — и ни одного подъёмника.");
         say("Новый подъёмник стоит " + col(C_RED, "60 000 000 ₽") + ". У нас — " + col(C_GOLD, money(budget)) + ".");
@@ -729,12 +752,14 @@ public class MainActivity extends Activity {
         String k2 = choose("Ратрак:",
                 new Opt("Купить новый ратрак", 3_000_000, "new"),
                 new Opt("Сдать старое железо шахты на лом (+1,5 млн) и купить б/у ратрак (−1,2 млн)", -300_000, "scrap"));
+        ratrak = true;
         if (k2.equals("scrap")) say("Старый ратрак ревёт и дымит. Ездит — и ладно.");
         advance(10);
         say("Остаётся гостиница «Яр». Стены облупились, окна заколочены.");
         String k3 = choose("Гостиница:",
                 new Opt("Покрасить стены, вставить окна, открыть 40 номеров", 500_000, "hotel"),
                 new Opt("Туристы пусть ездят на день", 0, "none"));
+        hotel = k3.equals("hotel");
         advance(10);
         double base = lift.equals("winch") ? 1_600_000 : 2_400_000;
         double roadMult = road == 0 ? 0.4 : road == 1 ? 0.8 : 1.0;
@@ -750,6 +775,7 @@ public class MainActivity extends Activity {
 
     void ch8() {
         chapter = "8. ЖИЛЬЁ";
+        focus("renov");
         say("Часть 8 · Жильё", H);
         say("Курорт заметили в Москве. Приходит федеральный грант:");
         budget += 20_000_000;
@@ -840,6 +866,7 @@ public class MainActivity extends Activity {
 
     void ch9() {
         chapter = "9. РАБОТА";
+        focus("town");
         say("Часть 9 · Работа", H);
         jobs += (long) Math.floor(pop * .5);
         housing = Math.max(housing, pop);
