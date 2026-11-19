@@ -178,6 +178,16 @@
   .arOpt.lock{border-style:dashed}.arOpt.sel{border-color:#c7ff48;background:rgba(199,255,72,.1)}
   .arOpt s.pr{color:#ffd27a;font-size:12px}.arOpt s.pr.no{color:#ff8a7e}.arOpt s{color:#c7ff48}
   .arOpt:disabled{opacity:.5;cursor:default}
+  #campaign,#campaign2{justify-content:flex-start;overflow-y:auto;padding-top:calc(env(safe-area-inset-top) + 18px)}
+  #campList{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;width:min(900px,94%)}
+  #offers{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;width:min(900px,94%);margin:0 0 10px}#offers>b{width:100%;font-size:13px;letter-spacing:1px;color:#ffd27a}
+  .offer{display:flex;gap:8px;align-items:center;padding:7px 10px;background:linear-gradient(135deg,rgba(255,210,122,.16),rgba(0,0,0,.3));border:1px solid rgba(255,210,122,.45);border-radius:6px;color:#fff;font:inherit;font-size:12px;cursor:pointer}
+  .offer i{font-style:normal;background:#e0392b;padding:1px 5px;border-radius:3px;font-weight:800;font-size:11px}.offer em{font-style:normal;color:#c7ff48;font-weight:800}.offer.got{opacity:.5}
+  #knifeBtn{width:46px;height:46px;right:calc(env(safe-area-inset-right) + 252px);bottom:calc(env(safe-area-inset-bottom) + 126px)}
+  #vign{position:fixed;inset:0;pointer-events:none;z-index:3;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.38) 100%);transition:opacity .35s}
+  body.sprint #vign{background:radial-gradient(ellipse at center,rgba(0,0,0,0) 38%,rgba(0,0,0,.55) 100%)}
+  body.sprint canvas{filter:blur(.4px)}
+  .cBrief{font-size:12px;opacity:.75;max-width:600px;margin:0 0 10px}
   #missions{justify-content:flex-start;overflow-y:auto;padding-top:calc(env(safe-area-inset-top) + 18px)}
   .msHead{display:flex;gap:14px;align-items:center}
   #msList{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;width:min(900px,94%)}
@@ -396,6 +406,15 @@
   .ov>:first-child{margin-top:auto}.ov>:last-child{margin-bottom:auto}
   #menu>:first-child{margin-top:0}
   .hidden{display:none!important}
+  /* 0.50 menu: 10 mode cards, campaign button */
+  .mActs{grid-column:2;grid-row:7;display:flex;gap:10px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+  #secOff .mActs .mPlay{margin:6px 0 0 0!important;grid-row:auto}
+  .mCampB{margin:6px 0 0 0!important;display:inline-flex;align-items:center;gap:8px;padding:11px 18px!important;font-size:13px!important;letter-spacing:2px!important;font-weight:900!important;background:rgba(255,210,122,.14)!important;color:#ffd27a!important;border:1px solid rgba(255,210,122,.6)!important;border-radius:0!important;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+  .mCampB svg{width:18px;height:18px}
+  #modes .card b,#modes .card span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  @media (max-height:500px){ #modes .card b{font-size:11.5px!important;letter-spacing:0!important} #modes .card{padding-left:38px!important;padding-right:6px!important} #modes .card .ic{left:7px!important} }
+  @media (max-height:500px){ #modes .card{padding-top:5px!important;padding-bottom:5px!important} #modes{gap:5px!important} #modes .card span{font-size:10px!important;margin-top:0} }
+  @media (max-width:640px){ .mActs{grid-column:1;grid-row:auto;justify-content:center} }
 </style>
 </head>
 <body>
@@ -414,6 +433,7 @@
   <div id="crouch" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><circle cx="17" cy="7" r="3" fill="currentColor"/><path d="M17 11l-3 7h7l2 7M14 18l-4 3 2 5M17 13l5 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><em>ПРИСЕД</em></div>
   <div id="reload" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M25 13a9.5 9.5 0 1 0 1 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 6v7h-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="13" y="12" width="6" height="9" rx="1" fill="currentColor"/></svg><em>ЗАРЯД</em></div>
   <div id="swap" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 11h17l-4-4M27 21H10l4 4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><em>ОРУЖИЕ</em></div>
+  <div id="knifeBtn" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27l4-4 2 2-4 4z" fill="currentColor"/><path d="M10 22L25 5c2 3 1 7-3 11L12 24z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg></div>
   <div id="nade" class="btn touch-only">ОСК<small>×1</small></div>
   <div id="nadeSw" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M9 9a10 10 0 1 1-2 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 5v6h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><em>ГРАНАТА</em></div>
   <div id="pause" class="btn"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="7" width="5" height="18" rx="1" fill="currentColor"/><rect x="18" y="7" width="5" height="18" rx="1" fill="currentColor"/></svg></div>
@@ -424,7 +444,7 @@
   <div id="emoteBtn" class="btn"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="13" r="1.8" fill="currentColor"/><circle cx="20" cy="13" r="1.8" fill="currentColor"/><path d="M10 19c3 4 9 4 12 0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></div>
   <div id="emoteWheel" class="hidden"></div>
   <div id="strikeBtn" class="btn hidden"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l3 10 10 4-10 2-3 10-3-10-10-2 10-4z" fill="currentColor" opacity=".9"/></svg><em>АВИА</em></div><div id="strikeKey" class="hidden">B — авиаудар</div>
-  <div id="streakBan"></div><div id="lvlUp"></div>
+  <div id="vign"></div><div id="streakBan"></div><div id="lvlUp"></div>
   <div id="bombBar" class="hidden"><span id="bombLbl"></span><div><i id="bombFill"></i></div></div>
   <div id="tutBox" class="hidden"></div>
   <div id="joy"><i id="joyK"></i></div>
@@ -440,7 +460,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.41</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.50</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -452,10 +472,12 @@
     <button class="card" data-mode="snipe"><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="10" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M16 2v8M16 22v8M2 16h8M22 16h8" stroke="currentColor" stroke-width="2.2"/><circle cx="16" cy="16" r="1.8" fill="currentColor"/></svg><b>Снайперская дуэль</b><span>3 на 3 · только винтовки</span></button>
     <button class="card" data-mode="ffa"><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="11" r="5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M6 28c1-6 5-9 10-9s9 3 10 9" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M25 4l3 3M28 4l-3 3" stroke="currentColor" stroke-width="2"/></svg><b>Последний выживший</b><span>все против всех · 1 жизнь</span></button>
     <button class="card" data-mode="bomb"><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="19" r="9" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 12l4-4M24 8c1-3 4-3 5-1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><b>Подрыв</b><span>заложите бомбу · 1 жизнь</span></button>
+    <button class="card" data-mode="ctf"><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M6 29V4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M7 5h8l2 3h9v10h-9l-2-3H7z" fill="currentColor" opacity=".85"/><path d="M20 26l4-4 4 4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><b>Захват флага</b><span>3 флага на свою базу</span></button>
+    <button class="card" data-mode="zomb"><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M8 14a8 8 0 0 1 16 0v6l-2 3h-3l-1 3h-4l-1-3h-3l-2-3z" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round"/><circle cx="12.5" cy="15" r="2" fill="currentColor"/><circle cx="19.5" cy="15" r="2" fill="currentColor"/></svg><b>Зомби</b><span>орды нежити · волны</span></button>
     <button class="card" data-mode="tut"><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 12l13-6 13 6-13 6z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M9 15v6c3 3 11 3 14 0v-6M27 13v8" fill="none" stroke="currentColor" stroke-width="2.2"/></svg><b>Обучение</b><span>основы за 2 минуты · +300 КР</span></button>
   </div>
 <div class="row" id="maps"><span class="lbl">Карта</span>
-    <button class="opt sel" data-map="forest">Сосновая падь</button><button class="opt" data-map="fields">Поля</button><button class="opt" data-map="front">Фронт</button><button class="opt" data-map="village">Деревня</button><button class="opt" data-map="taiga">Тайга</button></div>
+    <button class="opt sel" data-map="forest">Сосновая падь</button><button class="opt" data-map="fields">Поля</button><button class="opt" data-map="front">Фронт</button><button class="opt" data-map="village">Деревня</button><button class="opt" data-map="taiga">Тайга</button><button class="opt" data-map="base">База</button></div>
 <div class="row" id="conds"><span class="lbl">Условия</span><button class="opt" data-time="day">День</button><button class="opt" data-time="evening">Вечер</button><button class="opt" data-time="night">Ночь</button><button class="opt" data-rain="t">☂ Дождь</button><button class="opt" data-wx="fog">Туман</button><button class="opt" data-wx="blizzard">Метель</button></div>
   <div class="row" id="clsRow"><span class="lbl">Класс</span><button class="opt" data-cls="assault">Штурмовик</button><button class="opt" data-cls="medic">Медик</button><button class="opt" data-cls="engineer">Инженер</button><button class="opt" data-cls="scout">Разведчик</button></div>
   <div class="row" id="myteam"><span class="lbl">Команда</span>
@@ -464,7 +486,7 @@
     <button class="opt" data-diff="easy">Лёгкая</button><button class="opt sel" data-diff="normal">Нормальная</button><button class="opt" data-diff="hard">Сложная</button></div>
   <div class="row" id="gfxs"><span class="lbl">Графика</span>
     <button class="opt sel" data-gfx="high">Высокая</button><button class="opt" data-gfx="mid">Средняя</button><button class="opt" data-gfx="low">Низкая</button></div>
-  <button class="big mPlay" id="play"><span class="pa">▶</span>В БОЙ</button>
+  <div class="mActs"><button class="big mCampB" id="openCamp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 6l7-2 8 3 7-2v21l-7 2-8-3-7 2z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 4v21M20 7v21" stroke="currentColor" stroke-width="2"/></svg>КАМПАНИЯ</button><button class="big mPlay" id="play"><span class="pa">▶</span>В БОЙ</button></div>
   </div>
   <div id="secOn" class="hidden">
     <div class="row" id="netKinds"><span class="lbl">Сервер</span><button class="opt" data-net="pub">Серверы игры</button><button class="opt" data-net="claude">Облачный</button><button class="opt" data-net="ws">Свой сервер</button></div>
@@ -474,7 +496,7 @@
     <div id="netst"><span class="dot wait"></span>Подключение к серверу…</div>
     <div class="row"><span class="lbl">Позывной</span><input class="nick" id="nick" maxlength="16" autocomplete="off" spellcheck="false"></div>
     <div class="row" id="maps2"><span class="lbl">Карта</span>
-    <button class="opt sel" data-map="forest">Сосновая падь</button><button class="opt" data-map="fields">Поля</button><button class="opt" data-map="front">Фронт</button><button class="opt" data-map="village">Деревня</button><button class="opt" data-map="taiga">Тайга</button></div>
+    <button class="opt sel" data-map="forest">Сосновая падь</button><button class="opt" data-map="fields">Поля</button><button class="opt" data-map="front">Фронт</button><button class="opt" data-map="village">Деревня</button><button class="opt" data-map="taiga">Тайга</button><button class="opt" data-map="base">База</button></div>
 <div class="row" id="conds2"><span class="lbl">Условия</span><button class="opt" data-time="day">День</button><button class="opt" data-time="evening">Вечер</button><button class="opt" data-time="night">Ночь</button><button class="opt" data-rain="t">☂ Дождь</button><button class="opt" data-wx="fog">Туман</button><button class="opt" data-wx="blizzard">Метель</button></div>
     <div class="row" id="teams"><span class="lbl">Команда</span>
       <button class="opt sel" data-team="auto">Авто</button><button class="opt" data-team="0">Синие</button><button class="opt" data-team="1">Красные</button></div>
@@ -485,7 +507,7 @@
     <div class="help">Онлайн-бой: живые игроки, синие против красных, без ботов и без лимита времени. <b>Серверы игры</b> — общие серверы, заходить можно из любой сети и с любого устройства, без регистрации; «Своя комната» — отдельный сервер по коду только для друзей. <b>Облачный</b> — встроенный сервер для тех, кому вы открыли доступ к игре. <b>Свой сервер</b>: один игрок запускает на компьютере файл server.js из архива игры (нужен Node.js), остальные в той же Wi-Fi сети открывают адрес, который он покажет, или вводят его здесь. Сервер можно разместить и в интернете.</div>
   </div>
   <div class="help"><b>Телефон</b> (держите горизонтально): левая часть экрана — движение (до упора вперёд — бег), правая — обзор. Кнопки: огонь (две), прицел, прыжок, присесть, перезарядка, ⇄ смена оружия.<br>
-  <b>Компьютер:</b> клик — захват мыши · WASD · Shift бег · C присесть · пробел прыжок · ЛКМ огонь · ПКМ прицел · R · 1/2, Q или колесо — смена оружия · G граната · T выбор гранаты · Esc пауза.<br>
+  <b>Компьютер:</b> клик — захват мыши · WASD · Shift бег · C присесть · пробел прыжок · ЛКМ огонь · ПКМ прицел · R · 1/2, Q или колесо — смена оружия · G граната · T выбор гранаты · F нож · I осмотр оружия · Esc пауза.<br>
   Синие — в тёмно-синей форме с синими повязками, красные — в бордовой с красными. Своих видно по именам над головой. Деньги (КР) даются за убийства, победы и миссии.</div>
   <div id="err"></div>
   <div class="mTip"><b>СОВЕТ</b><span id="mTip"></span></div>
@@ -522,10 +544,11 @@
   <textarea id="accCodeTxt" readonly spellcheck="false"></textarea>
   <div class="row"><button class="big" id="accCodeCopy">Скопировать</button><button class="big alt" id="accCodeClose">Закрыть</button></div></div>
 <div id="profile" class="ov hidden"><h1 style="font-size:22px">ПРОФИЛЬ БОЙЦА</h1><div id="profBody"></div><button class="big" id="profClose">Назад</button></div>
-<div id="lboard" class="ov hidden"><h1 style="font-size:22px">РЕЙТИНГ</h1><div id="lbHead"></div><div class="tabs" id="lbTabs"><button class="tab" data-t="season">Сезон</button><button class="tab" data-t="all">За всё время</button><button class="tab" data-t="clans">Кланы</button></div><div id="lbList"></div><button class="big" id="lbClose">Назад</button></div>
+<div id="lboard" class="ov hidden"><h1 style="font-size:22px">РЕЙТИНГ</h1><div id="lbHead"></div><div class="tabs" id="lbTabs"><button class="tab" data-t="season">Сезон</button><button class="tab" data-t="all">За всё время</button><button class="tab" data-t="week">Турнир недели</button><button class="tab" data-t="clans">Кланы</button></div><div id="lbList"></div><button class="big" id="lbClose">Назад</button></div>
+<div id="campaign" class="ov hidden"><h1 style="font-size:24px">КАМПАНИЯ</h1><div class="cBrief">Пять операций подряд. Каждая открывает следующую и приносит награду при первом прохождении.</div><div id="campList"></div><button class="big" id="campClose">Назад</button></div>
 <div id="missions" class="ov hidden"><div class="msHead"><h1 style="font-size:24px">МИССИИ</h1><span class="money" id="moneyMs">0 КР</span></div>
   <div class="help" style="margin:4px 0 10px">Выполняйте задания в любых режимах, забирайте награду — после этого задание переходит на следующий уровень с большей наградой.</div>
-  <div id="msDaily"></div><div id="msList"></div><button class="big" id="msClose">Назад</button></div>
+  <div id="offers"></div><div id="msDaily"></div><div id="msList"></div><button class="big" id="msClose">Назад</button></div>
 <div id="about" class="ov hidden"><h1 style="font-size:26px">ЛЕСНОЙ РУБЕЖ</h1><div class="sub">РАЗРАБОТЧИКИ</div>
   <div class="sgrid" style="max-width:900px">
     <div class="sbox"><h3>paralysax</h3><p style="margin:0;font-size:14px;line-height:1.5">Главный разработчик. Идея игры, режимы и карты, модель тяжёлого пистолета, модели бойцов, движок погоды и времени суток.</p></div>
@@ -2828,7 +2851,7 @@ function renderMissions(){
       <div class="msBot"><span>${st.prog} / ${t}</span>${done ? `<button class="big claim" data-id="${m.id}">Забрать ${msReward(m)} КР</button>` : `<span class="rw">Награда: ${msReward(m)} КР</span>`}</div></div>`; }).join('');
 }
 $('msList').addEventListener('click', e => { const b = e.target.closest('button.claim'); if (b) claimMission(b.dataset.id); });
-function openMissions(){ $('menu').classList.add('hidden'); $('missions').classList.remove('hidden'); renderMissions(); renderMoney(); if (typeof renderDaily === 'function' && ACC) $('msDaily').innerHTML = renderDaily(); applyLang && applyLang(); }
+function openMissions(){ try { renderOffers(); } catch(e){} $('menu').classList.add('hidden'); $('missions').classList.remove('hidden'); renderMissions(); renderMoney(); if (typeof renderDaily === 'function' && ACC) $('msDaily').innerHTML = renderDaily(); applyLang && applyLang(); }
 $('openMissions').addEventListener('click', openMissions);
 $('msClose').addEventListener('click', () => { $('missions').classList.add('hidden'); $('menu').classList.remove('hidden'); });
 // ---- kill rewards & mission hooks ----
@@ -2845,7 +2868,52 @@ function carryList(){ const l = [WEAPON_KEYS.indexOf(PROG.primary)]; if (PROG.se
 
 // drop attachments the player hasn't bought (older saves had everything free)
 for (const k in SLOTS) for (const sl in SLOTS[k]) if (!ownsOpt(k, sl, LOADOUT[k][sl])) LOADOUT[k][sl] = DEFAULT_LOADOUT[k][sl];
-const WEAPON_KEYS = ['rifle','carbine','battle','smg','mp','sniper','shotgun','pistol','hpistol','revolver'];
+// ---------- 0.50 weapons: light machine gun «Буран», crossbow «Тихий» ----------
+function buildLMG(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  P.box(g,.07,.1,.36,M.metal,0,0,0); P.box(g,.074,.035,.2,M.metal2,0,.06,.02);                  // receiver + feed cover
+  P.box(g,.06,.11,.12,M.poly,.0,-.1,.05); P.box(g,.064,.02,.124,M.metal,0,-.155,.05);             // box magazine
+  for (let k = 0; k < 6; k++) P.box(g,.012,.012,.02,0 === k ? M.metal : M.metal2,-.04,-.02 - k*.012,.04 + k*.006);   // belt links
+  P.zc(g,.024,.024,.3,M.metal2,0,.01,-.33,20); for (let k = 0; k < 8; k++) P.zc(g,.028,.028,.012,M.dark,0,.01,-.21 - k*.034,16);  // heat shield
+  P.zc(g,.011,.011,.18,M.metal,0,.01,-.55,12); P.box(g,.02,.06,.03,M.metal,0,.05,-.22);           // barrel + carry handle post
+  P.box(g,.018,.018,.16,M.metal,0,.085,-.13);
+  if (att.optic === 'iron'){ P.ring(g,.013,.003,M.metal,0,.046,-.6); P.box(g,.024,.02,.02,M.metal,0,.08,.12); out.ads = new THREE.Vector3(0,-.07,-.3); }
+  else { rail(g, M, .18, 0, .08, .0); const r = OPTICS[att.optic](g, M, [0,.0905,.01]); out.ads = new THREE.Vector3(0, -(.0905 + r.sightY), -.3); }
+  const tip = MUZZLES[att.muzzle](g, M, [0,.01,-.64]); const mz = new THREE.Object3D(); mz.position.set(0,.01,tip-.01); g.add(mz); out.muzzle = mz;
+  for (const sd of [-1, 1]){ const leg = P.box(g,.012,.2,.012,M.metal,sd*.03,-.09,-.46); leg.rotation.x = .25; leg.rotation.z = sd*.25; }   // folded bipod
+  const [L, pose] = underFor(g, M, att, [0,-.04,-.24], [0,-.055,-.26], out);
+  P.box(g,.034,.1,.046,M.poly,0,-.09,.12,-.3); stockFor(g, M, att, .18);
+  if (hands_) hands(g, [0,-.1,.13], L, pose);
+  out.pos = new THREE.Vector3(.19,-.2,-.4); return out;
+}
+function buildXbow(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  P.box(g,.05,.06,.5,M.poly,0,0,-.05); P.box(g,.02,.012,.42,M.metal,0,.036,-.08);                  // stock + rail
+  const limbM = M.metal2; for (const sd of [-1, 1]){ const l = P.box(g,.26,.03,.03,limbM,sd*.14,.02,-.3); l.rotation.y = sd*.35; }   // limbs
+  const str = new THREE.Mesh(new THREE.CylinderGeometry(.002,.002,.5,4), SM(0xd9d4c4,.9)); str.rotation.z = Math.PI/2; str.position.set(0,.03,-.16); g.add(str);
+  P.zc(g,.006,.006,.38,SM(0x6a5a3a,.8),0,.048,-.2,6); P.box(g,.01,.02,.03,SM(0xc7ff48,.5),0,.048,-.4);   // bolt + fletching
+  P.box(g,.03,.09,.05,M.poly,0,-.07,.1,-.3); P.box(g,.012,.03,.03,M.metal,0,-.035,.04);              // grip + trigger
+  if (att.optic === 'iron'){ P.ring(g,.014,.003,M.metal,0,.07,-.12); out.ads = new THREE.Vector3(0,-.075,-.24); }
+  else { rail(g, M, .14, 0, .05, .02); const r = OPTICS[att.optic](g, M, [0,.0605,.02]); out.ads = new THREE.Vector3(0, -(.0605 + r.sightY), -.26); }
+  const mz = new THREE.Object3D(); mz.position.set(0,.048,-.42); g.add(mz); out.muzzle = mz;
+  const [L, pose] = underFor(g, M, att, [0,-.03,-.25], [0,-.045,-.27], out);
+  if (hands_) hands(g, [0,-.09,.11], L, pose);
+  out.pos = new THREE.Vector3(.17,-.18,-.36); return out;
+}
+Object.assign(BASE, {
+  lmg: {key:'lmg', name:'ПУЛЕМЁТ «БУРАН»', feed:'«Буран»', auto:true, rate:.085, mag:100, resMax:200, reload:4.2, dmg:27, pellets:1, spread:.022, adsMul:.35, kick:.011, adsFov:54, snd:[.55,2100,.18], mob:.86},
+  xbow:{key:'xbow', name:'АРБАЛЕТ «ТИХИЙ»', feed:'«Тихий»', auto:false, rate:1.1, mag:1, resMax:20, reload:1.6, dmg:110, pellets:1, spread:.004, adsMul:.2, kick:.02, adsFov:44, snd:[.08,4000,.06], mob:1},
+});
+Object.assign(SLOTS, {
+  lmg: {optic:['iron','reddot','holo','x4'], muzzle:['std','flash','comp'], under:['none','vgrip','bipod'], stock:['tact','wood'], finish:ALL_FIN},
+  xbow:{optic:['iron','reddot','x4'], under:['none','laser'], finish:ALL_FIN},
+});
+for (const k of ['lmg','xbow']){ DEFAULT_LOADOUT[k] = {}; for (const sl in SLOTS[k]){ const o = SLOTS[k][sl][0]; DEFAULT_LOADOUT[k][sl] = Array.isArray(o) ? o[0] : o; } if (!LOADOUT[k]) LOADOUT[k] = JSON.parse(JSON.stringify(DEFAULT_LOADOUT[k])); }
+Object.assign(BUILDERS, {lmg:buildLMG, xbow:buildXbow});
+Object.assign(WCAT, {lmg:'primary', xbow:'primary'}); Object.assign(WCLASS, {lmg:'Ручной пулемёт', xbow:'Арбалет'}); Object.assign(W3P, {lmg:'rifle', xbow:'sniper'});
+Object.assign(PRICE_W, {lmg:2800, xbow:1800});
+
+const WEAPON_KEYS = ['rifle','carbine','battle','smg','mp','sniper','shotgun','pistol','hpistol','revolver','lmg','xbow'];
 const WEAPONS = WEAPON_KEYS.map(k => Object.assign(computeStats(k, LOADOUT[k]), {model:buildWeaponModel(k, LOADOUT[k])}));
 const vFlash = new THREE.Mesh(new THREE.SphereGeometry(.045,8,8), FLASH_MAT); vFlash.scale.set(1,1,2.4); vFlash.visible = false;
 const vLight = new THREE.PointLight(0xffc070, 0, 9);
@@ -2903,7 +2971,7 @@ function openArmory(from){
 }
 function closeArmory(){ armoryOpen = false; $('armory').classList.add('hidden'); $(arFrom === 'pause' ? 'pauseMenu' : 'menu').classList.remove('hidden'); if (arModel){ arPivot.remove(arModel.g); disposeTree(arModel.g); arModel = null; } }
 let arPending = null, arNades = false;
-const SHORT_W = {rifle:'АК', carbine:'«Вихрь»', battle:'«Тайга»', smg:'«Шершень»', mp:'«Оса»', sniper:'Снайперская', shotgun:'Дробовик', pistol:'Пистолет', hpistol:'Тяж. пистолет', revolver:'«Бизон»'};
+const SHORT_W = {rifle:'АК', carbine:'«Вихрь»', battle:'«Тайга»', smg:'«Шершень»', mp:'«Оса»', sniper:'Снайперская', shotgun:'Дробовик', pistol:'Пистолет', hpistol:'Тяж. пистолет', revolver:'«Бизон»', lmg:'«Буран»', xbow:'«Тихий»'};
 function weapBtn(k, i){ const own = !!PROG.weapons[k], inHand = PROG.primary === k || PROG.secondary === k;
   return `<button class="arW${i === arWeap && !arNades ? ' sel' : ''}${own ? '' : ' lock'}" data-i="${i}"><b>${SHORT_W[k]}</b><span>${own ? (inHand ? '● в руках' : WCLASS[k]) : '🔒 ' + fmtMoney(PRICE_W[k])}</span></button>`; }
 function renderArmory(){
@@ -3501,8 +3569,9 @@ function clearBots(){ for (const b of bots) scene.remove(b.root); bots = []; }
 
 // =============== MATCH FLOW ===============
 function startMatch(){
+  ZMB = mode === 'zomb'; if (ZMB) mode = 'surv'; ctfClear();
   if (curMap !== selMap) buildWorld(selMap);
-  initAudio(); clearBots();
+  initAudio(); clearBots(); ensureWeek(); if (knifeMesh) knifeMesh.visible = false; knifeT = 0;
   for (const f of fx) scene.remove(f.obj); fx = [];
   feedItems.length = 0; renderFeed();
   teamScore = [0,0]; timeLeft = MATCH_TIME; domCap = 0; domOwner = -1; domAcc = 0; matchOver = false;
@@ -3521,7 +3590,7 @@ function startMatch(){
   respawnPlayer();
   if (mode === 'surv'){
     createBot(AT, ALLY_NAMES[0], 'rifle'); createBot(AT, ALLY_NAMES[1], 'shotgun');
-    startWave();
+    startWave(); if (ZMB) showMsg('Зомби: продержитесь как можно больше волн');
   } else if (mode === 'snipe'){
     for (let i=0;i<2;i++) createBot(AT, ALLY_NAMES[i], 'sniper');
     for (let i=0;i<3;i++) createBot(ET, ENEMY_NAMES[i], 'sniper');
@@ -3536,7 +3605,8 @@ function startMatch(){
     const loadout = ['rifle','rifle','sniper','shotgun','rifle'];
     for (let i=0;i<4;i++) createBot(AT, ALLY_NAMES[i], loadout[i]);
     for (let i=0;i<5;i++) createBot(ET, ENEMY_NAMES[i], loadout[(i+1)%5]);
-    if (mode === 'bomb'){ bombSetup(); showMsg('Подрыв: заложите бомбу на точке A или B · без возрождения'); }
+    if (mode === 'ctf'){ ctfSetup(); showMsg('Захват флага: доставьте 3 вражеских флага на свою базу · ' + MAPS[curMap].name); }
+    else if (mode === 'bomb'){ bombSetup(); showMsg('Подрыв: заложите бомбу на точке A или B · без возрождения'); }
     else showMsg(MODE_INFO[mode].name + (mode === 'dom' ? ': захватите точку в центре' : mode === 'koth' ? ': точка перемещается каждые 45 с' : '') + ' · ' + MAPS[curMap].name);
   }
   running = true; paused = false;
@@ -3562,7 +3632,7 @@ function startWave(){
   if (wave > 1){ addMoney(40, 'волна пройдена'); addXp(80, 'волна'); mission('waves'); }
 }
 function endMatch(win, draw){
-  if (matchOver) return; matchOver = true; running = false;
+  if (matchOver) return; matchOver = true; running = false; document.body.classList.remove('sprint'); try { campaignEnd(mode === 'surv' && CAMP && CAMP.m.goal ? wave > CAMP.m.goal.waves : win); } catch(e){}
   try { document.exitPointerLock && document.exitPointerLock(); } catch(e){}
   { const played = now() - (matchStart || now()) > 45;
     if (mode === 'tut'){ }
@@ -3573,7 +3643,7 @@ function endMatch(win, draw){
   $('endEarn').innerHTML = `Заработано за бой: <b>+${fmtMoney(matchEarn)}</b> · <b>+${xpMatch} опыта</b> · баланс ${fmtMoney(PROG.money)}`;
   $('endT').textContent = draw ? 'НИЧЬЯ' : win ? 'ПОБЕДА' : 'ПОРАЖЕНИЕ';
   $('endT').style.color = draw ? '#eee' : win ? '#d9f99d' : '#ff8a7e';
-  $('endS').textContent = mode === 'surv' ? `Вы продержались до волны ${wave} · убито врагов: ${player.kills}` : `Счёт ${teamScore[player.team]} : ${teamScore[1-player.team]} · вы за ${player.team ? 'красных' : 'синих'}`;
+  $('endS').textContent = mode === 'surv' ? `${ZMB ? 'Зомби · ' : ''}Вы продержались до волны ${wave} · убито врагов: ${player.kills}` : `Счёт ${teamScore[player.team]} : ${teamScore[1-player.team]} · вы за ${player.team ? 'красных' : 'синих'}`;
   const units = [player, ...bots];
   const rows = t => units.filter(u => u.team === t).sort((a,b) => b.kills-a.kills)
     .map(u => `<tr class="${u.isPlayer?'me':''}"><td class="c${t}">${u.name}</td><td>${u.kills}</td><td>${u.deaths}</td></tr>`).join('');
@@ -3631,7 +3701,7 @@ addEventListener('keydown', e => { keys[e.code] = true;
   if (e.code === 'Space'){ jump(); e.preventDefault(); }
   if (e.code === 'KeyC' || e.code === 'ControlLeft') toggleCrouch();
   const n = ['Digit1','Digit2'].indexOf(e.code); if (n >= 0 && n < CARRY.length){ if (TUT && CARRY[n] !== cur) TUT.swapped = true; equip(CARRY[n]); }
-  if (e.code === 'KeyG') playerThrow(); if (e.code === 'KeyT') cycleNade(); if (e.code === 'KeyQ') swapCarry(); if (e.code === 'KeyB') callStrike(); if (e.code === 'KeyV') useAbility(); if (e.code === 'KeyE') toggleQuad(); if (e.code === 'KeyZ'){ renderEmotes(); $('emoteWheel').classList.toggle('hidden'); } });
+  if (e.code === 'KeyG') playerThrow(); if (e.code === 'KeyF' || e.code === 'KeyK') knifeAttack(); if (e.code === 'KeyI' && running && !aiming) inspectT = 2.4; if (e.code === 'KeyT') cycleNade(); if (e.code === 'KeyQ') swapCarry(); if (e.code === 'KeyB') callStrike(); if (e.code === 'KeyV') useAbility(); if (e.code === 'KeyE') toggleQuad(); if (e.code === 'KeyZ'){ renderEmotes(); $('emoteWheel').classList.toggle('hidden'); } });
 addEventListener('keyup', e => keys[e.code] = false);
 addEventListener('wheel', e => { if (running && !paused && player.alive) swapCarry(); });
 document.addEventListener('pointerlockchange', () => { locked = document.pointerLockElement === renderer.domElement; if (!locked && running && !isTouch && !matchOver && !paused) togglePause(true); });
@@ -3698,7 +3768,7 @@ function bindGroup(id, attr, fn){ const g = $(id); g.addEventListener('click', e
 bindGroup('modes', 'mode', v => mode = v); bindGroup('myteam', 'team', v => { PROG.team = +v; saveProg(); const av = document.querySelector('#userChip .av'); if (av) av.className = 'av t' + PROG.team; });
 $('myteam').querySelectorAll('button').forEach(b => b.classList.toggle('sel', +b.dataset.team === PROG.team)); renderMoney(); updateMsBadge(); CARRY = carryList(); bindGroup('diffs', 'diff', v => diff = v); bindGroup('gfxs', 'gfx', v => { setGraphics(v); settings.gfx = v; saveSettings(); });
 $('play').addEventListener('click', () => {
-  leaveOnline(); mode = ($('modes').querySelector('.sel') || {dataset:{mode:'tdm'}}).dataset.mode;
+  leaveOnline(); CAMP = null; mode = ($('modes').querySelector('.sel') || {dataset:{mode:'tdm'}}).dataset.mode;
   try { const d = document.documentElement; if (isTouch && d.requestFullscreen) d.requestFullscreen().catch(() => {}); } catch(e){}
   try { screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape').catch(() => {}); } catch(e){}
   startMatch();
@@ -3712,7 +3782,7 @@ function playerFire(){
   player.pitch = Math.min(1.45, player.pitch + kick*(.7+Math.random()*.6)); player.yaw += (Math.random()-.5)*kick*.5;
   vFlash.visible = !(w.scope && aimK > .9) && w.flash !== false; vFlash.rotation.z = Math.random()*3; vLight.intensity = w.flash === false ? .4 : 2.2;
   setTimeout(() => { vFlash.visible = false; vLight.intensity = 0; }, 45);
-  boom(...w.snd); if (!w.sil) shotEcho(w.snd);
+  boom(...w.snd); if (!w.sil) shotEcho(w.snd); if (mode !== 'online') botHearShot(player.pos.x, player.pos.z, !w.sil && w.key !== 'xbow');
   camera.updateMatrixWorld();
   const parts = []; for (const b of bots) if (b.alive && b.team !== player.team) for (const p of b.parts) parts.push(p);
   if (mode === 'online') for (const rp of remotes.values()) if (rp.alive && rp.team !== player.team) for (const p of rp.parts) parts.push(p);
@@ -3791,6 +3861,7 @@ function updateBot(b, dt){
     return;
   }
   if (b.dummy){ animateSoldier(b, 0, 0, 0, false, 0); b.spotted = 1; return; }
+  if (b.zombie){ zombieBot(b, dt); return; }
   b.spotted -= dt; b.alertT -= dt; b.lkT -= dt; if (b.lkT <= 0) b.lastKnown = null;
   const eye = v1.set(b.pos.x, b.pos.y+1.6, b.pos.z);
   b.think -= dt;
@@ -3834,6 +3905,7 @@ function updateBot(b, dt){
       else { const hs = hostiles(b.team); let best = null, bd = 1e9; for (const u of hs){ const d = u.pos.distanceTo(b.pos); if (d < bd){ bd = d; best = u; } } if (best) goal = best.pos; }
     } else if (DOM_LIKE()){ goal = v2.set(capX + b.goalOff.x, 0, capZ + b.goalOff.z).clone(); }
     else if (mode === 'bomb'){ goal = bombBotGoal(b); }
+    else if (mode === 'ctf'){ goal = ctfBotGoal(b); }
     else if (mode === 'ffa'){ if (!b.wp || Math.hypot(b.wp.x-b.pos.x, b.wp.z-b.pos.z) < 3){ const w = WAYPOINTS[(Math.random()*WAYPOINTS.length)|0]; b.wp = new THREE.Vector3(w[0]+rand(-3,3), 0, w[1]+rand(-3,3)); } goal = b.wp; }
     else {
       if (!b.wp || Math.hypot(b.wp.x-b.pos.x, b.wp.z-b.pos.z) < 3){
@@ -3847,6 +3919,8 @@ function updateBot(b, dt){
       else if (b.lastKnown === goal){ b.lastKnown = null; } }
   }
   for (const n of nades) if (n.type === 'frag' && n.t < 1.3 && Math.abs(n.pos.x-b.pos.x) < 6 && Math.abs(n.pos.z-b.pos.z) < 6 && (n.dg || (n.dg = new Map())).get(b) !== false){ if (!n.dg.has(b)) n.dg.set(b, Math.random() < (diff === 'easy' ? .2 : diff === 'hard' ? .65 : .4)); if (!n.dg.get(b)){ n.dg.set(b, false); continue; } const ax = b.pos.x-n.pos.x, az = b.pos.z-n.pos.z, l = Math.hypot(ax,az) || 1; dx = ax/l; dz = az/l; spd = 4.4; break; }
+  { const tg = mode !== 'tut' ? botTactics(b, t && b.los ? t : null, dt) : null; if (mode === 'ctf' && CTF && (CTF.flags[1 - b.team].carrier === b || (b.ctfRole === 'att' && !CTF.flags[1 - b.team].carrier))){ const g = ctfRoute(b, CTF.flags[1 - b.team].carrier === b ? CTF.flags[b.team].home : CTF.flags[1 - b.team].pos); const gx = g.x - b.pos.x, gz = g.z - b.pos.z, d = Math.hypot(gx, gz) || 1; dx = gx/d; dz = gz/d; spd = t && b.los ? 3.2 : 4; }
+    else if (tg){ const gx = tg.x - b.pos.x, gz = tg.z - b.pos.z, d = Math.hypot(gx, gz); if (d > 1.2){ dx = gx/d; dz = gz/d; spd = 3.8; } else if (b.cover === tg) spd = 0; } }
   // stuck handling
   b.checkT -= dt;
   if (b.checkT <= 0){ b.checkT = 1.1;
@@ -3946,6 +4020,9 @@ function updatePlayer(dt){
   m.g.position.set(lerp(m.pos.x, m.ads.x, aimK) + bobX, lerp(m.pos.y, m.ads.y, aimK) + bob - rl*.12 - switching*.5, lerp(m.pos.z, m.ads.z, aimK) + recoil*.05*(1-aimK*.5));
   const sp = sprinting && player.moving;
   m.g.rotation.set(recoil*.08*(1-aimK*.6) - rl*.6 + (sp ? -.3 : 0), sp ? .4 : 0, rl*.4);
+  if (inspectT > 0){ inspectT = (aimK > .1 || recoil > .2 || reloading > 0) ? 0 : inspectT - dt; const k = Math.sin(Math.min(1, (2.4 - inspectT)/2.4)*Math.PI), k2 = Math.sin(Math.min(1, (2.4 - inspectT)/2.4)*Math.PI*2);
+    m.g.rotation.y += k*.9; m.g.rotation.z += k*.55 - k2*.25; m.g.rotation.x += k2*.15; m.g.position.x -= k*.06; m.g.position.y += k*.03; }
+  if (switching > 0) m.g.rotation.x -= switching*.9;
   if (m.mover){ w.animT = Math.max(0, w.animT - dt);
     let k; if (m.pumpLate){ const p = 1 - w.animT/.55; k = (p > .3 && p < 1) ? Math.sin((p-.3)/.7*Math.PI) : 0; } else k = w.animT/.09;
     m.mover.position[m.axis || 'z'] = m.baseZ + k*m.amp; }
@@ -3956,7 +4033,7 @@ function update(dt){
   if (mode === 'online') onlineTick(dt);
   if (running && mode !== 'tut'){ ensureProgExtras(); PROG.stats.playSec += dt; }
   streakFrame(dt); snowFrame(dt); abilityFrame(dt);
-  if (TDM_LIKE() || DOM_LIKE()){ timeLeft -= dt; if (timeLeft <= 0){ timeLeft = 0; endMatch(teamScore[player.team] > teamScore[1-player.team], teamScore[0] === teamScore[1]); return; } }
+  if (TDM_LIKE() || DOM_LIKE() || mode === 'ctf'){ timeLeft -= dt; if (timeLeft <= 0){ timeLeft = 0; endMatch(teamScore[player.team] > teamScore[1-player.team], teamScore[0] === teamScore[1]); return; } }
   if (player.alive) updatePlayer(dt);
   else {
     if (player.vehicle){ player.vehicle.rider = null; player.vehicle = null; }
@@ -3977,6 +4054,7 @@ function update(dt){
   if (bots.some(b => b.gone)) bots = bots.filter(b => !b.gone);
   // mode logic
   if (mode === 'bomb') bombTick(dt);
+  if (mode === 'ctf') ctfTick(dt); knifeFrame(dt); campaignTick(); postFrame();
   if (mode === 'tut') tutTick(dt);
   if (mode === 'ffa' && !matchOver){ const left = bots.filter(b => b.alive).length;
     if (!player.alive && !update.ffaEnd){ update.ffaEnd = true; setTimeout(() => { update.ffaEnd = false; endMatch(false); }, 1800); }
@@ -3996,9 +4074,10 @@ function update(dt){
   }
   if (mode === 'surv' && !matchOver){
     const alive = bots.filter(b => b.team !== player.team && b.alive).length;
-    if (toSpawn > 0){ spawnT -= dt; if (spawnT <= 0 && alive < 7){
+    if (toSpawn > 0){ spawnT -= dt; if (spawnT <= 0 && alive < (ZMB ? 12 : 7)){
         const roll = Math.random(), wt = wave >= 3 && roll < .2 ? 'shotgun' : wave >= 4 && roll < .35 ? 'sniper' : 'rifle';
-        createBot(1-player.team, ENEMY_NAMES[enemyNameIdx++ % ENEMY_NAMES.length], wt); toSpawn--; spawnT = Math.max(.8, 2.2 - wave*.12); } }
+        if (ZMB){ spawnZombie(); toSpawn--; spawnT = Math.max(.4, 1.4 - wave*.08); }
+        else { createBot(1-player.team, ENEMY_NAMES[enemyNameIdx++ % ENEMY_NAMES.length], wt); toSpawn--; spawnT = Math.max(.8, 2.2 - wave*.12); } } }
     else if (alive === 0 && bots.every(b => b.team === player.team || b.gone || !b.alive)){
       if (waveDelay === 0){ waveDelay = 4; player.hp = 100; for (const w of WEAPONS){ w.ammo = w.mag; w.res = w.resMax; } showMsg('Волна зачищена!'); }
       waveDelay -= dt; if (waveDelay <= 0){ waveDelay = 0; bots = bots.filter(b => { if (b.team !== player.team){ scene.remove(b.root); return false; } return true; }); startWave(); }
@@ -4266,8 +4345,8 @@ function onlineHurt(dmg, rp, wi, head){
   rp.spotted = 2;
   if (player.hp <= 0){
     player.hp = 0; player.alive = false; player.respawnT = 5; aiming = false; touchFire = false; $('aim').classList.remove('on');
-    player.deaths++; statDeath(); onPlayerDeath(); startKillcam(rp, wi >= 0 && wi < WEAPONS.length ? WEAPONS[wi].feed : 'взрыв'); deathSeq++; killerPeer = rp.peer; killerW = wi; player.killer = rp.name;
-    feed({team:rp.team, name:rp.name}, {team:player.team, name:myName}, wi === 99 ? 'граната' : WEAPONS[wi].feed, head);
+    player.deaths++; statDeath(); onPlayerDeath(); startKillcam(rp, wi === 96 ? 'нож' : wi >= 0 && wi < WEAPONS.length ? WEAPONS[wi].feed : 'взрыв'); deathSeq++; killerPeer = rp.peer; killerW = wi; player.killer = rp.name;
+    feed({team:rp.team, name:rp.name}, {team:player.team, name:myName}, WNAME(wi), head);
     sendPresence();
   }
   updateHud();
@@ -4327,7 +4406,7 @@ function onlineTick(dt){
     let maxId = tr.hit === undefined ? -1 : tr.hit;
     if (Array.isArray(pr.hits)) for (const h of pr.hits.slice(-16)){
       if (!Array.isArray(h)) continue; const id = num(h[0], -1); if (id < 0) continue;
-      if (tr.hit !== undefined && id > tr.hit && myPeer && h[1] === myPeer) { const wi2 = num(h[4]) === 99 ? 99 : clamp(Math.round(num(h[4])),0,WEAPONS.length-1), dm2 = clamp(num(h[2]), 0, 300); if (wi2 === 99 || hitAllowed(rp, dm2, wi2)) onlineHurt(dm2, rp, wi2, h[3] === 1); }
+      if (tr.hit !== undefined && id > tr.hit && myPeer && h[1] === myPeer) { const wi2 = num(h[4]) === 99 ? 99 : num(h[4]) === 96 ? 96 : clamp(Math.round(num(h[4])),0,WEAPONS.length-1), dm2 = clamp(num(h[2]), 0, 300); if (wi2 === 99 || (wi2 === 96 && dm2 <= 200 && Math.hypot(rp.pos.x - player.pos.x, rp.pos.z - player.pos.z) < 4) || (wi2 !== 96 && hitAllowed(rp, dm2, wi2))) onlineHurt(dm2, rp, wi2, h[3] === 1); }
       if (id > maxId) maxId = id;
     }
     tr.hit = maxId;
@@ -4336,8 +4415,8 @@ function onlineTick(dt){
     if (tr.ds !== undefined && ds > tr.ds){
       const kb = typeof pr.kb === 'string' ? pr.kb : '', kw = clamp(Math.round(num(pr.kw)),0,WEAPONS.length-1);
       const killer = kb && kb === myPeer ? {team:player.team, name:myName} : remotes.get(kb) ? {team:remotes.get(kb).team, name:remotes.get(kb).name} : {team:1-team, name:'?'};
-      feed(killer, {team, name:rp.name}, num(pr.kw) === 99 ? 'граната' : WEAPONS[kw].feed, false);
-      if (kb && kb === myPeer){ player.kills++; const wn = num(pr.kw) === 99 ? 'граната' : WEAPONS[kw].feed; showKill(`${esc(rp.name)} <span style="color:#c7ff48">+${25+(wn==='граната'?10:0)} КР</span>`); rewardKill(null, wn, false, true); }
+      feed(killer, {team, name:rp.name}, WNAME(num(pr.kw) === 99 || num(pr.kw) === 96 ? num(pr.kw) : kw), false);
+      if (kb && kb === myPeer){ player.kills++; const wn = WNAME(num(pr.kw) === 99 || num(pr.kw) === 96 ? num(pr.kw) : kw); showKill(`${esc(rp.name)} <span style="color:#c7ff48">+${25+(wn==='граната'?10:0)} КР</span>`); rewardKill(null, wn, false, true); }
     }
     tr.ds = ds;
   }
@@ -4716,7 +4795,7 @@ function seasonName(id){ const [y, m] = id.split('-').map(Number); return ['Ян
 let xpMatch = 0;
 function addXp(n, why){
   if (!(n > 0)) return; ensureProgExtras();
-  const before = levelOf(PROG.xp); PROG.xp = Math.min(5e7, PROG.xp + Math.round(n)); PROG.season.xp += Math.round(n); xpMatch += Math.round(n);
+  const before = levelOf(PROG.xp); PROG.xp = Math.min(5e7, PROG.xp + Math.round(n)); PROG.season.xp += Math.round(n); ensureWeek(); PROG.week.xp += Math.round(n); xpMatch += Math.round(n);
   const after = levelOf(PROG.xp);
   if (after > before){ const reward = 50 * after; PROG.money += reward; matchEarn += reward;
     levelBanner(after, reward); if (rankOf(after) > rankOf(before)) setTimeout(() => toast('Новое звание: ' + RANKS[rankOf(after)]), 1800); }
@@ -4829,7 +4908,8 @@ function streakFrame(dt){
 // =============== EXTRA MODES: king of the hill, sniper duel, last man standing, bomb, tutorial ===============
 const MODE_INFO = {
   tdm:{name:'Командный бой'}, dom:{name:'Захват точки'}, surv:{name:'Выживание'}, koth:{name:'Король горы'}, snipe:{name:'Снайперская дуэль'},
-  ffa:{name:'Последний выживший'}, bomb:{name:'Подрыв'}, tut:{name:'Обучение'} };
+  ffa:{name:'Последний выживший'}, bomb:{name:'Подрыв'}, tut:{name:'Обучение'}, ctf:{name:'Захват флага'}, zomb:{name:'Зомби'} };
+const WNAME = wi => wi === 99 ? 'граната' : wi === 96 ? 'нож' : (WEAPONS[wi] || WEAPONS[0]).feed;
 const TDM_LIKE = () => mode === 'tdm' || mode === 'snipe';
 const DOM_LIKE = () => mode === 'dom' || mode === 'koth';
 const NO_RESPAWN = () => mode === 'ffa' || mode === 'bomb';
@@ -4951,7 +5031,7 @@ function mqttOnce(onReady, onFail){
 const LB_BASE = 'lesnoyrubezh/lb2/';
 let lbT = 0;
 function lbEntry(){ ensureProgExtras(); const L = levelOf(PROG.xp);
-  return {n:(ACC ? ACC.nick : myName).slice(0, 16), cl:PROG.clan, rk:rankOf(L), lvl:L, xp:PROG.xp, k:PROG.stats.kills, w:PROG.stats.wins, sxp:PROG.season.xp, sk:PROG.season.k, sw:PROG.season.w, t:Date.now()}; }
+  return {n:(ACC ? ACC.nick : myName).slice(0, 16), cl:PROG.clan, rk:rankOf(L), lvl:L, xp:PROG.xp, k:PROG.stats.kills, w:PROG.stats.wins, sxp:PROG.season.xp, sk:PROG.season.k, sw:PROG.season.w, wk:(ensureWeek(), PROG.week.id), wx:PROG.week.xp, t:Date.now()}; }
 function lbDirty(){ if (!ACC) return; clearTimeout(lbT); lbT = setTimeout(lbPublish, 4000); }
 function lbPublish(){ if (!ACC || typeof WebSocket === 'undefined') return; const e = lbEntry();
   mqttOnce(api => { api.publish(LB_BASE + PROG.season.id + '/' + DEVICE_ID, JSON.stringify(e), true); setTimeout(() => api.close(), 800); }); }
@@ -4961,13 +5041,13 @@ function lbFetch(season, cb){
   mqttOnce(api => { api.subscribe(LB_BASE + season + '/+', (topic, s) => { if (!s) return; let o; try { o = JSON.parse(s); } catch(e){ return; }
       if (!o || typeof o !== 'object') return; const id = topic.slice(topic.lastIndexOf('/') + 1);
       out.set(id, {id, n:cleanName(o.n), cl:typeof o.cl === 'string' && /^[A-ZА-ЯЁ0-9]{2,5}$/.test(o.cl) ? o.cl : '', rk:clamp(Math.round(num(o.rk)), 0, RANKS.length - 1), lvl:clamp(Math.round(num(o.lvl)), 1, MAX_LVL),
-        xp:clamp(num(o.xp), 0, 5e7), k:clamp(num(o.k), 0, 1e7), w:clamp(num(o.w), 0, 1e6), sxp:clamp(num(o.sxp), 0, 5e7), sk:clamp(num(o.sk), 0, 1e7), sw:clamp(num(o.sw), 0, 1e6)}); });
+        xp:clamp(num(o.xp), 0, 5e7), k:clamp(num(o.k), 0, 1e7), w:clamp(num(o.w), 0, 1e6), sxp:clamp(num(o.sxp), 0, 5e7), sk:clamp(num(o.sk), 0, 1e7), sw:clamp(num(o.sw), 0, 1e6), wk:typeof o.wk === 'string' ? o.wk.slice(0, 10) : '', wx:clamp(num(o.wx), 0, 5e6)}); });
     setTimeout(() => { api.close(); fin(); }, 3000); }, () => fin());
   setTimeout(fin, 9000);
 }
 let lbTab = 'season', lbData = null;
 function openBoard(){ $('menu').classList.add('hidden'); $('lboard').classList.remove('hidden'); lbData = null; renderBoard(); applyLang(); lbPublish();
-  lbFetch(PROG.season.id, list => { lbData = list; renderBoard(); }); seasonRewardCheck(); }
+  lbFetch(PROG.season.id, list => { lbData = list; renderBoard(); weekRewardCheck(list); }); seasonRewardCheck(); }
 function renderBoard(){
   const sid = PROG.season.id, end = new Date(Date.UTC(+sid.slice(0, 4), +sid.slice(5, 7), 0));
   $('lbHead').innerHTML = `<b>Сезон: ${seasonName(sid)}</b><span>до ${end.getUTCDate()} ${SEASON_MONTHS[end.getUTCMonth()]} · топ-10 сезона получат награды: 1 место — 3000 КР, 2–3 — 2000 КР, 4–10 — 1000 КР и форму «Чемпион»</span>`;
@@ -4976,6 +5056,8 @@ function renderBoard(){
   if (lbTab === 'clans'){ const per = {}; for (const r of lbData) if (r.cl){ const c = per[r.cl] || (per[r.cl] = {cl:r.cl, n:0, sxp:0, k:0, w:0}); c.n++; c.sxp += r.sxp; c.k += r.sk; c.w += r.sw; }
     const cl = Object.values(per).sort((a, b) => b.sxp - a.sxp).slice(0, 30);
     $('lbList').innerHTML = cl.length ? `<table class="admT lbT"><tr><th>#</th><th>Клан</th><th>Бойцов</th><th>Опыт за сезон</th><th>Убийств</th><th>Побед</th></tr>${cl.map((c, i) => `<tr class="${c.cl === PROG.clan ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td><span class="clt">[${esc(c.cl)}]</span></td><td>${c.n}</td><td>${Math.round(c.sxp).toLocaleString('ru-RU')}</td><td>${c.k}</td><td>${c.w}</td></tr>`).join('')}</table>` : '<p style="opacity:.6">Пока ни у кого нет клана. Задайте тег в профиле.</p>'; return; }
+  if (lbTab === 'week'){ ensureWeek(); const wk = PROG.week.id, rows = lbData.filter(r => r.wk === wk && r.wx > 0); if (ACC && !rows.some(r => r.id === DEVICE_ID) && PROG.week.xp > 0) rows.push(Object.assign({id:DEVICE_ID}, lbEntry())); rows.sort((a, b) => b.wx - a.wx);
+    $('lbList').innerHTML = `<p style="margin:0 0 8px;font-size:12.5px;opacity:.8">Турнир идёт с понедельника по воскресенье. Награды в начале новой недели: 1 место — 1500 КР, 2–3 — 1000 КР, 4–10 — 500 КР.</p>` + (rows.length ? `<table class="admT lbT"><tr><th>#</th><th>Игрок</th><th>Звание</th><th>Опыт за неделю</th></tr>${rows.slice(0, 50).map((r, i) => `<tr class="${r.id === DEVICE_ID ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td>${r.cl ? `<span class="clt">[${esc(r.cl)}]</span> ` : ''}${esc(r.n)}</td><td>${rankBadge(r.rk, 18)} ${r.lvl}</td><td>${Math.round(r.wx).toLocaleString('ru-RU')}</td></tr>`).join('')}</table>` : '<p style="opacity:.6">На этой неделе ещё никто не играл — станьте первым.</p>'); return; }
   const key = lbTab === 'season' ? 'sxp' : 'xp', rows = lbData.filter(r => r[key] > 0).sort((a, b) => b[key] - a[key]).slice(0, 50);
   if (!rows.some(r => r.id === DEVICE_ID) && ACC){ const me = Object.assign({id:DEVICE_ID}, lbEntry()); if (me[key] > 0){ rows.push(me); rows.sort((a, b) => b[key] - a[key]); } }
   $('lbList').innerHTML = rows.length ? `<table class="admT lbT"><tr><th>#</th><th>Игрок</th><th>Звание</th><th>${lbTab === 'season' ? 'Опыт за сезон' : 'Опыт'}</th><th>Убийств</th><th>Побед</th></tr>${rows.map((r, i) =>
@@ -5491,7 +5573,7 @@ if (settings.gyro){ if (typeof DeviceOrientationEvent !== 'undefined' && typeof 
   show(); setInterval(() => { if (!$('menu').classList.contains('hidden')) show(); }, 7000); }
 
 // =============== SETTINGS ===============
-const BTN_IDS = ['fire','fireL','aim','jump','crouch','reload','swap','nade','nadeSw','pause','chatBtn','strikeBtn','abil','quadBtn','radioBtn','emoteBtn'];
+const BTN_IDS = ['fire','fireL','aim','jump','crouch','reload','swap','nade','nadeSw','pause','chatBtn','strikeBtn','abil','quadBtn','radioBtn','emoteBtn','knifeBtn'];
 let settingsFrom = 'menu', editing = false;
 function applySettings(){
   const r = document.documentElement.style; r.setProperty('--bs', settings.btnScale); r.setProperty('--ba', settings.btnAlpha);
@@ -5589,6 +5671,191 @@ function loop(t){
   if (armoryOpen) renderArmoryFrame(dt); else renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
+// =============================== 0.50 ===============================
+// ---- knife (melee) ----
+let ZMB = false, inspectT = 0, knifeT = 0, knifeCd = 0, knifeMesh = null;
+function knifeModel(){ const g = new THREE.Group(); mk(g, BG(.018, .03, .2), SM(0xc8ccd0, .25, .9), 0, 0, -.12); mk(g, BG(.02, .035, .1), SM(0x1e1e1c, .8), 0, -.004, .02); mk(g, BG(.05, .012, .012), SM(0x333333, .5, .5), 0, 0, -.025);
+  g.position.set(.2, -.2, -.35); g.visible = false; camera.add(g); return g; }
+function knifeAttack(){
+  if (!running || paused || !player.alive || knifeCd > 0 || player.vehicle) return;
+  knifeCd = .6; knifeT = .35; if (!knifeMesh) knifeMesh = knifeModel(); knifeMesh.visible = true; if (WEAPONS[cur]) WEAPONS[cur].model.g.visible = false;
+  noiseHit(.1*settings.vol, 'highpass', 3000, 1, .08);
+  fwd.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
+  const cand = [...bots.filter(b => b.alive && b.team !== player.team)]; if (mode === 'online') for (const rp of remotes.values()) if (rp.alive && rp.team !== player.team) cand.push(rp);
+  for (const u of cand){ const dx = u.pos.x - player.pos.x, dz = u.pos.z - player.pos.z, d = Math.hypot(dx, dz); if (d > 2.3 || Math.abs(u.pos.y - player.pos.y) > 1.5) continue;
+    if ((dx*fwd.x + dz*fwd.z)/d < .55) continue;
+    const back = u.isBot ? -(Math.sin(u.yaw)*dx + Math.cos(u.yaw)*dz)/d : 0, dmg = back < -.5 ? 200 : 75;   // from behind = instant
+    noiseHit(.2*settings.vol, 'lowpass', 900, 1, .1); hitTick(dmg > 100); buzz(20);
+    if (u.peer){ myHits.push([++hitSeq, u.peer, dmg, 0, 96]); if (myHits.length > 12) myHits.splice(0, myHits.length - 12); }
+    else damage(u, dmg, player, false, 'нож');
+    break; }
+}
+function knifeFrame(dt){ knifeCd -= dt; if (knifeT > 0){ knifeT -= dt; const k = 1 - knifeT/.35, s = Math.sin(k*Math.PI);
+    knifeMesh.position.set(.2 - s*.22, -.2 + s*.06, -.35 - s*.22); knifeMesh.rotation.set(-s*.4, s*.9, -s*.5);
+    if (knifeT <= 0){ knifeMesh.visible = false; if (WEAPONS[cur] && player.alive && !player.vehicle) WEAPONS[cur].model.g.visible = true; } } }
+
+// ---- smarter bots: hearing, cover when hurt or reloading, flanking ----
+function botHearShot(x, z, loud){ const r = loud ? 48 : 18; for (const b of bots) if (b.alive && b.team !== player.team && !b.target && Math.hypot(b.pos.x - x, b.pos.z - z) < r){ b.lastKnown = new THREE.Vector3(x, 0, z); b.lkT = 6; b.alertT = 2; } }
+function coverSpot(b, threat){
+  let best = null, bd = 1e9;
+  for (const c of circles){ if (c.dest) continue; const d = Math.hypot(c.x - b.pos.x, c.z - b.pos.z); if (d > 16 || d > bd) continue;
+    const ax = c.x - threat.x, az = c.z - threat.z, l = Math.hypot(ax, az) || 1; best = new THREE.Vector3(c.x + ax/l*(c.r + .8), 0, c.z + az/l*(c.r + .8)); bd = d; }
+  for (const bx of boxes){ if (bx.dest || bx.maxY - bx.minY < 1) continue; const cx = (bx.minX + bx.maxX)/2, cz = (bx.minZ + bx.maxZ)/2, d = Math.hypot(cx - b.pos.x, cz - b.pos.z); if (d > 16 || d > bd) continue;
+    const ax = cx - threat.x, az = cz - threat.z, l = Math.hypot(ax, az) || 1, ext = Math.max(bx.maxX - bx.minX, bx.maxZ - bx.minZ)/2 + .9; best = new THREE.Vector3(cx + ax/l*ext, 0, cz + az/l*ext); bd = d; }
+  return best;
+}
+function botTactics(b, t, dt){
+  // returns a goal vector that overrides normal movement, or null
+  if (!t){ b.cover = null; return null; }
+  if ((b.hp < 45 || b.reloadT > 0) && !b.dummy && mode !== 'surv'){ if (!b.cover || b.coverT <= 0){ b.cover = coverSpot(b, t.pos); b.coverT = 4; } b.coverT -= dt; if (b.cover) return b.cover; }
+  if (b.flank === undefined) b.flank = Math.random() < .35 ? (Math.random() < .5 ? -1 : 1) : 0;
+  if (b.flank && Math.hypot(t.pos.x - b.pos.x, t.pos.z - b.pos.z) > 14){ const dx = t.pos.x - b.pos.x, dz = t.pos.z - b.pos.z, l = Math.hypot(dx, dz);
+    return new THREE.Vector3(t.pos.x - dz/l*12*b.flank - dx/l*6, 0, t.pos.z + dx/l*12*b.flank - dz/l*6); }
+  return null;
+}
+
+// ---- zombies mode (original undead design: grey skin, torn clothes, glowing eyes) ----
+const ZOMBIE_PAL = {id:'zmb', uni:0x4a4f3e, pants:0x3a3a30, vest:0x2a2a22, helm:0x3a3a30, band:0x7a1e14, pack:0x2a2a22, gear:'none-none-0'};
+function zombieWave(){ const n = 4 + wave*3; toSpawn = n; spawnT = 1; }
+function spawnZombie(){ const b = createBot(1 - player.team, 'Зомби', 'shotgun'); scene.remove(b.root);
+  SKINS.push(0x7f8f6c); const z = buildSoldier(1 - player.team, 'shotgun', SKINS.length - 1, 0, ZOMBIE_PAL); SKINS.pop(); Object.assign(b, {root:z.root, body:z.body, head:z.head, legs:z.legs, knees:z.knees, arms:z.arms, elbows:z.elbows, gun:z.gun, parts:z.parts, muzzle:z.muzzle, mflash:z.mflash});
+  b.gun.visible = false; for (const p of b.parts) p.userData.bot = b; b.pos = b.root.position; b.zombie = true; b.hp = 60 + wave*12; scene.add(b.root);
+  const a = Math.random()*6.28, r = rand(30, MAP_R - 4); b.pos.set(player.pos.x + Math.cos(a)*r, 0, player.pos.z + Math.sin(a)*r); const p = {x:b.pos.x, z:b.pos.z}; collide(p, .5, 0, 1.7); b.pos.set(p.x, groundAt(p.x, p.z, terrainH(p.x, p.z) + .3), p.z);
+  for (const eye of [-.035, .035]){ const e = new THREE.Mesh(new THREE.SphereGeometry(.014, 6, 4), new THREE.MeshBasicMaterial({color:0xff4020, toneMapped:false})); e.position.set(eye, .17, .085); b.head.add(e); } }
+function zombieBot(b, dt){
+  if (!b.zombie) return false;
+  const tgts = [player, ...bots.filter(x => x.alive && x.team === player.team && !x.zombie)].filter(u => u.alive);
+  let t = null, bd = 1e9; for (const u of tgts){ const d = Math.hypot(u.pos.x - b.pos.x, u.pos.z - b.pos.z); if (d < bd){ bd = d; t = u; } }
+  b.phase += dt*6; const spd = 2.6 + wave*.12;
+  if (t){ const dx = t.pos.x - b.pos.x, dz = t.pos.z - b.pos.z, l = Math.hypot(dx, dz) || 1; b.yaw = Math.atan2(dx, dz); b.root.rotation.y = b.yaw;
+    if (l > 1.2){ const np = {x:b.pos.x + dx/l*spd*dt, z:b.pos.z + dz/l*spd*dt}; collide(np, .38, b.pos.y, 1.75); b.pos.x = np.x; b.pos.z = np.z; b.pos.y = groundAt(b.pos.x, b.pos.z, b.pos.y + .5); botSteps(b, spd*dt); }
+    b.cd -= dt; if (l < 1.6 && b.cd <= 0){ b.cd = 1; damage(t, 18 + wave*2, b, false, 'зомби'); noiseHit(.15*settings.vol, 'lowpass', 400, 2, .2); } }
+  animateSoldier(b, .8, b.phase, 0, false, 0); b.arms[0].rotation.x = -1.4; b.arms[1].rotation.x = -1.5; b.elbows[0].rotation.x = -.2; b.elbows[1].rotation.x = -.1;
+  if ((b.groanT = (b.groanT || rand(2, 6)) - dt) <= 0){ b.groanT = rand(4, 9); const d = Math.hypot(b.pos.x - player.pos.x, b.pos.z - player.pos.z); if (d < 25) tone(90 + Math.random()*40, .6, .05*(1 - d/25), 'sawtooth'); }
+  return true;
+}
+
+// ---- capture the flag ----
+let CTF = null;
+function flagMesh(team){ const g = new THREE.Group(); mk(g, CG(.035, .035, 2.4, 8), SM(0xaaaaaa, .4, .6), 0, 1.2, 0); const cl = mk(g, new THREE.PlaneGeometry(.9, .55), new THREE.MeshStandardMaterial({color:C(TEAM_COL[team].band), side:THREE.DoubleSide, roughness:.8}), .45, 2.1, 0);
+  g.userData.cloth = cl; scene.add(g); return g; }
+function ctfSetup(){ CTF = {flags:[0, 1].map(t => { const home = new THREE.Vector3(0, 0, BASE_Z[t] + FWD[t]*8); home.y = terrainH(home.x, home.z); return {team:t, home, pos:home.clone(), carrier:null, dropT:0, mesh:flagMesh(t)}; }), score:[0, 0]}; }
+function ctfClear(){ if (CTF) for (const f of CTF.flags) scene.remove(f.mesh); CTF = null; }
+function ctfTick(dt){
+  if (!CTF) return; const units = [player, ...bots];
+  for (const f of CTF.flags){
+    if (f.carrier && !f.carrier.alive){ f.carrier = null; f.dropT = 20; showMsg(f.team === player.team ? 'Наш флаг брошен!' : 'Вражеский флаг брошен'); }
+    if (f.carrier){ f.pos.copy(f.carrier.pos); }
+    else { if (f.dropT > 0){ f.dropT -= dt; if (f.dropT <= 0){ f.pos.copy(f.home); } }
+      for (const u of units){ if (!u.alive || Math.hypot(u.pos.x - f.pos.x, u.pos.z - f.pos.z) > 1.6) continue;
+        if (u.team !== f.team){ f.carrier = u; showMsg(u === player ? 'Вы взяли флаг! Несите на свою базу' : u.team === player.team ? 'Наши взяли флаг!' : 'Противник взял наш флаг!'); break; }
+        else if (f.pos.distanceTo(f.home) > 1){ f.pos.copy(f.home); f.dropT = 0; if (u === player){ addMoney(20, 'флаг возвращён'); addXp(80); } showMsg('Флаг возвращён на базу'); break; } } }
+    f.mesh.position.set(f.pos.x, f.carrier ? f.pos.y + .2 : groundAt(f.pos.x, f.pos.z, f.pos.y + 1), f.pos.z); f.mesh.userData.cloth.rotation.y = Math.sin(performance.now()*.003 + f.team)*.3;
+  }
+  for (const f of CTF.flags){ const own = CTF.flags[1 - f.team]; if (f.carrier && Math.hypot(f.carrier.pos.x - own.home.x, f.carrier.pos.z - own.home.z) < 3 && !own.carrier && own.pos.distanceTo(own.home) < 1){
+      const t = f.carrier.team; CTF.score[t]++; teamScore[t] = CTF.score[t]; if (f.carrier === player){ addMoney(100, 'флаг доставлен'); addXp(400, 'флаг'); mission('caps'); } showMsg(t === player.team ? 'Флаг доставлен! +1' : 'Противник доставил флаг'); f.carrier = null; f.pos.copy(f.home);
+      if (CTF.score[t] >= 3){ endMatch(t === player.team); return; } } }
+}
+function ctfRoute(b, dest){ // go around the centre through a side lane
+  if (b.ctfLane === undefined) b.ctfLane = (Math.random() < .5 ? -1 : 1) * rand(9, 17);
+  const sz = Math.sign(dest.z - b.pos.z), farZ = Math.abs(dest.z - b.pos.z);
+  if (farZ > 22 && Math.abs(b.pos.x - b.ctfLane) > 3 && Math.abs(b.pos.z) < Math.abs(dest.z) - 8) return v2.set(b.ctfLane, 0, b.pos.z + sz*6);
+  if (farZ > 22) return v2.set(b.ctfLane, 0, b.pos.z + sz*10);
+  return dest; }
+function ctfBotGoal(b){ if (!CTF) return null; const enemyFlag = CTF.flags[1 - b.team], ownFlag = CTF.flags[b.team];
+  if (enemyFlag.carrier === b) return ownFlag.home.clone();
+  if (ownFlag.carrier) return ownFlag.carrier.pos.clone();
+  if (b.ctfRole === undefined) b.ctfRole = Math.random() < .6 ? 'att' : 'def';
+  return b.ctfRole === 'att' ? enemyFlag.pos.clone() : ownFlag.home.clone().add(b.goalOff); }
+
+// ---- map: military base ----
+MAPS.base = {name:'Военная база', R:76, D:56, seed:5150, sky:[0x6f8db0, 0xd6dbdc], fog:.009, sun:[0xfff1dc, 1.8], hemi:[0xc8d4ea, 0x5d5a48, .45], mtn:0x5e6a6c, moss:.3,
+  wps:[[0,0],[-26,-18],[26,-18],[-26,18],[26,18],[-44,0],[44,0],[-12,-32],[12,32],[0,-24],[0,24],[-34,-34],[34,34],[20,0],[-20,0]],
+  spots(){ const D = this.D; return [[0,0,16,22],[0,D,12,18],[0,-D,12,18],[-28,-20,8,12],[28,20,8,12],[30,-22,7,10],[-30,22,7,10]]; },
+  height(x,z){ return (Math.sin(x*.04)*.9 + Math.cos(z*.035)*.8 + Math.sin((x+z)*.08)*.3) * flatMul(x,z,this.sp)*.7 + edgeRise(x,z); },
+  onPath(x,z,w){ return (Math.abs(x) < w + .5 && Math.abs(z) < this.D - 2) || (Math.abs(z) < w + .5 && Math.abs(x) < 48); },
+  reserve(x,z,r){ for (const s of this.sp) if (Math.hypot(x-s[0], z-s[1]) < s[2]+1.5+r) return true; return this.onPath(x,z,3+r); },
+  grass(x,z){ return this.onPath(x,z,3) ? 0 : .5; }, wheat(){ return 0; }, tall(x,z){ return meadow(x,z,1.7)*.25; },
+  color(x,z,h,c){ const n = (Math.sin(x*.3)*Math.cos(z*.28) + Math.sin(x*.07+z*.05))*.2 + .5; c.copy(C(0x5d6a3a)).lerp(C(0x7a7a4e), clamp(n,0,1));
+    if (this.onPath(x,z,3.2)) c.lerp(C(0x6a6660), .85); for (const s of this.sp){ const d = Math.hypot(x-s[0], z-s[1]); if (d < s[2]) c.lerp(C(0x7a7468), .55*(1-d/s[2])); } },
+  build(){
+    const cont = [0x5a6e4a, 0x8a4a2e, 0x2e4a6a, 0x9a8a5a, 0x6a2e2e];
+    const container = (x, z, rot, col, stack = 1) => { for (let k = 0; k < stack; k++){ const y = terrainH(x, z) + k*2.6, rr = rot ? Math.PI/2 : 0; const m = wm(BG(6, 2.6, 2.4), SM(col, .7, .3), x, y + 1.3, z, 0, rr);
+        for (let i = -2.45; i <= 2.5; i += .7) wm(BG(.04, 2.5, 2.42), SM(col, .7, .3), x + (rot ? 0 : i), y + 1.3, z + (rot ? i : 0), 0, rr);
+        const hw = rot ? 1.2 : 3, hd = rot ? 3 : 1.2; boxes.push({minX:x-hw, maxX:x+hw, minY:y, maxY:y+2.6, minZ:z-hd, maxZ:z+hd, kind:'metal'}); } };
+    container(-8, -6, 0, cont[0], 2); container(-8, -3.3, 0, cont[1]); container(8, 6, 0, cont[2], 2); container(8, 3.3, 0, cont[3]); container(4, -10, 1, cont[4]); container(-4, 10, 1, cont[0]);
+    container(-30, -6, 1, cont[2]); container(30, 6, 1, cont[1], 2); container(-18, 30, 0, cont[3]); container(18, -30, 0, cont[4], 2);
+    houseX({x:-28, z:-20, w:12, d:8, H:4.2, ops:{e:[DOOR(0, 2.4)], w:[DOOR(0, 2.4)], n:[WIN(-3), WIN(3)], s:[WIN(-3), WIN(3)]}});
+    houseX({x:28, z:20, w:12, d:8, H:4.2, ops:{e:[DOOR(0, 2.4)], w:[DOOR(0, 2.4)], n:[WIN(-3), WIN(3)], s:[WIN(-3), WIN(3)]}});
+    houseX({x:30, z:-22, w:7, d:6, H:2.8, interior:'living', ops:{w:[DOOR(0)], n:[WIN(0)], s:[WIN(0)]}}); houseX({x:-30, z:22, w:7, d:6, H:2.8, interior:'living', ops:{e:[DOOR(0)], n:[WIN(0)], s:[WIN(0)]}});
+    watchtower(-40, -40); watchtower(40, 40); watchtower(40, -40); watchtower(-40, 40);
+    for (let i = 0; i < 8; i++){ crate(rand(-14, 14), rand(-14, 14), 1); barrel(rand(-20, 20), rand(-20, 20)); }
+    carWreck(-14, 18, .3); carWreck(14, -18, 2.8); truck(16, 10); truck(-16, -10);
+    capPoint(0, terrainH(0, 0), 0);
+    const [P] = scatterTrees(150, .2, 86, (x, z, r) => r > 48); buildPines(P); buildRocks(20); buildBushes(80);
+    return P.map(t => [t.x, t.z, 4.2*t.s]);
+  },
+  litter:0x6a6450, ground:'groundD', grassTint:[.95, .95, .8], grassN:9000, ponds:[] };
+MAPS.base.sp = MAPS.base.spots();
+
+// ---- campaign (5 missions) ----
+const CAMPAIGN = [
+  {name:'1. Зачистка', brief:'Разведка доложила о противнике в Сосновой пади. Уничтожьте 12 врагов, прежде чем они уничтожат вас.', map:'forest', mode:'tdm', time:'day', goal:{kills:12}, reward:400},
+  {name:'2. Удержание', brief:'Деревня — ключ к дороге. Захватите и удерживайте точку, наберите 100 очков.', map:'village', mode:'dom', time:'evening', reward:500},
+  {name:'3. Подрыв', brief:'На фронте противник держит склад. Заложите бомбу на точке A или B и не дайте её обезвредить.', map:'front', mode:'bomb', time:'day', reward:600},
+  {name:'4. Ночь в тайге', brief:'Ваш отряд окружён в тайге. Продержитесь 5 волн до прихода подкрепления.', map:'taiga', mode:'surv', time:'night', goal:{waves:5}, reward:700},
+  {name:'5. Последний рубеж', brief:'Финальная операция на военной базе. Доставьте три вражеских флага на свою базу.', map:'base', mode:'ctf', time:'evening', reward:1000},
+];
+let CAMP = null;
+function campaignState(){ return PROG.camp || (PROG.camp = {done:0}); }
+function renderCampaign(){ const st = campaignState();
+  $('campList').innerHTML = CAMPAIGN.map((m, i) => { const open = i <= st.done, done = i < st.done;
+    return `<div class="ms${done ? ' done' : ''}"><div class="msTop"><b>${m.name}</b><span class="lvl">${MAPS[m.map].name}</span></div><p>${m.brief}</p>
+      <div class="msBot"><span class="rw">${tr('Награда')}: ${m.reward} КР${done ? ' · ✓' : ''}</span>${open ? `<button class="big campGo" data-i="${i}">${done ? tr('Ещё раз') : tr('Начать')}</button>` : '<span>🔒</span>'}</div></div>`; }).join(''); }
+$('campList').addEventListener('click', e => { const b = e.target.closest('button.campGo'); if (!b) return; const m = CAMPAIGN[+b.dataset.i];
+  CAMP = {i:+b.dataset.i, m}; selMap = m.map; mode = m.mode; try { setAtmo(m.time, false); } catch(e){} $('campaign').classList.add('hidden'); startMatch(); showMsg(m.name); });
+$('openCamp').addEventListener('click', () => { $('menu').classList.add('hidden'); $('campaign').classList.remove('hidden'); renderCampaign(); applyLang(); });
+$('campClose').addEventListener('click', () => { $('campaign').classList.add('hidden'); $('menu').classList.remove('hidden'); });
+function campaignTick(){ if (!CAMP || matchOver) return; const g = CAMP.m.goal || {};
+  if (g.kills && player.kills >= g.kills) endMatch(true); if (g.waves && wave > g.waves) endMatch(true); }
+function campaignEnd(win){ if (!CAMP) return; const st = campaignState();
+  if (win){ if (CAMP.i >= st.done){ st.done = CAMP.i + 1; addMoney(CAMP.m.reward, 'кампания'); addXp(CAMP.m.reward, 'кампания'); toast(CAMP.i === CAMPAIGN.length - 1 ? 'Кампания пройдена!' : 'Открыта следующая миссия'); } saveProg(); }
+  CAMP = null; }
+
+// ---- weekly tournament + daily shop offers ----
+function weekId(d = new Date()){ const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day);
+  const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return t.getUTCFullYear() + '-w' + Math.ceil(((t - y0)/86400000 + 1)/7); }
+function ensureWeek(){ const w = weekId(); if (!PROG.week || PROG.week.id !== w) PROG.week = {id:w, xp:0}; }
+function shopOffers(){ const t = today(); let seed = 7; for (const ch of t + DEVICE_ID) seed = (seed*33 + ch.charCodeAt(0)) >>> 0; const r = mulberry32(seed), out = [];
+  const ws = WEAPON_KEYS.filter(k => PRICE_W[k] > 0); if (ws.length) out.push({kind:'w', id:ws[(r()*ws.length)|0]});
+  const sk = USKINS.filter(s => s.price); if (sk.length) out.push({kind:'s', id:sk[(r()*sk.length)|0].id});
+  if (PROG.nade.frag < 3) out.push({kind:'n', id:'frag'}); return out.map(o => Object.assign(o, {disc:.3 + Math.floor(r()*3)*.1})); }
+function offerPrice(o){ const base = o.kind === 'w' ? PRICE_W[o.id] : o.kind === 's' ? USKINS.find(s => s.id === o.id).price : 200*PROG.nade.frag; return Math.round(base*(1 - o.disc)/10)*10; }
+function renderOffers(){ const bought = (PROG.offers && PROG.offers.date === today()) ? PROG.offers.got : {};
+  $('offers').innerHTML = `<b>${tr('Предложения дня')}</b>` + shopOffers().map((o, i) => { const name = o.kind === 'w' ? BASE[o.id].name : o.kind === 's' ? 'Форма «' + USKINS.find(s => s.id === o.id).name + '»' : '+1 осколочная граната в каждом бою';
+    const got = bought[o.kind + o.id] || (o.kind === 'w' && PROG.weapons[o.id]) || (o.kind === 's' && PROG.skins[o.id]); return `<button class="offer${got ? ' got' : ''}" data-o="${i}" ${got ? 'disabled' : ''}><span>${esc(name)}</span><i>−${Math.round(o.disc*100)}%</i><em>${got ? '✓' : fmtMoney(offerPrice(o))}</em></button>`; }).join(''); }
+$('offers').addEventListener('click', e => { const b = e.target.closest('button[data-o]'); if (!b) return; const o = shopOffers()[+b.dataset.o], p = offerPrice(o);
+  if (PROG.money < p){ toast('Не хватает ' + fmtMoney(p - PROG.money)); return; } PROG.money -= p;
+  if (o.kind === 'w') PROG.weapons[o.id] = true; if (o.kind === 's') PROG.skins[o.id] = true; if (o.kind === 'n') PROG.nade.frag = Math.min(3, PROG.nade.frag + 1);
+  if (!PROG.offers || PROG.offers.date !== today()) PROG.offers = {date:today(), got:{}}; PROG.offers.got[o.kind + o.id] = 1; saveProg(); toast('Куплено со скидкой'); renderOffers(); if (typeof renderArmory === 'function' && armoryOpen) renderArmory(); });
+
+// ---- light post effects: sun glare, vignette, sprint blur ----
+const glare = new THREE.Sprite(new THREE.SpriteMaterial({map:fireTex, color:0xfff2d0, transparent:true, opacity:0, depthWrite:false, depthTest:false, blending:THREE.AdditiveBlending, toneMapped:false, fog:false}));
+glare.scale.setScalar(26); glare.renderOrder = 5; scene.add(glare);
+function postFrame(){
+  if (gfx === 'low' || ATMO.time === 'night' || ATMO.rain || settings.weather !== 'clear'){ glare.material.opacity = 0; }
+  else { const sd = _nd.set(SUN_OFF.x, SUN_OFF.y, SUN_OFF.z).normalize(); glare.position.copy(camera.position).addScaledVector(sd, 140);
+    camera.getWorldDirection(v3tmp); const k = Math.max(0, v3tmp.dot(sd)); glare.material.opacity = Math.pow(k, 8)*.55; }
+  const sp = running && sprinting && player.moving; document.body.classList.toggle('sprint', !!sp);
+}
+const v3tmp = new THREE.Vector3();
+
+function weekRewardCheck(list){ ensureWeek(); const prev = weekId(new Date(Date.now() - 7*86400000)); if (PROG.weekClaim === prev) return;
+  PROG.weekClaim = prev; const rows = list.filter(r => r.wk === prev && r.wx > 0).sort((a, b) => b.wx - a.wx), place = rows.findIndex(r => r.id === DEVICE_ID) + 1;
+  if (place >= 1 && place <= 10){ const prize = place === 1 ? 1500 : place <= 3 ? 1000 : 500; addMoney(prize, `${place} место в турнире недели`); PROG.medals.push(`${place} место · турнир ${prev}`); toast(`Турнир недели: ${place} место, +${prize} КР`); }
+  saveProg(); }
+tap('knifeBtn', () => knifeAttack());
+
 equip(0); WEAPONS[0].model.g.visible = false;
 if (settings.gfx) $('gfxs').querySelector(`[data-gfx="${settings.gfx}"]`)?.click();
 else if (isTouch && Math.min(screen.width, screen.height) < 400) { $('gfxs').querySelector('[data-gfx="mid"]').click(); }

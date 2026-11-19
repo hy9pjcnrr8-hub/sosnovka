@@ -192,6 +192,12 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
         <p>Каждый сам за себя, без возрождения. Побеждает тот, кто останется последним.</p></article>
       <article class="mode"><div class="meta"><span>5 на 5</span><span>1 жизнь</span></div><h3>Подрыв</h3>
         <p>Ваша команда атакует: заложите бомбу на точке A или B за 2,5 минуты и не дайте её обезвредить. Защитники стараются этого не допустить.</p></article>
+      <article class="mode"><div class="meta"><span>5 на 5</span><span>до 3 флагов</span></div><h3>Захват флага</h3>
+        <p>Проберитесь на базу противника, заберите флаг и донесите до своей базы. Свой флаг надо вернуть, если его уронили. Боты делятся на атакующих и защитников и обходят центр по флангам.</p></article>
+      <article class="mode"><div class="meta"><span>3 бойца</span><span>волны</span></div><h3>Зомби</h3>
+        <p>Вы и два напарника против нежити. С каждой волной зомби больше, они быстрее и крепче. Нож и пулемёт здесь особенно пригодятся.</p></article>
+      <article class="mode"><div class="meta"><span>5 миссий</span><span>соло</span></div><h3>Кампания</h3>
+        <p>Цепочка операций с брифингами: зачистка, удержание, подрыв, ночь в тайге и финал на военной базе. Каждая миссия открывает следующую и даёт награду.</p></article>
       <article class="mode"><div class="meta"><span>соло</span><span>2 минуты</span></div><h3>Обучение</h3>
         <p>Пошаговый урок: обзор, ходьба, прыжок, присед, прицел, мишени, перезарядка, граната и смена оружия. За первое прохождение — 300 КР.</p></article>
     </div>
@@ -215,6 +221,8 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
         <tr><td class="n">Дробовик</td><td>9 × 17 <span class="bar"><i style="width:100%"></i></span></td><td>70, помповый</td><td>6 / 30</td><td>2,6 с</td><td>1 100 КР</td></tr>
         <tr><td class="n">Пистолет</td><td>34 <span class="bar"><i style="width:34%"></i></span></td><td>400</td><td>12 / ∞</td><td>1,3 с</td><td>250 КР</td></tr>
         <tr><td class="n">Тяжёлый пистолет</td><td>52 <span class="bar"><i style="width:52%"></i></span></td><td>190</td><td>7 / 35</td><td>1,6 с</td><td>700 КР</td></tr>
+        <tr><td class="n">Пулемёт «Буран»</td><td>27 <span class="bar"><i style="width:27%"></i></span></td><td>705, автоогонь</td><td>100 / 200</td><td>4,2 с</td><td>2 800 КР</td></tr>
+        <tr><td class="n">Арбалет «Тихий»</td><td>110 <span class="bar"><i style="width:100%"></i></span></td><td>55, бесшумный</td><td>1 / 20</td><td>1,6 с</td><td>1 800 КР</td></tr>
         <tr><td class="n">Револьвер «Бизон»</td><td>62 <span class="bar"><i style="width:62%"></i></span></td><td>130</td><td>6 / 36</td><td>2,3 с</td><td>950 КР</td></tr>
       </tbody>
     </table></div>
@@ -243,6 +251,9 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
       <article class="mapc"><canvas width="400" height="400" data-map="taiga" aria-label="Схема карты Тайга"></canvas>
         <div><h3>Тайга</h3><p class="dim">Ø 148 м · снег и ельник</p>
         <p>Заснеженный ельник с шапками снега на ветвях, падающий снег и хруст под ногами. Зимовье в центре, две охотничьи избы, сарай с поленницами, вышка, костёр и окопы у баз.</p></div></article>
+      <article class="mapc"><canvas width="400" height="400" data-map="base" aria-label="Схема карты Военная база"></canvas>
+        <div><h3>Военная база</h3><p class="dim">Ø 152 м · контейнеры и ангары</p>
+        <p>Штабеля морских контейнеров в центре, два ангара с воротами, казармы, четыре вышки по углам, грузовики и ящики с припасами. Много укрытий на средней дистанции.</p></div></article>
     </div>
   </div>
 </section>
@@ -269,7 +280,7 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
           <kbd>ЛКМ</kbd><span>огонь, <kbd>ПКМ</kbd> — прицел</span>
           <kbd>C</kbd><span>присесть, <kbd>Пробел</kbd> — прыжок</span>
           <kbd>R</kbd><span>перезарядка</span>
-          <kbd>1/2 · Q</kbd><span>оружие, <kbd>G</kbd> граната, <kbd>Enter</kbd> чат, <kbd>T</kbd> выбор гранаты, <kbd>Esc</kbd> — пауза</span>
+          <kbd>1/2 · Q</kbd><span>оружие, <kbd>G</kbd> граната, <kbd>Enter</kbd> чат, <kbd>T</kbd> выбор гранаты, <kbd>F</kbd> нож, <kbd>I</kbd> осмотр оружия, <kbd>Esc</kbd> — пауза</span>
         </div></div>
     </div>
   </div>
@@ -306,6 +317,7 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
     <div class="eyebrow">ЖУРНАЛ ИЗМЕНЕНИЙ</div>
     <h2>Обновления</h2>
     <div class="log">
+      <div><b>0.50</b><span>Большое обновление. Кампания из пяти миссий с брифингами и наградами. Новые режимы: «Захват флага» и «Зомби» — волны нежити с горящими глазами. Новая карта «Военная база» с контейнерами, ангарами и вышками. Новое оружие: пулемёт «Буран» на 100 патронов и бесшумный арбалет «Тихий». Нож: клавиша F или кнопка на экране, удар в спину убивает сразу. Боты умнее: слышат выстрелы, при ранении и перезарядке уходят в укрытие, часть обходит с флангов. Осмотр оружия (I), плавная смена оружия, блик солнца, виньетка и размытие при беге. Турнир недели в рейтинге с наградами для топ-10 и предложения дня со скидками в разделе «Миссии».</span></div>
       <div><b>0.41</b><span>Гироскоп на Android исправлен так же, как на iPhone — оси датчика теперь читаются одинаково во всех браузерах. Окна настроек, профиля и других меню больше не обрезаются сверху на телефонах: если не помещаются — прокручиваются.</span></div>
       <div><b>0.40</b><span>Большое обновление. Классы бойцов со способностями: штурмовик (броня и рывок), медик (быстрая регенерация и аптечка), инженер (мины), разведчик (дрон-разведчик). Квадроциклы у баз. Разрушаемые баррикады и взрывные бочки. Боевой пропуск на 50 уровней с формами, эмоциями и нашивками, ежедневные задания и награда за вход. Друзья со статусом «в сети» и приглашениями в бой, рация для команды, киллкам, рейтинг кланов, эмоции. Снаряжение бойца: шлем, маска, рюкзак. Туман и метель. Автоподстройка качества под FPS и режим для слабых телефонов. Английский язык интерфейса. Проверка подозрительного урона в онлайне.</span></div>
       <div><b>0.36</b><span>Значки на всех кнопках управления с короткими подписями: огонь, прицел, прыжок, присед, перезарядка, смена оружия, граната (свой рисунок для осколочной, светошумовой и дымовой), смена гранаты, пауза, чат, авиаудар.</span></div>
@@ -361,7 +373,7 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
     <a class="btn play" href="play.html">▶ НАЧАТЬ ИГРУ</a>
   </div></div>
 </div>
-<footer><div class="wrap">ЛЕСНОЙ РУБЕЖ · создатель: paralysax · тестер и модератор: иксов · дизайн сайта по макету paralysax · графика и звук генерируются кодом при запуске</div></footer>
+<footer><div class="wrap">ЛЕСНОЙ РУБЕЖ · создатель: paralysax · тестер и модератор: иксов · дизайн сайта по макету paralysax · графика и звук генерируются кодом при запуске · <a href="privacy.html" style="color:inherit">политика конфиденциальности</a></div></footer>
 
 <script>
 (() => {
@@ -430,6 +442,12 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
         if (Math.hypot(x, z) < 11 || Math.hypot(x, z-42) < 12 || Math.hypot(x, z+42) < 12 || (Math.abs(z) < 44 && Math.abs(x - Math.sin(z*.07+1)*4) < 3.5)) continue;
         const [X,Y] = P(x,z); m.fillStyle = R2() < .3 ? '#5f7f62' : '#3e5c45'; m.beginPath(); m.arc(X, Y, 4 + R2()*3, 0, 6.29); m.fill(); m.fillStyle = '#f4f7fa'; m.beginPath(); m.arc(X-1, Y-1, 1.6, 0, 6.29); m.fill(); }
       m.fillStyle = '#8a7350'; for (const [x,z,w,d] of [[0,0,7,7],[-28,-20,6.5,5.5],[-24,30,6,5],[30,-24,5,3.2]]){ const [X,Y] = P(x - w/2, z - d/2); m.fillRect(X, Y, w*k*2.6, d*k*2.6); } },
+    base(m, P, R2, k){ m.fillStyle = '#4d5a33'; m.fillRect(0, 0, 400, 400); m.strokeStyle = '#6a6660'; m.lineWidth = 7*k; m.beginPath(); { const [a,b] = P(0,-52), [c,d] = P(0,52), [e,f] = P(-48,0), [g,h] = P(48,0); m.moveTo(a,b); m.lineTo(c,d); m.moveTo(e,f); m.lineTo(g,h); } m.stroke();
+      const cols = ['#5a6e4a','#8a4a2e','#2e4a6a','#9a8a5a','#6a2e2e']; [[-8,-6,0],[-8,-3.3,0],[8,6,0],[8,3.3,0],[4,-10,1],[-4,10,1],[-30,-6,1],[30,6,1],[-18,30,0],[18,-30,0]].forEach(([x,z,r],i) => { const w = r ? 2.4 : 6, d = r ? 6 : 2.4, [X,Y] = P(x - w/2, z - d/2); m.fillStyle = cols[i % 5]; m.fillRect(X, Y, w*k, d*k); });
+      m.fillStyle = '#8f8b80'; for (const [x,z,w,d] of [[-28,-20,12,8],[28,20,12,8],[30,-22,7,6],[-30,22,7,6]]){ const [X,Y] = P(x-w/2, z-d/2); m.fillRect(X, Y, w*k, d*k); }
+      m.fillStyle = '#c9b49a'; for (const [x,z] of [[-40,-40],[40,40],[40,-40],[-40,40]]){ const [X,Y] = P(x-1.5, z-1.5); m.fillRect(X, Y, 3*k, 3*k); }
+      m.fillStyle = '#2f4a2c'; for (let i=0;i<120;i++){ const a = R2()*6.28, r = 48 + Math.sqrt(R2())*10, [X,Y] = P(Math.cos(a)*r, Math.sin(a)*r); m.beginPath(); m.arc(X,Y,3,0,6.29); m.fill(); }
+      { const [X,Y] = P(0,0); m.fillStyle = '#f0a43a'; m.beginPath(); m.arc(X,Y,1.4*k,0,6.29); m.fill(); } },
     village(m, P, R2, k){ m.strokeStyle = '#8a7350'; m.lineWidth = 5*k; m.lineCap = 'butt';
       m.beginPath(); { const [a,b] = P(0,-46), [c,d] = P(0,46); m.moveTo(a,b); m.lineTo(c,d); const [e,f] = P(-30,0), [g,h] = P(19,0); m.moveTo(e,f); m.lineTo(g,h); } m.stroke();
       { const [X,Y] = P(0,0); m.fillStyle = '#8a7350'; m.beginPath(); m.arc(X,Y,7.5*k,0,6.29); m.fill(); m.fillStyle = '#f0a43a'; m.beginPath(); m.arc(X,Y,1.2*k,0,6.29); m.fill(); }
