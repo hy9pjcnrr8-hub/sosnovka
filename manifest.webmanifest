@@ -1,0 +1,17 @@
+{
+  "name": "Лесной рубеж",
+  "short_name": "Лесной рубеж",
+  "description": "Тактический шутер: синие против красных, 5 карт, 8 режимов, онлайн и оффлайн.",
+  "start_url": "app.html?pwa=1",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#080b0d",
+  "theme_color": "#080b0d",
+  "lang": "ru",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
