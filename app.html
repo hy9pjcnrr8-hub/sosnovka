@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 330, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 340, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -271,7 +271,7 @@
   #arName,.arHint{left:calc(env(safe-area-inset-left) + 172px)!important}
   @media (max-width:700px){ #arName,.arHint{left:calc(env(safe-area-inset-left) + 138px)!important} #arName{font-size:17px} .arList{width:118px} .arW b{font-size:12px} }
   .ov>*{max-width:100%;box-sizing:border-box}
-  html,body{width:100%;height:100%;overflow:hidden}
+  html,body{width:100%;height:100%;overflow:hidden;position:fixed;inset:0;margin:0;overscroll-behavior:none;background:#080b0d}
 
   /* ---- main menu skin ---- */
   #menu{background:radial-gradient(70% 60% at 0% 0%,rgba(199,255,72,.10),transparent 60%),radial-gradient(60% 70% at 100% 100%,rgba(42,108,240,.08),transparent 60%),radial-gradient(120% 100% at 50% 50%,rgba(6,9,8,.55),rgba(4,6,5,.92));animation:mIn .5s ease-out}
@@ -424,7 +424,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 5 карт · 8 режимов · онлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 0.33 · Android</div></div></div>
+  <div class="spV">версия 0.34 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><div id="armorW"><div id="armor"></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -461,7 +461,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.33</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.34</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -567,7 +567,8 @@
       <label class="ck"><input type="checkbox" id="sInv"> Инверсия по вертикали</label>
       <label class="ck"><input type="checkbox" id="sHold"> Прицел только пока зажата кнопка</label>
       <label class="ck"><input type="checkbox" id="sGyro"> Гироскоп: поворот телефоном</label>
-      <label class="ck"><input type="checkbox" id="sGyroInv"> Гироскоп: обратное направление</label>
+      <label class="ck"><input type="checkbox" id="sGyroInv"> Гироскоп: инверсия влево-вправо</label>
+      <label class="ck"><input type="checkbox" id="sGyroInvY"> Гироскоп: инверсия вверх-вниз</label>
       <label>Чувствительность гироскопа <input type="range" id="sGyroS" min="20" max="300"><span id="vGyroS"></span></label>
     </div>
     <div class="sbox"><h3>Кнопки</h3>
@@ -638,7 +639,7 @@ let fitW = 0, fitH = 0;
 function viewSize(){ const de = document.documentElement, vv = window.visualViewport;
   const w = Math.max(innerWidth || 0, de && de.clientWidth || 0, vv ? Math.round(vv.width) : 0), h = Math.max(innerHeight || 0, de && de.clientHeight || 0, vv ? Math.round(vv.height) : 0);
   return [w || 1, h || 1]; }
-function fitRenderer(force){ const [w, h] = viewSize(); if (!force && w === fitW && h === fitH) return; fitW = w; fitH = h;
+function fitRenderer(force){ if (window.scrollX || window.scrollY) try { window.scrollTo(0, 0); } catch(e){} const [w, h] = viewSize(); if (!force && w === fitW && h === fitH) return; fitW = w; fitH = h;
   camera.aspect = w/h; camera.updateProjectionMatrix(); renderer.setSize(w, h); if (typeof applyLayout === 'function') setTimeout(applyLayout, 30); }
 addEventListener('resize', () => fitRenderer(true)); addEventListener('orientationchange', () => { fitRenderer(true); setTimeout(() => fitRenderer(true), 250); setTimeout(() => fitRenderer(true), 800); });
 if (window.visualViewport) visualViewport.addEventListener('resize', () => fitRenderer(true));
@@ -3372,7 +3373,7 @@ function hitTick(head){
 }
 
 // =============== GAME STATE ===============
-const DEFAULTS = {vol:.8, enemyVol:1, hitSound:true, sens:1, ads:.8, invertY:false, aimHold:false, btnScale:1, btnAlpha:.9, leftFire:true, fov:72, names:true, fps:false, layout:{}, gfx:null, time:'day', rain:false, flashlight:true, gyro:false, gyroSens:1, gyroInv:false, music:.6, autoFire:false, vibrate:true, joySize:1};
+const DEFAULTS = {vol:.8, enemyVol:1, hitSound:true, sens:1, ads:.8, invertY:false, aimHold:false, btnScale:1, btnAlpha:.9, leftFire:true, fov:72, names:true, fps:false, layout:{}, gfx:null, time:'day', rain:false, flashlight:true, gyro:false, gyroSens:1, gyroInv:false, gyroInvY:false, music:.6, autoFire:false, vibrate:true, joySize:1};
 const settings = JSON.parse(JSON.stringify(DEFAULTS));
 try { const sv = JSON.parse(localStorage.getItem('lr_settings') || 'null'); if (sv && typeof sv === 'object') for (const k in DEFAULTS) if (k in sv && typeof sv[k] === typeof DEFAULTS[k] || (k === 'gfx' && typeof sv[k] === 'string')) settings[k] = sv[k]; } catch(e){}
 if (!settings.layout || typeof settings.layout !== 'object') settings.layout = {};
@@ -4557,39 +4558,47 @@ function spectateFrame(){
 // =============== GYROSCOPE AIM (turn the phone to turn) ===============
 let gyroErr = '', gyroAsk = null, gyroOn = false, gyroListening = false, gyroLast = 0, gyroRate = {yaw:0, pitch:0}, gyroSeen = false;
 function screenAngle(){ const o = screen.orientation; const a = o && typeof o.angle === 'number' ? o.angle : (typeof window.orientation === 'number' ? window.orientation : 0); return ((a % 360) + 360) % 360; }
-// Orientation-based aiming: the phone's full 3D attitude (deviceorientation, consistent on iOS and Android) is turned into
-// a camera direction; the change in that direction between events turns the soldier. Finger look keeps working on top.
-const GQ = {q:new THREE.Quaternion(), e:new THREE.Euler(), z:new THREE.Vector3(0,0,1), q1:new THREE.Quaternion(-Math.sqrt(.5), 0, 0, Math.sqrt(.5)), q0:new THREE.Quaternion(),
-  f:new THREE.Vector3(), u:new THREE.Vector3(), prev:null, dyaw:0, dpitch:0, orient:null};
-function gyroDir(a, b, g, orient, out, up){
-  const D = Math.PI/180; GQ.e.set(b*D, a*D, -g*D, 'YXZ'); GQ.q.setFromEuler(GQ.e); GQ.q.multiply(GQ.q1); GQ.q.multiply(GQ.q0.setFromAxisAngle(GQ.z, -orient*D));
-  out.set(0, 0, -1).applyQuaternion(GQ.q); if (up) up.set(0, 1, 0).applyQuaternion(GQ.q); }
-function pickOrient(a, b, g){
+// Gyro aiming: angular speed from the gyroscope (devicemotion), projected onto the real vertical and the screen's
+// horizontal axis; the phone's attitude (deviceorientation) tells which way is up. iOS reports the rotation-rate
+// axes in a different order than Android, which is handled here.
+const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const GQ = {q1:new THREE.Quaternion(-Math.sqrt(.5), 0, 0, Math.sqrt(.5)), q:new THREE.Quaternion(), qi:new THREE.Quaternion(), e:new THREE.Euler(), up:new THREE.Vector3(0,1,0), upD:new THREE.Vector3(), rt:new THREE.Vector3(), ok:false, dyaw:0, dpitch:0, last:0, orient:null};
+function pickOrient(){
   const o = screen.orientation && typeof screen.orientation.angle === 'number' ? screen.orientation.angle : (typeof window.orientation === 'number' ? window.orientation : null);
   const land = innerWidth > innerHeight;
-  if (o !== null && (o % 180 !== 0) === land) return o;
-  const cands = land ? [90, -90] : [0, 180]; let best = cands[0], bu = -2;   // pick the orientation whose screen-up points to the sky
-  for (const c of cands){ gyroDir(a, b, g, c, GQ.f, GQ.u); if (GQ.u.y > bu){ bu = GQ.u.y; best = c; } } return best;
+  if (o !== null && (Math.abs(o) % 180 !== 0) === land) return o;
+  if (!GQ.ok) return land ? 90 : 0;
+  // fall back: choose the landscape side whose screen-up points to the sky
+  return land ? (GQ.upD.x >= 0 ? 90 : -90) : (GQ.upD.y >= 0 ? 0 : 180);
 }
 function onOrient(e){
-  if (e.alpha == null || e.beta == null || e.gamma == null) return; gyroSeen = true;
-  const orient = pickOrient(e.alpha, e.beta, e.gamma);
-  if (orient !== GQ.orient){ GQ.orient = orient; GQ.prev = null; }
-  gyroDir(e.alpha, e.beta, e.gamma, orient, GQ.f);
-  const yaw = Math.atan2(-GQ.f.x, -GQ.f.z), pitch = Math.asin(clamp(GQ.f.y, -1, 1));
-  if (GQ.prev && Math.abs(pitch) < 1.35){ let dy = angDiff(GQ.prev.yaw, yaw), dp = pitch - GQ.prev.pitch;
-    if (Math.abs(dy) < .5 && Math.abs(dp) < .5){ GQ.dyaw += dy; GQ.dpitch += dp; } }
-  GQ.prev = {yaw, pitch};
+  if (e.beta == null || e.gamma == null) return; const D = Math.PI/180;
+  GQ.e.set(e.beta*D, (e.alpha || 0)*D, -e.gamma*D, 'YXZ'); GQ.q.setFromEuler(GQ.e); GQ.q.multiply(GQ.q1); GQ.qi.copy(GQ.q).invert();
+  GQ.upD.set(0, 1, 0).applyQuaternion(GQ.qi);                // world "up" expressed in the phone's own axes
+  GQ.ok = true; GQ.orient = pickOrient();
 }
-function onMotion(){}
+function onMotion(e){
+  const r = e.rotationRate; if (!r || r.alpha == null || !GQ.ok) return; gyroSeen = true;
+  const t = performance.now(), dt = GQ.last ? Math.min(.1, (t - GQ.last)/1000) : (e.interval > 0 ? Math.min(.1, e.interval > 1 ? e.interval/1000 : e.interval) : .016); GQ.last = t;
+  const D = Math.PI/180;
+  // device-frame angular velocity (x right, y top, z out of the screen)
+  const wx = (IOS ? r.alpha : r.beta)*D, wy = (IOS ? r.beta : r.gamma)*D, wz = (IOS ? r.gamma : r.alpha)*D;
+  const up = GQ.upD, o = (GQ.orient || 0)*D;
+  // the screen's "right" in device axes, made horizontal
+  GQ.rt.set(Math.cos(o), -Math.sin(o), 0); GQ.rt.addScaledVector(up, -GQ.rt.dot(up)); const L = GQ.rt.length(); if (L < .2) return; GQ.rt.divideScalar(L);
+  let yawRate = wx*up.x + wy*up.y + wz*up.z, pitchRate = wx*GQ.rt.x + wy*GQ.rt.y + wz*GQ.rt.z;
+  const dz = .03; if (Math.abs(yawRate) < dz) yawRate = 0; if (Math.abs(pitchRate) < dz) pitchRate = 0;
+  GQ.dyaw += clamp(yawRate, -15, 15)*dt; GQ.dpitch += clamp(pitchRate, -15, 15)*dt;
+}
 async function enableGyro(on){
-  gyroOn = on; GQ.prev = null; GQ.dyaw = GQ.dpitch = 0; if (!on) return true;
+  gyroOn = on; GQ.last = 0; GQ.dyaw = GQ.dpitch = 0; if (!on) return true;
+  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') try { await DeviceMotionEvent.requestPermission(); } catch(e){}
   if (typeof DeviceOrientationEvent === 'undefined'){ gyroOn = false; gyroErr = 'в этом браузере нет датчиков движения'; return false; }
   if (typeof DeviceOrientationEvent.requestPermission === 'function'){
     try { const res = await (gyroAsk || DeviceOrientationEvent.requestPermission()); gyroAsk = null;
       if (res !== 'granted'){ gyroOn = false; gyroErr = 'iOS ответил «запрещено». Закройте и снова откройте браузер или приложение — iOS спросит ещё раз'; return false; } }
     catch(e){ gyroAsk = null; gyroOn = false; gyroErr = 'iOS не даёт доступ к датчику в этом окне (' + (e && e.name || 'ошибка') + ')'; return false; } }
-  if (!gyroListening){ addEventListener('deviceorientation', onOrient); gyroListening = true; }
+  if (!gyroListening){ addEventListener('deviceorientation', onOrient); addEventListener('devicemotion', onMotion); gyroListening = true; }
   setTimeout(() => { if (gyroOn && !gyroSeen) toast('Гироскоп не отвечает: устройство или просмотр не дают к нему доступ'); }, 2500);
   return true;
 }
@@ -4597,7 +4606,7 @@ function gyroFrame(dt){
   let y = GQ.dyaw, p = GQ.dpitch; GQ.dyaw = GQ.dpitch = 0;
   if (!gyroOn || !gyroSeen || !running || paused || !player.alive || chatOpen || spectate) return;
   const k = settings.gyroSens * (aimK > .5 ? Math.min(1, settings.ads + .2) : 1);
-  if (settings.gyroInv){ y = -y; p = -p; } if (settings.invertY) p = -p;
+  if (settings.gyroInv) y = -y; if (settings.gyroInvY) p = -p;
   player.yaw += y * k; player.pitch = clamp(player.pitch + p * k, -1.45, 1.45);
 }
 // =============== CLOUD SAVE (claude.ai database) + transfer codes ===============
@@ -5146,7 +5155,7 @@ function applyLayout(){
 }
 addEventListener('resize', () => setTimeout(applyLayout, 50));
 const SL = [ ['sVol','vol',100,'%'], ['sEnemyVol','enemyVol',100,'%'], ['sSens','sens',100,'%'], ['sAds','ads',100,'%'], ['sBtn','btnScale',100,'%'], ['sAlpha','btnAlpha',100,'%'], ['sFov','fov',1,'°'], ['sGyroS','gyroSens',100,'%'], ['sMusic','music',100,'%'], ['sJoy','joySize',100,'%'] ];
-const CK = [ ['sHit','hitSound'], ['sInv','invertY'], ['sHold','aimHold'], ['sLeft','leftFire'], ['sNames','names'], ['sFps','fps'], ['sFlash','flashlight'], ['sGyro','gyro'], ['sGyroInv','gyroInv'], ['sAuto','autoFire'], ['sVib','vibrate'] ];
+const CK = [ ['sHit','hitSound'], ['sInv','invertY'], ['sHold','aimHold'], ['sLeft','leftFire'], ['sNames','names'], ['sFps','fps'], ['sFlash','flashlight'], ['sGyro','gyro'], ['sGyroInv','gyroInv'], ['sGyroInvY','gyroInvY'], ['sAuto','autoFire'], ['sVib','vibrate'] ];
 function fillSettings(){
   for (const [id,key,mul,u] of SL){ $(id).value = Math.round(settings[key]*mul); $('v'+id.slice(1)).textContent = Math.round(settings[key]*mul) + u; }
   for (const [id,key] of CK) $(id).checked = !!settings[key];

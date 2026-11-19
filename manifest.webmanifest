@@ -4,7 +4,7 @@
   "description": "Тактический шутер: синие против красных, 5 карт, 8 режимов, онлайн и оффлайн.",
   "start_url": "app.html?pwa=1",
   "scope": "./",
-  "display": "fullscreen",
+  "display": "standalone",
   "orientation": "landscape",
   "background_color": "#080b0d",
   "theme_color": "#080b0d",
