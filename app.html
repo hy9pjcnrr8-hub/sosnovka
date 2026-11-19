@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 350, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 360, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -395,6 +395,18 @@
   .pfAcc{display:flex;gap:6px;margin-top:6px}
   #quickGo{background:linear-gradient(90deg,#ffd27a,#c7ff48);margin-right:6px}
 
+  /* ---- button icons ---- */
+  .btn{flex-direction:column;gap:1px;line-height:1}
+  .btn .bi{width:46%;height:46%;flex:none;pointer-events:none}
+  .btn em{font-style:normal;font-size:7.5px;font-weight:900;letter-spacing:.3px;opacity:.95;pointer-events:none;white-space:nowrap;max-width:92%;overflow:hidden}
+  #fire .bi{width:42%;height:42%}#fire em{font-size:11px}
+  #fireL .bi{width:58%;height:58%}
+  #pause .bi{width:62%;height:62%}#chatBtn .bi{width:48%;height:48%}#chatBtn em{font-size:8px}
+  #nade{gap:0}#nade .bi{width:50%;height:50%}#nade em{font-size:8.5px}
+  #nadeSw .bi{width:52%;height:52%}#nadeSw em{display:none}
+  #strikeBtn em{font-size:8.5px}
+  #aim .bi{width:50%;height:50%}
+
   /* ---- Android app look ---- */
   body{font-family:Montserrat,"Arial Black",Arial,sans-serif}
   .ov{background:radial-gradient(120% 90% at 85% 10%,rgba(199,255,72,.07),transparent 55%),linear-gradient(180deg,rgba(8,11,13,.9),rgba(8,11,13,.82))}
@@ -424,7 +436,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 5 карт · 8 режимов · онлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 0.35 · Android</div></div></div>
+  <div class="spV">версия 0.36 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><div id="armorW"><div id="armor"></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -433,18 +445,18 @@
   <div id="scope"><i class="chev"></i><i class="st4"></i></div><div id="dmg"></div><div id="dirw"><div></div></div>
   <div id="msg"></div><div id="kill"></div><div id="death"></div>
   <div id="weap"><div id="wname">АК</div><div id="ammo">30 / 120</div><div id="nadeInfo"></div></div><div id="flashOv"></div><div id="nadeWarn">⚠ ГРАНАТА</div>
-  <div id="fire" class="btn touch-only">ОГОНЬ</div>
-  <div id="fireL" class="btn touch-only">●</div>
-  <div id="aim" class="btn touch-only">ПРИЦЕЛ</div>
-  <div id="jump" class="btn touch-only">⤒</div>
-  <div id="crouch" class="btn touch-only">⤓</div>
-  <div id="reload" class="btn touch-only">⟳</div>
-  <div id="swap" class="btn touch-only">⇄</div>
+  <div id="fire" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 3v6M16 23v6M3 16h6M23 16h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="16" r="2.2" fill="currentColor"/></svg><em>ОГОНЬ</em></div>
+  <div id="fireL" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg></div>
+  <div id="aim" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 5v7M16 20v7M5 16h7M20 16h7" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="16" r="1.6" fill="#ff5a3c"/></svg><em>ПРИЦЕЛ</em></div>
+  <div id="jump" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 26V8M9 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 29h16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><em>ПРЫЖОК</em></div>
+  <div id="crouch" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><circle cx="17" cy="7" r="3" fill="currentColor"/><path d="M17 11l-3 7h7l2 7M14 18l-4 3 2 5M17 13l5 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><em>ПРИСЕД</em></div>
+  <div id="reload" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M25 13a9.5 9.5 0 1 0 1 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 6v7h-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="13" y="12" width="6" height="9" rx="1" fill="currentColor"/></svg><em>ЗАРЯД</em></div>
+  <div id="swap" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 11h17l-4-4M27 21H10l4 4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><em>ОРУЖИЕ</em></div>
   <div id="nade" class="btn touch-only">ОСК<small>×1</small></div>
-  <div id="nadeSw" class="btn touch-only">⟲</div>
-  <div id="pause" class="btn">❚❚</div>
-  <div id="chatBtn" class="btn">ЧАТ</div>
-  <div id="strikeBtn" class="btn hidden">АВИА</div><div id="strikeKey" class="hidden">B — авиаудар</div>
+  <div id="nadeSw" class="btn touch-only"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M9 9a10 10 0 1 1-2 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 5v6h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><em>ГРАНАТА</em></div>
+  <div id="pause" class="btn"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="7" width="5" height="18" rx="1" fill="currentColor"/><rect x="18" y="7" width="5" height="18" rx="1" fill="currentColor"/></svg></div>
+  <div id="chatBtn" class="btn"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 7h22v14H14l-6 5v-5H5z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 13h12M10 17h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><em>ЧАТ</em></div>
+  <div id="strikeBtn" class="btn hidden"><svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l3 10 10 4-10 2-3 10-3-10-10-2 10-4z" fill="currentColor" opacity=".9"/></svg><em>АВИА</em></div><div id="strikeKey" class="hidden">B — авиаудар</div>
   <div id="streakBan"></div><div id="lvlUp"></div>
   <div id="bombBar" class="hidden"><span id="bombLbl"></span><div><i id="bombFill"></i></div></div>
   <div id="tutBox" class="hidden"></div>
@@ -461,7 +473,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.35</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.36</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -3256,7 +3268,8 @@ function nadeMesh(type){ const g = new THREE.Group(), m = SM(NADE_DEF[type].col,
   scene.add(g); return g; }
 function resetNadeInv(){ nadeInv = {frag:PROG.nade.frag, flash:PROG.nade.flash ? 2 : 0, smoke:PROG.nade.smoke ? 1 : 0}; if (!nadeInv[nadeSel]) nadeSel = NADE_TYPES.find(t => nadeInv[t]) || 'frag'; updateNadeHud(); }
 function cycleNade(){ const avail = NADE_TYPES.filter(t => nadeInv[t] > 0); if (!avail.length) return; nadeSel = avail[(avail.indexOf(nadeSel)+1) % avail.length]; updateNadeHud(); }
-function updateNadeHud(){ const n = nadeInv[nadeSel] || 0; $('nade').innerHTML = `${NADE_DEF[nadeSel].short}<small>×${n}</small>`; $('nade').classList.toggle('empty', !n);
+const NADE_ICO = {"frag": "<svg class=\"bi\" viewBox=\"0 0 32 32\" aria-hidden=\"true\"><ellipse cx=\"15\" cy=\"19\" rx=\"8\" ry=\"9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M11 10h8M15 10V7h6l3 3\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M9 18h12M10 23h10\" stroke=\"currentColor\" stroke-width=\"1.6\"/></svg>", "flash": "<svg class=\"bi\" viewBox=\"0 0 32 32\" aria-hidden=\"true\"><rect x=\"10\" y=\"10\" width=\"11\" height=\"17\" rx=\"2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M12 10V7h7M19 7l4 3\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M26 13l3-2M27 18h3M26 23l3 2\" stroke=\"#ffd27a\" stroke-width=\"2.2\" stroke-linecap=\"round\"/></svg>", "smoke": "<svg class=\"bi\" viewBox=\"0 0 32 32\" aria-hidden=\"true\"><rect x=\"8\" y=\"12\" width=\"10\" height=\"16\" rx=\"2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M10 12V9h6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M20 10c3-3 7-1 6 2 3 0 3 4 0 4M22 6c1-2 4-2 5 0\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\" opacity=\".7\"/></svg>"};
+function updateNadeHud(){ const n = nadeInv[nadeSel] || 0; $('nade').innerHTML = `${NADE_ICO[nadeSel] || ''}<em>${NADE_DEF[nadeSel].short} ×${n}</em>`; $('nade').classList.toggle('empty', !n);
   $('nadeInfo').textContent = NADE_TYPES.map(t => `${NADE_DEF[t].short} ${nadeInv[t]}`).join(' · '); }
 function spawnNade(owner, type, pos, vel, online){ nades.push({owner, type, pos:pos.clone(), vel:vel.clone(), t:NADE_DEF[type].fuse, mesh:nadeMesh(type), spin:rand(4,9), online:!!online}); }
 const _nd = new THREE.Vector3(), _nv = new THREE.Vector3();
