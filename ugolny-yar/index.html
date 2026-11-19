@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Угольный Яр — верни городу жизнь</title>
+<meta name="description" content="Стратегия о шахтёрском посёлке: 312 жителей, 365 дней, 12 миллионов рублей. Верни Угольному Яру 50 000 человек. Скачать для Android.">
+<meta property="og:title" content="Угольный Яр — верни городу жизнь">
+<meta property="og:description" content="312 жителей. 365 дней. Одна цель — 50 000. Скачай игру для Android.">
+<meta property="og:image" content="img/shot-1.jpg">
+<meta name="theme-color" content="#0b0f1c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 108 108'%3E%3Crect width='108' height='108' rx='24' fill='%230d1220'/%3E%3Cpath d='M0 78Q30 70 54 76T108 74V108H0Z' fill='%23e8ecf4'/%3E%3Cpath d='M38 76 54 22 70 76M44 56H64M47 44H61' stroke='%23c9302c' stroke-width='4' fill='none'/%3E%3Crect x='48' y='18' width='12' height='8' fill='%23c9302c'/%3E%3Crect x='70' y='58' width='16' height='18' fill='%23f4c84a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Golos+Text:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0b0f1c; --ink2:#111729; --panel:#151c2e; --line:#252f49;
+  --text:#e9edf5; --dim:#8d96ab; --gold:#f4c84a; --gold2:#ffdf7e; --red:#ff5a4f; --green:#4fd17a; --blue:#6cc6ff;
+  --display:"Unbounded",system-ui,sans-serif; --body:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+#snow{position:fixed;inset:0;pointer-events:none;z-index:50}
+
+/* ── навигация ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:40;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+nav.solid{background:rgba(11,15,28,.85);backdrop-filter:blur(10px);border-color:var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.5px;text-decoration:none;text-transform:uppercase}
+.logo svg{width:32px;height:32px;border-radius:8px}
+nav .links{display:flex;gap:26px;font-size:15px;color:var(--dim)}
+nav .links a{text-decoration:none;transition:color .2s}
+nav .links a:hover{color:var(--text)}
+.nav-cta{background:var(--gold);color:#1b1404!important;padding:9px 16px;border-radius:999px;font-weight:700;text-decoration:none;font-size:14px}
+@media(max-width:760px){nav .links{display:none}.moon{display:none}.btn{width:100%;justify-content:center}}
+
+/* ── герой ── */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;
+  background:radial-gradient(120% 70% at 70% 0%,#24325a 0%,#121a31 45%,var(--ink) 75%)}
+.hero .scene{order:2;position:relative;width:100%;height:clamp(170px,21vw,300px);margin-top:-10px;z-index:1}
+.hero .scene svg{width:100%;height:100%;display:block}
+.moon{position:absolute;top:13%;right:12%;width:90px;height:90px;z-index:0;border-radius:50%;
+  box-shadow:inset -22px 6px 0 0 #f2ecd6;transform:rotate(-20deg);opacity:.9}
+.hero-copy{order:1;position:relative;z-index:2;padding:110px 0 0;width:100%}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(244,200,74,.35);padding:6px 12px;border-radius:999px;background:rgba(11,15,28,.55)}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.25}}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(46px,9vw,112px);line-height:.95;margin:18px 0 18px;letter-spacing:-1px;text-transform:uppercase;
+  text-shadow:0 6px 0 rgba(0,0,0,.45)}
+h1 span{color:var(--gold);display:block}
+@media(min-width:900px){h1 span{display:inline;margin-left:.25em}h1{font-size:clamp(60px,7.4vw,104px)}}
+.lede{max-width:560px;font-size:clamp(17px,2vw,20px);color:#cfd5e2;margin:0 0 30px}
+.lede b{color:var(--text)}
+.counter{display:flex;gap:12px;align-items:stretch;margin:0 0 30px}
+.counter .box{background:rgba(17,23,41,.78);border:1px solid var(--line);border-radius:16px;padding:12px 18px;backdrop-filter:blur(6px);min-width:150px}
+@media(max-width:600px){.counter{gap:8px}.counter .box{min-width:0;flex:1;padding:10px 10px}.counter .bud{flex:1.5}.counter small{font-size:10px;letter-spacing:1px}}
+.counter small{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);font-weight:700}
+.counter b{font-family:var(--display);font-size:clamp(17px,4.6vw,28px);font-weight:700;font-variant-numeric:tabular-nums}
+.counter .pop b{color:var(--green)} .counter .days b{color:var(--red)} .counter .bud b{color:var(--gold)}
+
+.btns{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:12px;text-decoration:none;border-radius:16px;padding:15px 22px;font-weight:700;font-size:16px;
+  transition:transform .15s,box-shadow .2s,background .2s;cursor:pointer;border:0;font-family:inherit}
+.btn:active{transform:scale(.97)}
+.btn-main{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#1b1404;box-shadow:0 10px 30px -8px rgba(244,200,74,.55),inset 0 -3px 0 rgba(0,0,0,.15)}
+.btn-main:hover{box-shadow:0 14px 40px -6px rgba(244,200,74,.7),inset 0 -3px 0 rgba(0,0,0,.15);transform:translateY(-2px)}
+.btn-main .sub{display:block;font-size:12px;font-weight:500;opacity:.7;margin-top:1px}
+.btn-main svg{width:28px;height:28px;flex:none}
+.btn-ghost{background:rgba(17,23,41,.7);border:1px solid var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.meta{font-size:13px;color:var(--dim);margin-top:14px}
+
+/* ── секции ── */
+section{padding:110px 0;position:relative}
+.kicker{font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,4.6vw,52px);line-height:1.05;margin:0 0 22px;letter-spacing:-.5px}
+.muted{color:var(--dim)}
+
+/* история */
+.story{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
+.story p{font-size:19px;color:#cfd5e2;margin:0 0 18px}
+.stamp{display:inline-block;margin:10px 0 0;padding:10px 22px;border:4px solid var(--red);color:var(--red);font-family:var(--display);font-weight:900;
+  font-size:22px;letter-spacing:2px;transform:rotate(-5deg);border-radius:8px;opacity:.92}
+.big-stat{display:grid;gap:16px}
+.big-stat div{background:var(--ink2);border:1px solid var(--line);border-radius:20px;padding:22px 24px;display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+.big-stat b{font-family:var(--display);font-size:clamp(34px,5vw,54px);font-weight:900;line-height:1}
+.big-stat span{color:var(--dim);font-size:15px;text-align:right}
+.s-red b{color:var(--red)} .s-gold b{color:var(--gold)} .s-green b{color:var(--green)}
+@media(max-width:860px){.story{grid-template-columns:1fr;gap:36px}}
+
+/* главы */
+.chapters{background:linear-gradient(180deg,var(--ink) 0%,#0e1426 100%)}
+.ch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px}
+.ch{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 22px 20px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.ch:hover{transform:translateY(-3px);border-color:#3a4870}
+.ch .n{font-family:var(--display);font-weight:900;font-size:13px;color:var(--gold);letter-spacing:1px}
+.ch h3{font-family:var(--display);font-weight:700;font-size:19px;margin:8px 0 8px;text-transform:uppercase}
+.ch p{margin:0;color:var(--dim);font-size:15px}
+.ch .ico{position:absolute;right:16px;top:14px;font-size:28px;opacity:.9}
+.ch.secret{border-color:rgba(244,200,74,.4);background:linear-gradient(160deg,#1f1a0d,var(--panel) 60%)}
+@media(max-width:860px){.ch-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.ch-grid{grid-template-columns:1fr}}
+
+/* скриншоты */
+.shots{overflow:hidden}
+.rail{display:flex;gap:26px;overflow-x:auto;scroll-snap-type:x mandatory;padding:40px 22px 30px;margin:0 -22px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.phone{flex:none;width:250px;scroll-snap-align:center;border-radius:36px;padding:10px;background:#05070d;
+  box-shadow:0 0 0 2px #2a3350,0 30px 60px -20px rgba(0,0,0,.8),0 0 80px -30px rgba(108,198,255,.25);position:relative}
+.phone:nth-child(even){transform:translateY(28px)}
+.phone img{border-radius:27px;width:100%;height:auto}
+.phone::before{content:"";position:absolute;top:18px;left:50%;width:70px;height:18px;margin-left:-35px;background:#05070d;border-radius:12px;z-index:2}
+.phone figcaption{position:absolute;bottom:-38px;left:0;right:0;text-align:center;font-size:14px;color:var(--dim)}
+.phone:nth-child(even) figcaption{bottom:-38px}
+@media(min-width:1100px){.rail{justify-content:center;overflow:visible}}
+
+/* фичи */
+.feat{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px}
+.feat div{border-top:2px solid var(--line);padding-top:18px}
+.feat b{display:block;font-family:var(--display);font-size:16px;margin-bottom:6px}
+.feat p{margin:0;color:var(--dim);font-size:15px}
+@media(max-width:860px){.feat{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.feat{grid-template-columns:1fr}}
+
+/* скачать */
+.download{background:radial-gradient(80% 90% at 50% 0%,#2a2410 0%,#141224 45%,var(--ink) 80%);text-align:center}
+.download h2{margin-bottom:12px}
+.dl-cards{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:16px;margin:44px 0 0;text-align:left}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:10px}
+.card.best{border:1px solid rgba(244,200,74,.55);background:linear-gradient(170deg,#272111 0%,var(--panel) 55%);box-shadow:0 30px 60px -30px rgba(244,200,74,.35)}
+.tag{align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--gold);color:#1b1404}
+.tag.alt{background:transparent;border:1px solid var(--line);color:var(--dim)}
+.card h3{font-family:var(--display);font-size:21px;margin:4px 0 0}
+.card p{margin:0;color:var(--dim);font-size:15px;flex:1}
+.card ul{margin:0;padding:0;list-style:none;font-size:14px;color:#c6cddc}
+.card li{padding:3px 0}
+.card li::before{content:"✓ ";color:var(--green);font-weight:700}
+.card .btn{justify-content:center;margin-top:8px}
+@media(max-width:900px){.dl-cards{grid-template-columns:1fr}}
+
+/* установка */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px;counter-reset:s}
+.step{background:var(--ink2);border:1px solid var(--line);border-radius:20px;padding:24px;position:relative}
+.step::before{counter-increment:s;content:counter(s);font-family:var(--display);font-weight:900;font-size:56px;line-height:1;color:transparent;
+  -webkit-text-stroke:1.5px var(--gold);display:block;margin-bottom:10px}
+.step b{display:block;font-size:18px;margin-bottom:6px}
+.step p{margin:0;color:var(--dim);font-size:15px}
+@media(max-width:860px){.steps{grid-template-columns:1fr}}
+
+/* faq */
+.faq{max-width:780px}
+details{border-bottom:1px solid var(--line);padding:18px 0}
+summary{cursor:pointer;font-weight:700;font-size:18px;list-style:none;display:flex;justify-content:space-between;gap:20px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--gold);font-family:var(--display);font-size:22px;line-height:1;transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin:12px 0 0;color:var(--dim)}
+
+footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--dim);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer a{color:var(--text)}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+.reveal.on{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}#snow{display:none}}
+</style>
+</head>
+<body>
+<canvas id="snow"></canvas>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="logo" href="#top">
+      <svg viewBox="0 0 108 108"><rect width="108" height="108" fill="#0d1220"/><path d="M0 78Q30 70 54 76T108 74V108H0Z" fill="#e8ecf4"/><path d="M38 76 54 22 70 76M44 56H64M47 44H61" stroke="#c9302c" stroke-width="4" fill="none"/><rect x="48" y="18" width="12" height="8" fill="#c9302c"/><rect x="70" y="58" width="16" height="18" fill="#f4c84a"/></svg>
+      Угольный Яр
+    </a>
+    <div class="links">
+      <a href="#story">История</a><a href="#chapters">Главы</a><a href="#shots">Скриншоты</a><a href="#install">Установка</a>
+    </div>
+    <a class="nav-cta" href="#download">Скачать</a>
+  </div>
+</nav>
+
+<!-- ═════════════ ГЕРОЙ ═════════════ -->
+<header class="hero" id="top">
+  <div class="moon"></div>
+  <div class="scene">
+    <svg id="town" viewBox="0 110 1440 450" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  </div>
+  <div class="hero-copy">
+    <div class="wrap">
+      <span class="eyebrow"><i></i> Шахта «Северная» закрыта с 2014</span>
+      <h1>Угольный<span>Яр</span></h1>
+      <p class="lede">Было <b>50 000</b> жителей. Осталось <b>312</b>. У тебя есть год и 12 миллионов, чтобы город снова ожил. Иначе его расселят и сотрут с карты.</p>
+      <div class="counter">
+        <div class="box pop"><small>Жители</small><b id="cPop">312</b></div>
+        <div class="box days"><small>До срока</small><b id="cDays">365 дн.</b></div>
+        <div class="box bud"><small>Бюджет</small><b>12 млн ₽</b></div>
+      </div>
+      <div class="btns">
+        <a class="btn btn-main" href="https://github.com/hy9pjcnrr8-hub/sosnovka/releases/download/latest/UgolnyYar-native.apk">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.48l1.84-3.18a.38.38 0 00-.66-.38l-1.86 3.22A11.4 11.4 0 0012 8.1c-1.77 0-3.43.38-4.92 1.04L5.22 5.92a.38.38 0 00-.66.38L6.4 9.48A10.8 10.8 0 001 18h22a10.8 10.8 0 00-5.4-8.52zM7 15.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zm10 0a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z"/></svg>
+          <span>Скачать для Android<span class="sub">APK · 33 КБ · бесплатно</span></span>
+        </a>
+        <a class="btn btn-ghost" href="play.html">▶ Играть в браузере</a>
+      </div>
+      <div class="meta">Android 7.0 и новее · без рекламы · без интернета</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═════════════ ИСТОРИЯ ═════════════ -->
+<section id="story">
+  <div class="wrap story">
+    <div class="reveal">
+      <p class="kicker">О чём игра</p>
+      <h2>Тёмные окна. Пустые подъезды. И ты — новый глава посёлка.</h2>
+      <p>Котельная стоит, в кранах нет воды, до трассы 60 километров по заметённому зимнику. Губернатор дал условие: за 365 дней вернуть городу 50 000 жителей.</p>
+      <p>Каждое решение стоит денег и времени. Чинить старое или строить новое? Отдать квартиры семьям или туристам? И кто каждую ночь спускается в закрытую шахту?</p>
+      <div class="stamp">ЗАКРЫТО · 2014</div>
+    </div>
+    <div class="big-stat reveal">
+      <div class="s-red"><b>312</b><span>жителей осталось</span></div>
+      <div class="s-gold"><b>365</b><span>дней до решения комиссии</span></div>
+      <div class="s-green"><b>50 000</b><span>нужно вернуть</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ ГЛАВЫ ═════════════ -->
+<section id="chapters" class="chapters">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="kicker">9 глав · 4 концовки</p>
+      <h2>От первой искры<br>до последнего жителя</h2>
+      <p class="muted" style="max-width:560px">Решения тянутся через всю игру: то, что ты построил в ноябре, решит, придут ли инвесторы летом.</p>
+    </div>
+    <div class="ch-grid">
+      <div class="ch reveal"><span class="ico">🔥</span><span class="n">01</span><h3>Тепло</h3><p>−34° и 100 000 тонн угля на складе шахты. Котельная, электрокотлы или буржуйки?</p></div>
+      <div class="ch reveal"><span class="ico">🛣️</span><span class="n">02</span><h3>Дорога</h3><p>60 км до трассы. Асфальт, снегозащитные щиты — или оставить зимник?</p></div>
+      <div class="ch reveal"><span class="ico">💡</span><span class="n">03</span><h3>Свет</h3><p>Подстанция пуста: всё сдали на металлолом. Трансформатор или дизель?</p></div>
+      <div class="ch secret reveal"><span class="ico">⛏️</span><span class="n">04</span><h3>Шахта?</h3><p>02:14. Тёплый свет в окне вентиляционного ствола. Журнал. Люк. Кто-то спускается туда двенадцать лет.</p></div>
+      <div class="ch reveal"><span class="ico">🚰</span><span class="n">05</span><h3>Вода</h3><p>Кран сухой с 2014-го. Земля промерзает глубже двух метров — сэкономишь сейчас, заплатишь потом.</p></div>
+      <div class="ch reveal"><span class="ico">📶</span><span class="n">06</span><h3>Связь и магазины</h3><p>«Жителей — 2,6 % от нужного. Не приведём». Придётся самому.</p></div>
+      <div class="ch reveal"><span class="ico">🎿</span><span class="n">07</span><h3>Курорт</h3><p>Снег лежит 7 месяцев. Подъёмник за 60 млн — или шахтная лебёдка 1957 года?</p></div>
+      <div class="ch reveal"><span class="ico">🏠</span><span class="n">08</span><h3>Жильё</h3><p>Грант 20 млн и 300 квартир. Жителям — или туристам?</p></div>
+      <div class="ch reveal"><span class="ico">🏭</span><span class="n">09</span><h3>Работа</h3><p>Дома есть, работы нет. Заводы, кварталы, реклама — месяц за месяцем до последней ночи.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ СКРИНШОТЫ ═════════════ -->
+<section id="shots" class="shots">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <p class="kicker">Как это выглядит</p>
+      <h2>Каждый день на счету</h2>
+    </div>
+    <div class="rail">
+      <figure class="phone reveal"><img src="img/shot-1.jpg" alt="Пролог: 50 000 жителей было, 312 осталось" loading="lazy" width="585" height="1266"><figcaption>Пролог</figcaption></figure>
+      <figure class="phone reveal"><img src="img/shot-2.jpg" alt="Часть 1: тепло" loading="lazy" width="585" height="1266"><figcaption>Котельная снова дымит</figcaption></figure>
+      <figure class="phone reveal"><img src="img/shot-3.jpg" alt="Часть 4: тайна шахты" loading="lazy" width="585" height="1266"><figcaption>Тайна шахты</figcaption></figure>
+      <figure class="phone reveal"><img src="img/shot-4.jpg" alt="Часть 9: строим заводы" loading="lazy" width="585" height="1266"><figcaption>Строим город</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:60px">
+  <div class="wrap">
+    <div class="feat">
+      <div class="reveal"><b>Решения с последствиями</b><p>Экономия в ноябре аукнется в октябре. Доверие жителей влияет на всё.</p></div>
+      <div class="reveal"><b>Живая экономика</b><p>Бюджет, доход по месяцам, налоги, гранты — и банкротство, если увлечёшься.</p></div>
+      <div class="reveal"><b>Партия за 15 минут</b><p>Сыграл — попробуй другой путь. Четыре разные концовки.</p></div>
+      <div class="reveal"><b>Лёгкая и честная</b><p>33 КБ, работает без интернета. Никакой рекламы и доната.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ СКАЧАТЬ ═════════════ -->
+<section id="download" class="download">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="kicker">Бесплатно</p>
+      <h2>Город ждёт тебя</h2>
+      <p class="muted">Выбери версию — их можно поставить обе.</p>
+    </div>
+    <div class="dl-cards">
+      <div class="card best reveal">
+        <span class="tag">Рекомендуем</span>
+        <h3>Android · нативная</h3>
+        <p>Написана на Java, без браузерного движка. Быстрая и лёгкая.</p>
+        <ul><li>33 КБ</li><li>Android 7.0+</li><li>Проверена в эмуляторе</li></ul>
+        <a class="btn btn-main" href="https://github.com/hy9pjcnrr8-hub/sosnovka/releases/download/latest/UgolnyYar-native.apk">⬇ Скачать APK</a>
+      </div>
+      <div class="card reveal">
+        <span class="tag alt">Альтернатива</span>
+        <h3>Android · WebView</h3>
+        <p>Та же игра в оболочке со встроенным браузерным движком.</p>
+        <ul><li>23 КБ</li><li>Android 7.0+</li></ul>
+        <a class="btn btn-ghost" href="https://github.com/hy9pjcnrr8-hub/sosnovka/releases/download/latest/UgolnyYar.apk">⬇ Скачать APK</a>
+      </div>
+      <div class="card reveal">
+        <span class="tag alt">Без установки</span>
+        <h3>В браузере</h3>
+        <p>На iPhone, компьютере — где угодно. Можно добавить на главный экран.</p>
+        <ul><li>Любое устройство</li><li>Ничего не скачивать</li></ul>
+        <a class="btn btn-ghost" href="play.html">▶ Играть сейчас</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ УСТАНОВКА ═════════════ -->
+<section id="install">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="kicker">Установка</p>
+      <h2>Три шага — и ты глава посёлка</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><b>Скачай APK</b><p>Нажми «Скачать для Android» на телефоне. Файл весит меньше фотографии.</p></div>
+      <div class="step reveal"><b>Разреши установку</b><p>Android спросит про «неизвестные источники» — разреши для браузера. Это нормально для игр не из Google Play.</p></div>
+      <div class="step reveal"><b>Открой и играй</b><p>Иконка с красным копром появится на главном экране. Интернет не нужен.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ FAQ ═════════════ -->
+<section style="padding-top:20px">
+  <div class="wrap faq">
+    <p class="kicker reveal">Вопросы</p>
+    <h2 class="reveal">Частые вопросы</h2>
+    <details class="reveal"><summary>Это бесплатно?</summary><p>Да, полностью. Без рекламы, покупок и регистрации.</p></details>
+    <details class="reveal"><summary>Android пишет, что приложение может быть опасным</summary><p>Так Android реагирует на любое приложение не из Google Play. Игра не просит никаких разрешений — ни к контактам, ни к камере, ни к интернету.</p></details>
+    <details class="reveal"><summary>А на iPhone есть?</summary><p>APK работает только на Android. На iPhone играй в браузере: открой «Играть в браузере» в Safari → «Поделиться» → «На экран „Домой“».</p></details>
+    <details class="reveal"><summary>Можно ли вообще выиграть?</summary><p>Можно, но не с первого раза. Подсказка: то, что ты построишь в первых главах, решит, сколько заводов готовы построить инвесторы. И не обижай деда Матвея.</p></details>
+    <details class="reveal"><summary>Сохраняется ли прогресс?</summary><p>Партия короткая — около 15 минут, — поэтому сохранений нет. Закрыл игру — начинаешь новую историю.</p></details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© Угольный Яр · игра о том, как вернуть городу жизнь</div>
+    <div><a href="https://github.com/hy9pjcnrr8-hub/sosnovka/releases/tag/latest">Все версии на GitHub</a></div>
+  </div>
+</footer>
+
+<script>
+"use strict";
+// ── ночной город: пятиэтажки, копёр шахты, сугробы ──
+(function town(){
+  const svg=document.getElementById("town"), NS="http://www.w3.org/2000/svg";
+  const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
+  let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
+  // дальние сопки
+  el("path",{d:"M0 330 Q180 250 360 300 T720 280 T1080 300 T1440 270 V560 H0Z",fill:"#18213d"});
+  el("path",{d:"M0 380 Q240 320 480 360 T960 350 T1440 340 V560 H0Z",fill:"#141c33"});
+  // копёр шахты
+  const hx=1080, hy=170;
+  el("path",{d:`M${hx-55} 420 L${hx} ${hy} L${hx+55} 420 M${hx-38} 340 H${hx+38} M${hx-24} 270 H${hx+24} M${hx-46} 380 L${hx+30} 300 M${hx+46} 380 L${hx-30} 300`,stroke:"#7a2a28",
+    "stroke-width":7,fill:"none","stroke-linejoin":"round"});
+  el("circle",{cx:hx,cy:hy+8,r:22,fill:"none",stroke:"#7a2a28","stroke-width":6});
+  const star=el("path",{d:"M0 -14 L4 -4 L14 -4 L6 2 L9 12 L0 6 L-9 12 L-6 2 L-14 -4 L-4 -4Z",fill:"#ff5a4f",transform:`translate(${hx} ${hy-26})`});
+  star.style.filter="drop-shadow(0 0 6px #ff5a4f)";
+  // труба котельной с дымом
+  el("rect",{x:250,y:220,width:26,height:200,fill:"#3a2626"});
+  for(let i=0;i<4;i++) el("rect",{x:250,y:236+i*40,width:26,height:9,fill:"#b33b35"});
+  const smoke=el("g",{opacity:.55});
+  for(let i=0;i<5;i++){const c=document.createElementNS(NS,"circle");c.setAttribute("cx",263);c.setAttribute("cy",205-i*22);c.setAttribute("r",12+i*5);c.setAttribute("fill","#c7cede");
+    c.style.animation=`puff 6s ${i*1.2}s infinite ease-out`;smoke.appendChild(c);}
+  const st=document.createElement("style");st.textContent="@keyframes puff{0%{transform:translate(0,20px) scale(.6);opacity:0}30%{opacity:.8}100%{transform:translate(40px,-80px) scale(1.4);opacity:0}}#town circle{transform-box:fill-box;transform-origin:center}";document.head.appendChild(st);
+  // пятиэтажки
+  const windows=[];
+  const blocks=[[20,250,200],[300,300,170],[490,220,230],[740,280,190],[1160,240,260],[1360,300,120]];
+  for(const [x,y,w] of blocks){
+    el("rect",{x,y,width:w,height:560-y,fill:"#1d2540"});
+    el("rect",{x,y,width:w,height:6,fill:"#2a3354"});
+    for(let fy=y+22; fy<500; fy+=34) for(let fx=x+14; fx<x+w-22; fx+=28){
+      windows.push(el("rect",{x:fx,y:fy,width:14,height:18,rx:1.5,fill:"#0e1324"}));
+    }
+  }
+  // сугробы
+  el("path",{d:"M0 500 Q160 470 330 492 T700 486 T1060 494 T1440 480 V560 H0Z",fill:"#dfe5f0"});
+  el("path",{d:"M0 530 Q260 505 560 524 T1100 518 T1440 522 V560 H0Z",fill:"#f2f5fa"});
+  // окна загораются вместе со счётчиком
+  const order=windows.map((w,i)=>[rnd(),w]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+  const lit=order.slice(0,Math.round(order.length*.04));
+  lit.forEach(w=>w.setAttribute("fill","#f4c84a"));
+  window.__lightTo=f=>{
+    const n=Math.round(order.length*Math.max(.04,f));
+    order.forEach((w,i)=>{const on=i<n;w.setAttribute("fill",on?"#f4c84a":"#0e1324");w.style.filter=on?"drop-shadow(0 0 4px rgba(244,200,74,.6))":"none";});
+  };
+})();
+
+// ── счётчик: 312 → 50 000, окна загораются ──
+(function(){
+  const p=document.getElementById("cPop"), d=document.getElementById("cDays");
+  const fmt=n=>Math.round(n).toLocaleString("ru-RU").replace(/,/g," ");
+  let t0=null; const DUR=6000;
+  function step(ts){
+    if(!t0)t0=ts;
+    const k=Math.min(1,(ts-t0)/DUR), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    p.textContent=fmt(312+(50000-312)*e);
+    d.textContent=Math.round(365*(1-k))+" дн.";
+    window.__lightTo&&window.__lightTo(e*.85);
+    if(k<1)requestAnimationFrame(step);
+  }
+  setTimeout(()=>requestAnimationFrame(step),900);
+})();
+
+// ── шапка и появление блоков ──
+const nav=document.getElementById("nav");
+addEventListener("scroll",()=>nav.classList.toggle("solid",scrollY>40),{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("on");io.unobserve(e.target);}}),{threshold:.12});
+document.querySelectorAll(".reveal").forEach((el,i)=>{el.style.transitionDelay=(i%3)*80+"ms";io.observe(el);});
+
+// ── снег ──
+(function(){
+  const cv=document.getElementById("snow"),ctx=cv.getContext("2d");let W,H,f=[];
+  const rs=()=>{W=cv.width=innerWidth*devicePixelRatio;H=cv.height=innerHeight*devicePixelRatio;cv.style.width=innerWidth+"px";cv.style.height=innerHeight+"px";};
+  rs();addEventListener("resize",rs);
+  const N=innerWidth<700?60:120;
+  for(let i=0;i<N;i++)f.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*2+.6)*devicePixelRatio,s:(Math.random()*.7+.3)*devicePixelRatio,d:Math.random()*.6-.3,a:Math.random()*.5+.3});
+  (function tick(){ctx.clearRect(0,0,W,H);
+    for(const o of f){o.y+=o.s;o.x+=o.d;if(o.y>H){o.y=-5;o.x=Math.random()*W;}
+      ctx.globalAlpha=o.a;ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,7);ctx.fill();}
+    requestAnimationFrame(tick);})();
+})();
+</script>
+</body>
+</html>
