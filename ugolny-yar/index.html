@@ -94,6 +94,20 @@ h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,4.6vw,52px);l
 .s-red b{color:var(--red)} .s-gold b{color:var(--gold)} .s-green b{color:var(--green)}
 @media(max-width:860px){.story{grid-template-columns:1fr;gap:36px}}
 
+
+/* было / стало */
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:40px}
+.ba figure{margin:0;position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 60px -30px rgba(0,0,0,.8)}
+.ba figure img{width:100%;height:auto}
+.ba figcaption{position:absolute;left:14px;top:14px;font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;
+  padding:6px 12px;border-radius:999px;background:rgba(11,15,28,.75);backdrop-filter:blur(6px)}
+.ba .b4 figcaption{color:var(--red)} .ba .af figcaption{color:var(--green)}
+.ba .wide{grid-column:1/-1;display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:30px;background:var(--ink2);border:1px solid var(--line);border-radius:22px;padding:18px;overflow:visible;box-shadow:none}
+.ba .wide img{border-radius:14px}
+.ba .wide p{margin:0;color:#cfd5e2}
+.ba .wide b{display:block;font-family:var(--display);font-size:22px;margin-bottom:8px;color:var(--gold)}
+@media(max-width:760px){.ba{grid-template-columns:1fr}.ba .wide{grid-template-columns:1fr}}
+
 /* главы */
 .chapters{background:linear-gradient(180deg,var(--ink) 0%,#0e1426 100%)}
 .ch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px}
@@ -181,7 +195,7 @@ footer a{color:var(--text)}
       Угольный Яр
     </a>
     <div class="links">
-      <a href="#story">История</a><a href="#chapters">Главы</a><a href="#shots">Скриншоты</a><a href="#install">Установка</a>
+      <a href="#story">История</a><a href="#city">Город</a><a href="#chapters">Главы</a><a href="#shots">Скриншоты</a><a href="#install">Установка</a>
     </div>
     <a class="nav-cta" href="#download">Скачать</a>
   </div>
@@ -229,6 +243,24 @@ footer a{color:var(--text)}
       <div class="s-red"><b>312</b><span>жителей осталось</span></div>
       <div class="s-gold"><b>365</b><span>дней до решения комиссии</span></div>
       <div class="s-green"><b>50 000</b><span>нужно вернуть</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═════════════ ГОРОД МЕНЯЕТСЯ ═════════════ -->
+<section id="city" style="padding-top:40px">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="kicker">Живой город</p>
+      <h2>Каждое решение видно<br>на улицах Яра</h2>
+      <p class="muted" style="max-width:600px">Над текстом — нарисованная панорама города. Выбрал котельную — камера летит к ней, и из трубы впервые за 12 лет идёт дым. Провёл свет — загораются фонари. Построил завод — над крышами поднимается новая труба.</p>
+    </div>
+    <div class="ba">
+      <figure class="b4 reveal"><img src="img/city-before.jpg" alt="Угольный Яр в начале игры: тёмные окна" loading="lazy" width="1040" height="715"><figcaption>Ноябрь · 312 жителей</figcaption></figure>
+      <figure class="af reveal"><img src="img/city-after.jpg" alt="Угольный Яр в конце игры: огни, заводы, курорт" loading="lazy" width="1040" height="715"><figcaption>Октябрь · 48 000 жителей</figcaption></figure>
+      <figure class="wide reveal"><img src="img/city-matvey.jpg" alt="Дед Матвей выходит из шахты с налобным фонарём" loading="lazy" width="1040" height="715">
+        <p><b>02:14. Свет в окне вентилятора.</b>Ночные сцены, падающий снег, северное сияние зимой и тёплые закаты летом. Город живёт по календарю: снег лежит семь месяцев, а когда тает — склоны зеленеют.</p></figure>
     </div>
   </div>
 </section>
