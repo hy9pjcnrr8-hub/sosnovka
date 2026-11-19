@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   emulator:
     runs-on: ubuntu-latest
@@ -39,3 +42,12 @@ jobs:
           target: default
           disable-animations: true
           script: bash .github/smoke.sh
+
+      - name: Publish screenshots to ci-shots branch
+        if: always()
+        run: |
+          cd ci-shots
+          git init -q -b ci-shots
+          git config user.name "ci"; git config user.email "ci@example.com"
+          git add -A && git commit -qm "screenshots ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-shots

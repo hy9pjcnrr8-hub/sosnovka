@@ -1,24 +1,20 @@
 #!/bin/bash
-# Ставит нативный APK, запускает в режиме автоигры и снимает скриншоты по ходу партии.
+# Ставит нативный APK, запускает в режиме автоигры и снимает скриншоты по ходу партии в папку ci-shots/.
 APK=nativeapp/build/outputs/apk/release/nativeapp-release.apk
+mkdir -p ci-shots
 adb install -r $APK
 adb logcat -c
-adb shell wm size
 adb shell am start -n ru.ugolnyyar.nativegame/.MainActivity --ez autoplay true
 shot() {
-  adb exec-out screencap -p > /tmp/s.png
-  echo "===SHOT $1 BEGIN"; base64 -w 0 /tmp/s.png; echo; echo "===SHOT $1 END"
+  timeout 60 adb shell screencap -p /sdcard/s.png && timeout 60 adb pull /sdcard/s.png ci-shots/$1.png >/dev/null && echo "shot $1 ok" || echo "shot $1 FAILED"
 }
 alive() { adb shell pidof ru.ugolnyyar.nativegame >/dev/null && echo "ALIVE at $1" || echo "DEAD at $1"; }
-sleep 12; shot t012; alive 12
-sleep 20; shot t032; alive 32
-sleep 30; shot t062; alive 62
-sleep 40; shot t102; alive 102
-sleep 60; shot t162; alive 162
-sleep 80; shot t242; alive 242
-sleep 90; shot t332; alive 332
-echo "===== FPS"
-adb shell dumpsys gfxinfo ru.ugolnyyar.nativegame | grep -E "Total frames|Janky|50th|90th" | head -5
-echo "===== CRASHES"
-adb logcat -d | grep -E "FATAL EXCEPTION" -A 25 | head -60
-alive end
+for t in 12 32 62 102 162 242 332 420; do
+  sleep $(( t - ${prev:-0} )); prev=$t
+  shot t$(printf %03d $t); alive $t
+done
+adb shell dumpsys gfxinfo ru.ugolnyyar.nativegame | grep -E "Total frames|Janky|50th|90th|99th" | head -6 > ci-shots/fps.txt
+adb logcat -d | grep -E "FATAL EXCEPTION" -A 30 | head -80 > ci-shots/crash.txt
+adb logcat -d | grep -iE "ugolnyyar|AndroidRuntime" | tail -40 > ci-shots/log.txt
+cat ci-shots/fps.txt ci-shots/crash.txt
+alive end | tee -a ci-shots/fps.txt
