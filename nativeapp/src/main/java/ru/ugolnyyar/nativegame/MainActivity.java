@@ -241,7 +241,8 @@ public class MainActivity extends Activity {
         scroll.post(() -> scroll.fullScroll(View.FOCUS_DOWN));
     }
 
-    Button makeButton(String text, String costLine, int costColor, boolean enabled, int style) {
+    Button makeButton(String text, String costLine, int costColor, boolean enabled, int style) { return makeButton(text, null, costLine, costColor, enabled, style); }
+    Button makeButton(String text, String sub, String costLine, int costColor, boolean enabled, int style) {
         Button b = new Button(this);
         b.setAllCaps(false);
         b.setTextSize(15);
@@ -249,6 +250,7 @@ public class MainActivity extends Activity {
         b.setPadding(dp(13), dp(10), dp(13), dp(10));
         b.setStateListAnimator(null);
         String full = escape(text);
+        if (sub != null) full = "<b>" + full + "</b><br><small><font color='#8a93a8'>" + escape(sub) + "</font></small>";
         if (costLine != null) {
             full += "<br><font color='" + String.format("#%06X", 0xFFFFFF & costColor) + "'><b><small>" + costLine + "</small></b></font>";
         }
@@ -295,7 +297,7 @@ public class MainActivity extends Activity {
     void say(String text, int kind, long wait) {
         hud();
         post(() -> addLine(text, kind));
-        sleep(wait);
+        sleep(autoplay ? wait / 4 : wait);
     }
     void say(String text) { say(text, P, 260); }
     void say(String text, int kind) {
@@ -308,7 +310,7 @@ public class MainActivity extends Activity {
 
     void pause(String label) {
         answers.clear();
-        if (autoplay) { sleep(2200); clear(); return; }
+        if (autoplay) { sleep(700); clear(); return; }
         post(() -> {
             ctl.removeAllViews();
             Button b = makeButton(label, null, 0, true, 1);
@@ -321,66 +323,102 @@ public class MainActivity extends Activity {
     void pause() { pause("Дальше →"); }
 
     static class Opt {
-        final String text, key; final long cost; final int style;
-        Opt(String text, long cost, String key) { this(text, cost, key, 0); }
-        Opt(String text, long cost, String key, int style) { this.text = text; this.cost = cost; this.key = key; this.style = style; }
+        final String text, key, sub; final long cost; final int style;
+        Opt(String text, long cost, String key) { this(text, null, cost, key, 0); }
+        Opt(String text, long cost, String key, int style) { this(text, null, cost, key, style); }
+        Opt(String text, String sub, long cost, String key) { this(text, sub, cost, key, 0); }
+        Opt(String text, String sub, long cost, String key, int style) { this.text = text; this.sub = sub; this.cost = cost; this.key = key; this.style = style; }
     }
 
-    String choose(String title, Opt[] opts, String[] caps) {
+    String choose(String title, Opt[] opts, String[] caps) { return choose(title, opts, caps, false); }
+    String choose(String title, Opt[] opts, String[] caps, boolean grid) {
         hud();
         answers.clear();
         final long budgetNow = (long) budget;
         post(() -> {
             ctl.removeAllViews();
             if (caps != null) {
-                LinearLayout row = new LinearLayout(this);
-                row.setOrientation(LinearLayout.HORIZONTAL);
+                LinearLayout row = null;
                 for (int i = 0; i < caps.length; i++) {
+                    if (i % 3 == 0) {
+                        row = new LinearLayout(this);
+                        row.setOrientation(LinearLayout.HORIZONTAL);
+                        LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(-1, -2);
+                        rlp.bottomMargin = dp(6);
+                        ctl.addView(row, rlp);
+                    }
                     TextView c = new TextView(this);
                     c.setText(html(caps[i]));
                     c.setTextColor(DIM);
-                    c.setTextSize(12);
-                    c.setPadding(dp(9), dp(7), dp(9), dp(7));
+                    c.setTextSize(11.5f);
+                    c.setPadding(dp(8), dp(5), dp(8), dp(5));
                     c.setBackground(box(PANEL, LINE, 10, 1));
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -2, 1f);
-                    if (i > 0) lp.leftMargin = dp(8);
+                    if (i % 3 > 0) lp.leftMargin = dp(6);
                     row.addView(c, lp);
                 }
-                LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(-1, -2);
-                rlp.bottomMargin = dp(8);
-                ctl.addView(row, rlp);
+                if (caps.length % 3 != 0) for (int i = caps.length % 3; i < 3; i++) { View sp = new View(this); LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, 1, 1f); lp.leftMargin = dp(6); row.addView(sp, lp); }
             }
             TextView q = new TextView(this);
             q.setText("▶ " + title);
             q.setTextColor(TEXT);
             q.setTextSize(15);
             q.setTypeface(Typeface.DEFAULT_BOLD);
-            q.setPadding(0, 0, 0, dp(8));
+            q.setPadding(0, 0, 0, dp(7));
             ctl.addView(q);
+            ScrollView sv = new ScrollView(this);
+            LinearLayout list = new LinearLayout(this);
+            list.setOrientation(LinearLayout.VERTICAL);
+            sv.addView(list);
+            LinearLayout.LayoutParams svlp = new LinearLayout.LayoutParams(-1, -2);
+            ctl.addView(sv, svlp);
+            LinearLayout gridRow = null; int inRow = 0;
+            Button pinned = null;
             for (Opt o : opts) {
                 boolean afford = o.cost <= 0 || budgetNow >= o.cost;
                 String costLine = null;
                 int costColor = GOLD;
-                if (o.cost > 0 && o.cost < 100_000_000_000L) {
-                    costLine = money(o.cost) + (afford ? "" : " · не хватает денег");
+                if (o.cost >= 100_000_000_000L) { costLine = "недоступно"; costColor = RED; afford = false; }
+                else if (o.cost > 0) {
+                    costLine = money(o.cost) + (afford ? "" : " · не хватает");
                     costColor = afford ? GOLD : RED;
                 } else if (o.cost < 0) {
                     costLine = "+" + money(-o.cost);
                     costColor = GREEN;
                 }
-                Button b = makeButton(o.text, costLine, costColor, afford, o.style);
+                Button b = makeButton(o.text, o.sub, costLine, costColor, afford, o.style);
                 b.setOnClickListener(v -> { ctl.removeAllViews(); answers.offer(o); });
-                ctl.addView(b);
+                if (o.key.equals("end")) { pinned = b; continue; }
+                if (grid) {
+                    b.setTextSize(13.5f);
+                    b.setPadding(dp(10), dp(8), dp(10), dp(8));
+                    if (inRow == 0) { gridRow = new LinearLayout(this); gridRow.setOrientation(LinearLayout.HORIZONTAL); list.addView(gridRow, new LinearLayout.LayoutParams(-1, -2)); }
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -1, 1f);
+                    lp.bottomMargin = dp(6); if (inRow == 1) lp.leftMargin = dp(6);
+                    gridRow.addView(b, lp);
+                    inRow = (inRow + 1) % 2;
+                } else list.addView(b);
             }
+            if (grid && inRow == 1) { View sp = new View(this); LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, 1, 1f); lp.leftMargin = dp(6); gridRow.addView(sp, lp); }
+            if (pinned != null) {
+                LinearLayout.LayoutParams plp = new LinearLayout.LayoutParams(-1, -2);
+                plp.topMargin = dp(6); plp.bottomMargin = 0;
+                ctl.addView(pinned, plp);
+            }
+            final int maxH = (int) (getResources().getDisplayMetrics().heightPixels * 0.34f);
+            sv.post(() -> { if (sv.getHeight() > maxH) { svlp.height = maxH; sv.setLayoutParams(svlp); } });
         });
         Opt o;
         if (autoplay) {
-            sleep(2200);
+            sleep(600);
             Opt pick = null;
             if (title.startsWith("Что строим")) {
-                boolean wantFactory = support() <= housing;
-                for (Opt x : opts) if (x.key.equals(wantFactory ? "factory" : "block") && (x.cost <= 0 || budget >= x.cost)) pick = x;
-                if (pick == null) for (Opt x : opts) if (x.key.equals(wantFactory ? "block" : "factory") && (x.cost <= 0 || budget >= x.cost)) pick = x;
+                String want;
+                if (act >= 2 && schools < needSchools()) want = "school";
+                else if (act >= 2 && hospitals < needHosp()) want = "hosp";
+                else want = support() <= housing ? "factory" : (north != null ? "micro" : "block");
+                for (Opt x : opts) if (x.key.equals(want) && x.cost < 100_000_000_000L && budget >= x.cost) pick = x;
+                if (pick == null) for (Opt x : opts) if ((x.key.equals("block") || x.key.equals("factory")) && x.cost < 100_000_000_000L && budget >= x.cost) pick = x;
                 if (pick == null) pick = opts[opts.length - 1];
             } else for (Opt x : opts) if (x.cost <= 0 || budget >= x.cost) { pick = x; break; }
             final Opt fp = pick;
@@ -404,6 +442,14 @@ public class MainActivity extends Activity {
     volatile String chapter, heat, light, water, comm, shops, lift, housingChoice, mine;
     int road;
     volatile boolean matvey, mineOpen, frozen, ms10, ms25, roadSet, ratrak, hotel, ventLit, matveyVis;
+    // Часть II и дальше
+    volatile int act = 1, goal = GOAL, deadline = DEADLINE, step = 0, month = 0, year = 1;
+    volatile int schools, hospitals, parks, malls, micro, capBonus;
+    volatile double smog;
+    volatile String rail, energy, airport, mineFate, north;
+    volatile boolean uni, med, tram, museum, demolished, cup, filters;
+    final java.util.Set<String> done = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+    final Map<String, Integer> lastEv = new java.util.HashMap<>();
 
     void newGame() {
         day = 0; budget = 12_000_000; pop = 312; trust = 50; chapter = "ПРОЛОГ";
@@ -413,10 +459,15 @@ public class MainActivity extends Activity {
         lift = "none"; road = 0;
         matvey = mineOpen = frozen = ms10 = ms25 = false;
         roadSet = ratrak = hotel = ventLit = matveyVis = false;
+        act = 1; goal = GOAL; deadline = DEADLINE; step = 0; month = 0; year = 1;
+        schools = hospitals = parks = malls = micro = capBonus = 0; smog = 0;
+        rail = energy = airport = mineFate = north = null;
+        uni = med = tram = museum = demolished = cup = filters = false;
+        done.clear(); lastEv.clear();
         post(() -> city.reset());
     }
 
-    int daysLeft() { return Math.max(0, DEADLINE - day); }
+    int daysLeft() { return deadline < 0 ? 99999 : Math.max(0, deadline - day); }
     long monthly() {
         long s = 0;
         for (long v : income.values()) s += v;
@@ -443,10 +494,11 @@ public class MainActivity extends Activity {
         c.add(Calendar.DAY_OF_YEAR, day);
         String date = String.format("%02d.%02d.%02d", c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR) % 100);
         long inc = monthly();
-        String l1 = col(C_RED, date + " · " + daysLeft() + " ДН.") + "   " + col(C_GOLD, chapter) + "   " + col(C_BLUE, "♥ " + trust);
-        String l2 = col(C_GREEN, "👥 " + fmt(pop) + " / " + fmt(GOAL)) + "   " + col(C_GOLD, money(budget)) + " " + col(inc >= 0 ? C_GREEN : C_RED, (inc >= 0 ? "+" : "") + fmt(inc) + "/мес");
+        String when = deadline < 0 ? date + " · ГОД " + year : date + " · " + daysLeft() + " ДН.";
+        String l1 = col(C_RED, when) + "   " + col(C_GOLD, chapter) + "   " + col(C_BLUE, "♥ " + trust) + (smog > 15 ? "   " + col("#c9a27a", "🌫 " + Math.round(smog)) : "");
+        String l2 = col(C_GREEN, "👥 " + fmt(pop) + " / " + fmt(goal)) + "   " + col(C_GOLD, money(budget)) + " " + col(inc >= 0 ? C_GREEN : C_RED, (inc >= 0 ? "+" : "") + fmt(inc) + "/мес");
         String l3 = "";
-        float frac = Math.min(1f, pop / (float) GOAL);
+        float frac = Math.min(1f, pop / (float) goal);
         post(() -> {
             hud1.setText(html(l1));
             hud2.setText(html(l2));
@@ -854,16 +906,34 @@ public class MainActivity extends Activity {
 
     long support() { return jobs + (long) Math.floor(pop * 0.3); }
 
+    // ───────────────────────── рост города ─────────────────────────
+
+    int needSchools() { return pop / 15000; }
+    int needHosp() { return pop / 40000; }
+    double serviceFactor() {
+        if (act < 2) return 1;
+        int ds = Math.max(0, needSchools() - schools), dh = Math.max(0, needHosp() - hospitals);
+        return Math.max(.3, 1 - .12 * ds - .18 * dh);
+    }
+    int factoryCap() { return infraScore() + capBonus + (act >= 2 ? pop / 12000 : 0); }
+    long factoryCost() { return act >= 2 ? 6_000_000L + (factories / 5) * 1_000_000L : FACTORY_COST; }
+    long microCost() { return ("muni".equals(north) ? 12_000_000L : 9_000_000L) + micro * 600_000L; }
+    static final int MAX_BLOCKS = 20;
+
     void growthTick(int days) {
         long cap = Math.min(housing, support());
-        double rate = Math.max(.08, Math.min(.8, .2 + 1.2 * quality() + .1 * ads)) * days / 30.0;
-        if (cap > pop) addPop((long) Math.floor((cap - pop) * rate), "переехали в город");
-        else if (cap < pop) addPop(-(long) Math.floor((pop - cap) * .25 * days / 30.0), housing < support() ? "негде жить" : "нет работы");
+        double smogF = 1 - Math.min(.5, smog / 250.0);
+        double rate = Math.max(.08, Math.min(.8, .2 + 1.2 * quality() + .1 * ads)) * serviceFactor() * smogF * days / 30.0;
+        if (cap > pop) {
+            long gain = (long) Math.floor((cap - pop) * rate);
+            if (act >= 2) gain = Math.min(gain, (long) Math.floor((pop * .03 + 2000) * (1 + .3 * ads) * serviceFactor() * smogF * days / 30.0));
+            addPop(gain, "переехали в город");
+        } else if (cap < pop) addPop(-(long) Math.floor((pop - cap) * .25 * days / 30.0), housing < support() ? "негде жить" : "нет работы");
         ads = 0;
     }
 
     void freezeEvent() {
-        if (water.equals("shallow") && !frozen && day >= 320) {
+        if ("shallow".equals(water) && !frozen && day >= 320) {
             frozen = true;
             clear();
             say("Заморозки", H);
@@ -881,9 +951,100 @@ public class MainActivity extends Activity {
         }
     }
 
+    String[] capsArr() {
+        java.util.ArrayList<String> c = new java.util.ArrayList<>();
+        String w = "<br><font color='#e8ecf4'><big><b>";
+        c.add("🏠 Жильё" + w + fmt(housing) + "</b></big></font>");
+        c.add("🏭 Работа" + w + fmt(support()) + "</b></big></font>");
+        c.add("Заводы" + w + factories + "/" + factoryCap() + "</b></big></font>");
+        if (act >= 2) {
+            int ns = needSchools(), nh = needHosp();
+            c.add((schools < ns ? "<font color='#ff9a8f'>" : "<font>") + "🏫 Школы</font>" + w + schools + "/" + ns + "</b></big></font>");
+            c.add((hospitals < nh ? "<font color='#ff9a8f'>" : "<font>") + "🏥 Больн.</font>" + w + hospitals + "/" + nh + "</b></big></font>");
+        }
+        return c.toArray(new String[0]);
+    }
+
+    Opt[] buildMenu() {
+        java.util.ArrayList<Opt> o = new java.util.ArrayList<>();
+        boolean a2 = act >= 2;
+        String fname = FACTORY_NAMES[factories % FACTORY_NAMES.length];
+        o.add(factories < factoryCap() ? new Opt("🏭 Завод", fname, factoryCost(), "factory") : new Opt("🏭 Завод", "инвесторам не хватает инфраструктуры", 1_000_000_000_000L, "factory"));
+        o.add(a2 && blocks >= MAX_BLOCKS ? new Opt("🏠 Квартал", "старых домов не осталось", 1_000_000_000_000L, "block")
+                : new Opt("🏠 Квартал", "+" + fmt(BLOCK_HOMES) + " жилья" + (a2 ? " · осталось " + (MAX_BLOCKS - blocks) : ""), BLOCK_COST, "block"));
+        if (a2 && north != null) o.add(new Opt("🏙 Микрорайон", "+25 000 жилья", microCost(), "micro"));
+        if (a2) {
+            o.add(new Opt("🏫 Школа", "нужна на 15 000 жителей", 2_000_000, "school"));
+            o.add(new Opt("🏥 Больница", "нужна на 40 000", 4_500_000, "hosp"));
+            o.add(new Opt("🌳 Парк", "доверие ↑, смог ↓", 1_500_000, "park"));
+            o.add(new Opt("🛍 Торговый центр", "+2 500 работы, доход", 3_500_000, "mall"));
+        }
+        o.add(new Opt("📣 Реклама", "быстрее переезжают", a2 ? 1_200_000 : AD_COST, "ad"));
+        o.add(new Opt("Завершить месяц →", 0, "end", 2));
+        return o.toArray(new Opt[0]);
+    }
+
+    void doBuild(String k) {
+        switch (k) {
+            case "factory":
+                factories++; jobs += FACTORY_JOBS;
+                income.put("Заводы", income.getOrDefault("Заводы", 0L) + FACTORY_INCOME);
+                if (act >= 2) smog = Math.min(100, smog + (filters ? 1.5 : 4));
+                say("Строится: <b>" + FACTORY_NAMES[(factories - 1) % FACTORY_NAMES.length] + "</b>", GREENK, 120); break;
+            case "block": blocks++; housing += BLOCK_HOMES; say("Пятиэтажки в лесах. Скоро — новые жильцы.", GREENK, 120); break;
+            case "micro": micro++; housing += 25000; say("Микрорайон «Северный»: краны, котлованы, три новые высотки.", GREENK, 120); break;
+            case "school": schools++; jobs += 120; say("Новая школа: 1 100 мест, бассейн и кружок робототехники.", GREENK, 120); break;
+            case "hosp": hospitals++; jobs += 600; say("Больница открыта: приёмный покой, роддом, вертолётная площадка.", GREENK, 120); break;
+            case "park": parks++; trust = Math.min(100, trust + 3); smog = Math.max(0, smog - 5);
+                say(parks == 1 ? "Парк с колесом обозрения — над городом видно гору и копёр." : "Ещё один парк: аллеи, фонари, каток.", GREENK, 120); break;
+            case "mall": malls++; jobs += 2500; income.put("Торговые центры", income.getOrDefault("Торговые центры", 0L) + 400_000L);
+                say("Торговый центр: кино, фудкорт, очередь на открытии.", GREENK, 120); break;
+            case "ad": ads++; say("Ролик про Угольный Яр набирает миллионы просмотров.", GREENK, 120); break;
+        }
+    }
+
+    static final long[][] MS_BONUS = {{10000, 4_000_000}, {25000, 6_000_000}, {75000, 10_000_000}, {100000, 15_000_000}, {150000, 20_000_000},
+            {250000, 30_000_000}, {500000, 50_000_000}, {1000000, 100_000_000}};
+
+    void monthTurn() {
+        save();
+        hud();
+        say(deadline < 0 ? "Год " + year + " · месяц " + (((month - 1) % 12) + 1) : "Месяц " + month, H);
+        if (act >= 2) {
+            int ns = needSchools(), nh = needHosp();
+            if (schools < ns || hospitals < nh)
+                say("⚠ Не хватает " + (schools < ns ? "школ: " + (ns - schools) : "") + (schools < ns && hospitals < nh ? ", " : "") + (hospitals < nh ? "больниц: " + (nh - hospitals) : "") + " — люди переезжают медленнее.", DIMK, 150);
+            if (smog > 40) say("🌫 Смог над городом: " + Math.round(smog) + ". Рост замедляется, доверие падает.", DIMK, 150);
+        }
+        while (true) {
+            String k = choose("Что строим?", buildMenu(), capsArr(), true);
+            if (k.equals("end")) break;
+            doBuild(k);
+        }
+        int days = Math.min(30, daysLeft());
+        advance(days);
+        growthTick(days);
+        if (act >= 2 && smog > 40) trust = Math.max(0, trust - 2);
+        if (act >= 2) smog = Math.max(0, smog - parks * .3);
+        for (long[] m : MS_BONUS) {
+            if (pop >= m[0] && !done.contains("ms" + m[0])) {
+                done.add("ms" + m[0]); budget += m[1];
+                final String fs = "🎉 " + fmt(m[0]);
+                post(() -> city.addFloat(fs, GOLD));
+                say("🎉 " + fmt(m[0]) + " жителей! Область добавляет " + money(m[1]) + ".", GOLDK);
+            }
+        }
+        freezeEvent();
+        if (deadline < 0 && month % 12 == 0) year++;
+        sleep(500);
+        clear();
+    }
+
     void ch9() {
         chapter = "9. РАБОТА";
         focus("town");
+        if (done.contains("ch9init")) { monthLoop1(); return; }
+        done.add("ch9init");
         say("Часть 9 · Работа", H);
         jobs += (long) Math.floor(pop * .5);
         housing = Math.max(housing, pop);
@@ -892,61 +1053,18 @@ public class MainActivity extends Activity {
         say("🏭 <b>Завод</b> (" + money(FACTORY_COST) + ") — работа для ~" + fmt(FACTORY_JOBS) + " жителей с семьями и +" + money(FACTORY_INCOME) + "/мес.");
         say("🏠 <b>Жилой квартал</b> (" + money(BLOCK_COST) + ") — квартиры для " + fmt(BLOCK_HOMES) + " жителей.");
         say("📣 <b>Реклама</b> (" + money(AD_COST) + ") — в этом месяце люди переезжают быстрее.");
-        say("Население растёт к меньшему из двух чисел — «жильё» и «работа». Инвесторы готовы зайти максимум на <b>" + infraScore() + "</b> заводов: всё, что ты построил раньше, сейчас окупается.", DIMK);
+        say("Население растёт к меньшему из двух чисел — «жильё» и «работа». Инвесторы готовы зайти максимум на <b>" + infraScore() + "</b> заводов.", DIMK);
         pause("К делу →");
-
-        int month = 0;
-        while (daysLeft() > 3) {
-            month++;
-            say("Месяц " + month, H);
-            while (true) {
-                int fmax = infraScore();
-                String[] caps = {
-                        "🏠 Жильё на<br><font color='#e8ecf4'><big><b>" + fmt(housing) + "</b></big></font>",
-                        "🏭 Работа на<br><font color='#e8ecf4'><big><b>" + fmt(support()) + "</b></big></font>",
-                        "Заводы<br><font color='#e8ecf4'><big><b>" + factories + "/" + fmax + "</b></big></font>"};
-                Opt fopt = factories < fmax
-                        ? new Opt("🏭 Завод: " + FACTORY_NAMES[factories % FACTORY_NAMES.length], FACTORY_COST, "factory")
-                        : new Opt("🏭 Завод — инвесторы не идут: не хватает инфраструктуры", 1_000_000_000_000L, "factory");
-                String k = choose("Что строим?", new Opt[]{
-                        fopt,
-                        new Opt("🏠 Жилой квартал (ремонт старых пятиэтажек)", BLOCK_COST, "block"),
-                        new Opt("📣 Рекламная кампания «Вернись в Яр»", AD_COST, "ad"),
-                        new Opt("Завершить месяц →", 0, "end", 2)}, caps);
-                if (k.equals("factory")) {
-                    factories++;
-                    jobs += FACTORY_JOBS;
-                    income.put("Заводы", income.getOrDefault("Заводы", 0L) + FACTORY_INCOME);
-                    say("Строится: <b>" + FACTORY_NAMES[(factories - 1) % FACTORY_NAMES.length] + "</b>", GREENK);
-                } else if (k.equals("block")) {
-                    blocks++;
-                    housing += BLOCK_HOMES;
-                    say("Пятиэтажки в лесах. Скоро — новые жильцы.", GREENK);
-                } else if (k.equals("ad")) {
-                    ads++;
-                    say("Ролик про Угольный Яр набирает миллионы просмотров.", GREENK);
-                } else break;
-            }
-            int days = Math.min(30, daysLeft());
-            advance(days);
-            growthTick(days);
-            if (pop >= 10000 && !ms10) {
-                ms10 = true; budget += 4_000_000;
-                say("🎉 10 000 жителей! Область добавляет " + money(4_000_000) + ".", GOLDK);
-            }
-            if (pop >= 25000 && !ms25) {
-                ms25 = true; budget += 6_000_000;
-                say("🎉 25 000 жителей! Область добавляет " + money(6_000_000) + ".", GOLDK);
-            }
-            freezeEvent();
-            sleep(500);
-            clear();
-        }
+        monthLoop1();
+    }
+    void monthLoop1() {
+        chapter = "9. РАБОТА";
+        while (daysLeft() > 3) { month++; monthTurn(); }
     }
 
-    // ───────────────────────── финал ─────────────────────────
+    // ───────────────────────── финал части I ─────────────────────────
 
-    void finale() {
+    boolean finale() {
         chapter = "ФИНАЛ";
         day = DEADLINE;
         clear();
@@ -977,15 +1095,20 @@ public class MainActivity extends Activity {
             say("ПОСЁЛОК РАССЕЛЁН", STAMP);
             say("Последний автобус уходит к трассе. Окна гаснут одно за другим.");
         }
-        summary(shown);
+        return summary(shown, shown >= 5000);
     }
 
-    void summary(int shown) {
-        say("<font color='" + C_DIM + "'>Итоги:</font><br>Жителей: <b>" + fmt(shown) + "</b> / " + fmt(GOAL)
+    boolean summary(int shown, boolean canContinue) {
+        say("<font color='" + C_DIM + "'>Итоги:</font><br>Жителей: <b>" + fmt(shown) + "</b> / " + fmt(goal)
                 + "<br>Бюджет: " + money(budget) + "<br>Доверие: " + trust + "/100<br>Заводов: " + factories
                 + ", кварталов: " + blocks + "<br>Матвей: " + (matvey ? "встретил у люка" : "так и не поговорили"));
+        if (canContinue) {
+            String k = choose("История продолжается", new Opt("▶ Часть II · «Большой Яр»", 0, "cont", 1), new Opt("Начать заново ↻", 0, "new"));
+            return k.equals("cont");
+        }
         say("Спасибо, что были с нами!", H);
         pause("Сыграть ещё раз ↻");
+        return false;
     }
 
     void bankrupt() {
@@ -993,20 +1116,368 @@ public class MainActivity extends Activity {
         say("Банкротство", H);
         say("Деньги на счету посёлка закончились. Котельная встаёт, свет отключают за долги.", REDK);
         say("Область вводит внешнее управление. Твоя история здесь закончилась.");
-        summary(pop);
+        summary(pop, false);
+    }
+
+    // ───────────────────────── ЧАСТЬ II ─────────────────────────
+
+    final java.util.Random rng = new java.util.Random();
+    void trustAdd(int n) { trust = Math.max(0, Math.min(100, trust + n)); }
+
+    boolean randomEvent() {
+        if (rng.nextDouble() > .55) return false;
+        java.util.ArrayList<String> pool = new java.util.ArrayList<>();
+        String[] all = {"blizzard", "investor", "mineAccident", "blogger", "festival", "coalPrice", "frost", "rink"};
+        for (String id : all) {
+            if (lastEv.getOrDefault(id, -5) == month - 1) continue;
+            if ((id.equals("mineAccident")) && !(mineOpen && !"closed".equals(mineFate) && !"it".equals(mineFate))) continue;
+            if (id.equals("coalPrice") && !(mineOpen && !"closed".equals(mineFate))) continue;
+            pool.add(id);
+        }
+        if (pool.isEmpty()) return false;
+        String id = pool.get(rng.nextInt(pool.size()));
+        lastEv.put(id, month);
+        clear();
+        switch (id) {
+            case "blizzard":
+                say("Метель", H); say("Трое суток метёт так, что не видно соседнего дома. Трассу заносит.");
+                if (road == 2 || rail != null) say("Асфальт и железная дорога выручают: город не отрезан.");
+                else { budget -= 1_500_000; say("Расчистка трассы: " + col(C_RED, money(1_500_000)) + "."); }
+                break;
+            case "investor": {
+                say("Инвестор", H); say("Из Новосибирска приезжает инвестор: хочет вложиться в Яр, но просит налоговые льготы.");
+                String k = choose("Что ответишь?", new Opt("Подписать соглашение", -6_000_000, "yes"), new Opt("Отказать — льготы дорого обойдутся", 0, "no"));
+                if (k.equals("yes")) { income.put("Льготы инвестору", income.getOrDefault("Льготы инвестору", 0L) - 150_000L); capBonus++; say("Деньги пришли. Инвестор обещает ещё один завод (лимит заводов +1)."); }
+                else say("Инвестор уезжает. В городе считают, что правильно.");
+                break; }
+            case "mineAccident": {
+                say("Авария на шахте", H); say("Ночью в лаве обвалилась кровля. Люди успели выйти, но крепь надо менять.");
+                String k = choose("Что делать?", new Opt("Остановить добычу и перекрепить всё", 2_500_000, "fix"), new Opt("Работать дальше, починить по ходу", 0, "risk"));
+                if (k.equals("fix")) { say("Две недели простоя. Шахтёры уважают решение."); trustAdd(5); }
+                else if (rng.nextDouble() < .5) { say("Через месяц обвал повторился. Пострадали двое. Город в шоке.", REDK); trustAdd(-15); addPop(-(long) (pop * .01), "уехали после аварии"); }
+                else say("Обошлось. Но шахтёры ворчат.");
+                break; }
+            case "blogger":
+                say("Видео про Яр", H); say("Блогер-миллионник снял ролик «Город, который отказался умирать». 8 миллионов просмотров.");
+                ads += 2; say("В этом месяце люди переезжают заметно быстрее.", GREENK); break;
+            case "festival": {
+                say("Фестиваль «Огни Яра»", H); say("Жители предлагают устроить фестиваль: салют над копром, ярмарка, концерт в ДК.");
+                String k = choose("Устраиваем?", new Opt("Да, город заслужил праздник", 1_000_000, "yes"), new Opt("Не сейчас", 0, "no"));
+                if (k.equals("yes")) { trustAdd(8); post(() -> city.addFloat("🎆 Огни Яра", GOLD)); say("Над шахтой салют. Весь город на улицах."); }
+                break; }
+            case "coalPrice":
+                say("Уголь дорожает", H); say("На бирже скачок цен на уголь. Разрез работает в три смены.");
+                budget += 3_000_000; say("+" + money(3_000_000) + " в бюджет.", GREENK); break;
+            case "frost":
+                say("Мороз −52°", H); say("Рекордный мороз. Котельная работает на пределе.");
+                if ("coal".equals(heat) || energy != null) say("Тепло держится. В соседних городах лопнули трубы — у нас нет.");
+                else { budget -= 1_500_000; say("Аварийный ремонт теплосетей: " + col(C_RED, money(1_500_000)) + "."); }
+                break;
+            case "rink": {
+                say("Просьба жителей", H); say("Школьники собрали 2 000 подписей: просят залить большой каток у ДК.");
+                String k = choose("Заливаем?", new Opt("Конечно", 600_000, "yes"), new Opt("Денег нет", 0, "no"));
+                if (k.equals("yes")) { trustAdd(5); say("Каток с гирляндами — главное место зимних вечеров."); } else { trustAdd(-3); say("Дети расстроены."); }
+                break; }
+        }
+        pause();
+        return true;
+    }
+
+    boolean storyEvent() {
+        String[] ids = {"rail", "energy", "health", "ecology", "airport", "north", "coal", "cup", "tram", "museum"};
+        int[] at = {1, 3, 5, 7, 9, 11, 14, 16, 18, 21};
+        for (int i = 0; i < ids.length; i++) {
+            String id = ids[i];
+            if (done.contains("a2_" + id) || month < at[i]) continue;
+            if (id.equals("coal") && !mineOpen) continue;
+            if (id.equals("cup") && (lift == null || lift.equals("none"))) continue;
+            if (id.equals("tram") && north == null) continue;
+            done.add("a2_" + id);
+            clear();
+            runStory(id);
+            pause();
+            return true;
+        }
+        return false;
+    }
+
+    void runStory(String id) {
+        String k;
+        switch (id) {
+            case "rail":
+                chapter = "II·1 ЖЕЛЕЗНАЯ ДОРОГА"; focus("rail");
+                say("Железная дорога", H);
+                say("Заводам тесно: всё везут фурами по 60 км трассы. До Транссиба — та же дистанция, и насыпь старой ветки ещё цела.");
+                say("60 КМ ПУТЕЙ", BIG);
+                k = choose("Ветка до Транссиба:", new Opt("Электрифицированная двухпутка: электрички до областного центра", 18_000_000, "electric"),
+                        new Opt("Однопутка на тепловозах — дешевле, грузы пойдут", 9_000_000, "diesel"), new Opt("Обойдёмся фурами", 0, "none"));
+                if (!k.equals("none")) {
+                    rail = k; advance(k.equals("electric") ? 40 : 25);
+                    income.put("Железная дорога", k.equals("electric") ? 2_000_000L : 1_000_000L); capBonus += k.equals("electric") ? 2 : 1;
+                    say(k.equals("electric") ? "По насыпи идёт первая электричка «Яр — Новосибирск». На перроне — оркестр." : "Тепловоз с вагонами угля медленно ползёт к Транссибу.");
+                    addPop(k.equals("electric") ? 3000 : 1200, "приехали по новой ветке");
+                } else say("Фуры продолжают стоять в пробке на въезде.");
+                break;
+            case "energy":
+                chapter = "II·2 ЭНЕРГИЯ"; focus("energy");
+                say("Энергия", H);
+                say("Заводам не хватает мощности. Подстанция гудит на пределе, вечером мигает свет.");
+                k = choose("Какую станцию строим?", new Opt("ТЭЦ на угле Яра: дёшево и много, но дым", 15_000_000, "tec"),
+                        new Opt("ГЭС на реке Яр: чисто, но дорого и долго", 28_000_000, "hydro"), new Opt("Ветряки на сопках: чисто, но мощности меньше", 10_000_000, "wind"));
+                energy = k; advance(k.equals("hydro") ? 60 : 35);
+                if (k.equals("tec")) { capBonus += 3; smog = Math.min(100, smog + 25); say("Две градирни поднимаются над городом. Пар видно с трассы."); }
+                if (k.equals("hydro")) { capBonus += 3; trustAdd(5); say("Плотина перекрыла реку. Огни ГЭС отражаются в воде."); }
+                if (k.equals("wind")) { capBonus += 1; say("На сопках крутятся двадцать белых ветряков."); }
+                break;
+            case "health":
+                chapter = "II·3 ЛЮДИ"; focus("uni");
+                say("Учиться и лечиться", H);
+                say("Молодые уезжают учиться и не возвращаются. А в больнице одна скорая на весь город.");
+                k = choose("Что первым?", new Opt("Горный институт: студенты и инженеры для заводов", 12_000_000, "uni"), new Opt("Большой медицинский центр с роддомом", 10_000_000, "med"));
+                advance(40);
+                if (k.equals("uni")) { uni = true; jobs += 3000; capBonus += 1; say("В сентябре в Горный институт пришли 2 000 первокурсников."); addPop(5000, "студенты и преподаватели"); }
+                else { med = true; hospitals += 2; trustAdd(10); say("В новом роддоме за первый месяц родились 140 детей."); addPop(2500, "семьи с детьми"); }
+                break;
+            case "ecology":
+                chapter = "II·4 ЭКОЛОГИЯ"; focus("town");
+                say("Экология", H);
+                if (smog < 20) { say("Учёные из института замерили воздух: Яр — один из самых чистых промышленных городов Сибири."); trustAdd(5); ads++; break; }
+                say("Над городом серая пелена. Смог — " + Math.round(smog) + ". Мамы с колясками выходят на митинг.");
+                k = choose("Что делать?", new Opt("Фильтры на все трубы и новые заводы", 8_000_000, "filters"), new Opt("Обещать разобраться позже", 0, "ignore"));
+                if (k.equals("filters")) { filters = true; smog = Math.round(smog * .4); trustAdd(8); say("Трубы оделись в фильтры. Через месяц снег снова белый."); }
+                else { trustAdd(-20); say("Митинг повторяется каждую субботу.", REDK); }
+                break;
+            case "airport":
+                chapter = "II·5 НЕБО"; focus("airport");
+                say("Аэропорт", H);
+                say("В 20 км — заброшенный военный аэродром. Полоса 2,5 км, бетон ещё советский.");
+                k = choose("Что с аэродромом?", new Opt("Аэропорт: рейсы в Москву и туристы на курорт", 20_000_000, "full"),
+                        new Opt("Вертолётная площадка для санавиации", 4_000_000, "heli"), new Opt("Пусть зарастает", 0, "none"));
+                if (!k.equals("none")) {
+                    airport = k; advance(k.equals("full") ? 45 : 15);
+                    income.put("Аэропорт", k.equals("full") ? (lift != null && !lift.equals("none") ? 2_500_000L : 1_500_000L) : 200_000L);
+                    say(k.equals("full") ? "Первый самолёт заходит на посадку над огнями Яра. В салоне аплодируют." : "Над городом стрекочет санитарный вертолёт.");
+                    if (k.equals("full")) addPop(2000, "прилетели и остались");
+                }
+                break;
+            case "north":
+                chapter = "II·6 СЕВЕРНЫЙ"; focus("north");
+                say("Микрорайон «Северный»", H);
+                say("Старых пятиэтажек больше нет. На месте отвалов шахты — ровное поле на 100 000 человек.");
+                k = choose("Кто строит?", new Opt("Город: школы, дворы без машин, парк", 15_000_000, "muni"), new Opt("Застройщик: быстро и бесплатно, но человейники", 0, "dev"));
+                north = k; micro++; housing += 25000;
+                if (k.equals("muni")) { trustAdd(5); say("Первые высотки «Северного» — с детскими площадками во дворах."); }
+                else { trustAdd(-5); say("Застройщик ставит 25-этажки впритык. Зато быстро."); }
+                say("Теперь в меню строительства есть 🏙 Микрорайон: +25 000 жилья.", DIMK);
+                break;
+            case "coal":
+                chapter = "II·7 КРИЗИС"; focus("mine");
+                say("Уголь никому не нужен", H);
+                say("Цены на уголь рухнули вдвое. Разрез работает в убыток. Шахтёры ждут, что скажет мэр.");
+                if (matvey) say("Шахту я держал не ради угля. Ради людей. Решай, как людям лучше.", QUOTE);
+                k = choose("Будущее шахты:", new Opt("Перепрофилировать: дата-центр «Яр-IT» на дешёвой энергии", 12_000_000, "it"),
+                        new Opt("Субсидировать добычу из бюджета", 0, "subsidy"), new Opt("Закрыть разрез", 0, "closed"));
+                mineFate = k;
+                if (k.equals("it")) { income.put("Уголь", 0L); income.put("Яр-IT", 2_500_000L); capBonus += 1; say("В старом здании шахты гудят серверы. Шахтёры учатся на операторов."); addPop(1500, "айтишники"); }
+                if (k.equals("subsidy")) { income.put("Уголь", -1_000_000L); say("Разрез работает. Бюджет теряет миллион в месяц."); }
+                if (k.equals("closed")) { income.put("Уголь", 0L); jobs = Math.max(0, jobs - 3000); trustAdd(-15); say("Самосвалы встали. Второй раз за двенадцать лет.", REDK); }
+                break;
+            case "cup":
+                chapter = "II·8 КУБОК"; focus("lift");
+                say("Кубок России", H);
+                say("Федерация горных лыж предлагает провести этап Кубка России на склонах Яра. Нужна новая трасса и освещение.");
+                k = choose("Берём?", new Opt("Да: трасса с подсветкой и трибуны", 10_000_000, "yes"), new Opt("Рано", 0, "no"));
+                if (k.equals("yes")) { cup = true; income.put("Курорт", income.getOrDefault("Курорт", 0L) + 1_500_000L); ads += 2; say("Трансляцию смотрят 3 миллиона человек. Трасса светится над городом."); }
+                break;
+            case "tram":
+                chapter = "II·9 ТРАМВАЙ"; focus("town");
+                say("Трамвай до «Северного»", H);
+                say("Утром на выезде из «Северного» пробка на час. Люди просят трамвай.");
+                k = choose("Трамвай:", new Opt("Строим линию через весь город", 14_000_000, "yes"), new Opt("Пустим больше автобусов", 2_000_000, "bus"));
+                if (k.equals("yes")) { tram = true; trustAdd(8); say("Красно-белый трамвай звенит по проспекту Шахтёров."); }
+                else say("Автобусы ходят чаще. Пробки чуть меньше.");
+                break;
+            case "museum":
+                chapter = "II·10 ПАМЯТЬ"; focus("mine");
+                say("Копёр", H);
+                say("Застройщик предлагает снести старый копёр шахты «Северная» — на его месте поместится ещё квартал.");
+                if (matvey) say("Дед Матвей приходит в мэрию сам. Молча кладёт на стол «Журнал вентилятора». Двенадцать лет записей.");
+                k = choose("Копёр:", new Opt("Музей шахты и смотровая площадка с подсветкой", 2_500_000, "museum"), new Opt("Снести, построить квартал", -3_000_000, "demolish"));
+                if (k.equals("museum")) { museum = true; trustAdd(12); income.put("Музей", 300_000L); say("Копёр подсвечен прожекторами. На входе в музей — журнал вентилятора под стеклом."); if (matvey) say("Ну вот. Теперь и на пенсию можно.", QUOTE); }
+                else { demolished = true; trustAdd(-20); housing += 5000; say("Копёр режут автогеном. Старики стоят у забора и не уходят.", REDK); }
+                break;
+        }
+    }
+
+    boolean act2() {
+        if (!done.contains("a2_started")) {
+            act = 2; done.add("a2_started"); chapter = "ЧАСТЬ II"; month = 0;
+            goal = 150000; deadline = day + 730;
+            schools = Math.max(schools, 2); hospitals = Math.max(hospitals, 1);
+            housing = Math.max(housing, pop);
+            clear(); post(() -> city.focus("wide", 9000));
+            say("Часть II · Большой Яр", H);
+            say("Через неделю после комиссии звонит губернатор.");
+            say(fmt(pop) + " человек за год. Такого в области не было. Хочу, чтобы Яр стал вторым городом области. Даю два года.", QUOTE);
+            say("150 000", BIG);
+            say("Цель — 150 000 жителей за 730 дней. Область выделяет стартовый фонд.");
+            budget += 30_000_000;
+            say("+" + money(30_000_000) + " на счёт", GREENK);
+            say("Новое в меню: 🏫 школы, 🏥 больницы, 🌳 парки, 🛍 торговые центры. Без школ и больниц город растёт медленнее. Заводы дают смог — следи за ним.", DIMK);
+            pause("Вперёд →");
+            save();
+        }
+        while (daysLeft() > 3) {
+            month++;
+            if (!storyEvent()) randomEvent();
+            if (daysLeft() <= 3) break;
+            chapter = "II · СТРОЙКА";
+            monthTurn();
+        }
+        return true;
+    }
+
+    boolean finale2() {
+        chapter = "ФИНАЛ II"; clear();
+        post(() -> city.focus("wide", 12000));
+        say("Два года спустя", H);
+        say("full".equals(airport) ? "Губернатор прилетает в Яр — теперь сюда можно прилететь." : "Губернатор приезжает в Яр по трассе.");
+        say("С балкона мэрии видно весь город: от копра до огней «Северного».");
+        sleep(800);
+        say(fmt(pop), pop < goal ? BIGR : BIG);
+        if (pop >= 150000) { say("ВТОРОЙ ГОРОД ОБЛАСТИ", STAMP); say("Указ подписан: Угольный Яр получает статус города областного значения."); }
+        else if (pop >= 90000) { say("ПОЧТИ", GOLDK); say("До плана не дотянули, но губернатор доволен: такого роста нет нигде в Сибири."); }
+        else { say("ПЛАН НЕ ВЫПОЛНЕН", REDK); say("В области недовольны. Но город живёт — и будет жить."); }
+        if (museum && matvey) say("Вечером дед Матвей поднимается на смотровую площадку копра. Внизу — сто тысяч огней.");
+        say("<font color='" + C_DIM + "'>Итоги части II:</font><br>Жителей: <b>" + fmt(pop) + "</b><br>Заводов: " + factories + ", микрорайонов: " + micro
+                + "<br>Школ: " + schools + ", больниц: " + hospitals + ", парков: " + parks + "<br>Смог: " + Math.round(smog) + " · Доверие: " + trust);
+        String k = choose("Дальше:", new Opt("▶ Свободная игра: строй город без срока", 0, "free", 1), new Opt("Начать заново ↻", 0, "new"));
+        return !k.equals("new");
+    }
+
+    boolean act3() {
+        if (!done.contains("free")) {
+            done.add("free"); act = 3; deadline = -1; year = 1; month = 0;
+            goal = pop < 250000 ? 250000 : pop < 500000 ? 500000 : 1000000;
+            clear();
+            say("Свободная игра", H);
+            say("Срока больше нет. Цели: 250 000 → 500 000 → миллион. За каждую — награда области.");
+            say("Игра сохраняется сама каждый месяц.", DIMK);
+            pause("Строить →");
+        }
+        while (true) {
+            month++;
+            chapter = "ГОРОД";
+            randomEvent();
+            monthTurn();
+            if (pop >= goal) {
+                clear();
+                say(goal >= 1000000 ? "Миллионник" : goal >= 500000 ? "Большой город" : "Крупный город", H);
+                say(fmt(goal), BIG);
+                say(goal >= 1000000 ? "ГОРОД-МИЛЛИОННИК" : "ЦЕЛЬ ДОСТИГНУТА", STAMP);
+                if (goal >= 1000000) { say("Миллион. Двенадцать лет назад здесь горело 312 окон."); if (matvey) say("Я ж говорил — вернутся.", QUOTE); goal = 2000000; }
+                else goal = goal == 250000 ? 500000 : 1000000;
+                say("Следующая цель: " + fmt(goal) + ".");
+                pause();
+            }
+        }
+    }
+
+    // ───────────────────────── сохранение ─────────────────────────
+
+    void save() {
+        try {
+            org.json.JSONObject o = new org.json.JSONObject();
+            o.put("day", day); o.put("pop", pop); o.put("trust", trust); o.put("factories", factories); o.put("blocks", blocks); o.put("ads", ads);
+            o.put("budget", budget); o.put("housing", housing); o.put("jobs", jobs); o.put("road", road);
+            o.put("act", act); o.put("goal", goal); o.put("deadline", deadline); o.put("step", step); o.put("month", month); o.put("year", year);
+            o.put("schools", schools); o.put("hospitals", hospitals); o.put("parks", parks); o.put("malls", malls); o.put("micro", micro);
+            o.put("smog", smog); o.put("capBonus", capBonus);
+            String[] sk = {"chapter", "heat", "light", "water", "comm", "shops", "lift", "housingChoice", "mine", "rail", "energy", "airport", "mineFate", "north"};
+            String[] sv = {chapter, heat, light, water, comm, shops, lift, housingChoice, mine, rail, energy, airport, mineFate, north};
+            for (int i = 0; i < sk.length; i++) if (sv[i] != null) o.put(sk[i], sv[i]);
+            String[] bk = {"matvey", "mineOpen", "frozen", "roadSet", "ratrak", "hotel", "ventLit", "matveyVis", "uni", "med", "tram", "museum", "demolished", "cup", "filters"};
+            boolean[] bv = {matvey, mineOpen, frozen, roadSet, ratrak, hotel, ventLit, matveyVis, uni, med, tram, museum, demolished, cup, filters};
+            for (int i = 0; i < bk.length; i++) o.put(bk[i], bv[i]);
+            org.json.JSONObject inc = new org.json.JSONObject(); for (Map.Entry<String, Long> e : income.entrySet()) inc.put(e.getKey(), e.getValue()); o.put("income", inc);
+            o.put("done", new org.json.JSONArray(done));
+            org.json.JSONObject le = new org.json.JSONObject(); for (Map.Entry<String, Integer> e : lastEv.entrySet()) le.put(e.getKey(), e.getValue()); o.put("lastEv", le);
+            getSharedPreferences("yar", MODE_PRIVATE).edit().putString("save", o.toString()).apply();
+        } catch (Exception ignored) { }
+    }
+
+    boolean load() {
+        try {
+            String s = getSharedPreferences("yar", MODE_PRIVATE).getString("save", null);
+            if (s == null) return false;
+            org.json.JSONObject o = new org.json.JSONObject(s);
+            day = o.getInt("day"); pop = o.getInt("pop"); trust = o.getInt("trust"); factories = o.getInt("factories"); blocks = o.getInt("blocks"); ads = o.getInt("ads");
+            budget = o.getDouble("budget"); housing = o.getLong("housing"); jobs = o.getLong("jobs"); road = o.getInt("road");
+            act = o.getInt("act"); goal = o.getInt("goal"); deadline = o.getInt("deadline"); step = o.getInt("step"); month = o.getInt("month"); year = o.getInt("year");
+            schools = o.getInt("schools"); hospitals = o.getInt("hospitals"); parks = o.getInt("parks"); malls = o.getInt("malls"); micro = o.getInt("micro");
+            smog = o.getDouble("smog"); capBonus = o.getInt("capBonus");
+            chapter = o.optString("chapter", "ПРОЛОГ"); heat = o.optString("heat", null); light = o.optString("light", null); water = o.optString("water", null);
+            comm = o.optString("comm", null); shops = o.optString("shops", null); lift = o.optString("lift", "none"); housingChoice = o.optString("housingChoice", null);
+            mine = o.optString("mine", null); rail = o.optString("rail", null); energy = o.optString("energy", null); airport = o.optString("airport", null);
+            mineFate = o.optString("mineFate", null); north = o.optString("north", null);
+            matvey = o.optBoolean("matvey"); mineOpen = o.optBoolean("mineOpen"); frozen = o.optBoolean("frozen"); roadSet = o.optBoolean("roadSet");
+            ratrak = o.optBoolean("ratrak"); hotel = o.optBoolean("hotel"); ventLit = o.optBoolean("ventLit"); matveyVis = o.optBoolean("matveyVis");
+            uni = o.optBoolean("uni"); med = o.optBoolean("med"); tram = o.optBoolean("tram"); museum = o.optBoolean("museum");
+            demolished = o.optBoolean("demolished"); cup = o.optBoolean("cup"); filters = o.optBoolean("filters");
+            income.clear(); org.json.JSONObject inc = o.getJSONObject("income");
+            for (java.util.Iterator<String> it = inc.keys(); it.hasNext(); ) { String key = it.next(); income.put(key, inc.getLong(key)); }
+            done.clear(); org.json.JSONArray d = o.getJSONArray("done"); for (int i = 0; i < d.length(); i++) done.add(d.getString(i));
+            lastEv.clear(); org.json.JSONObject le = o.getJSONObject("lastEv");
+            for (java.util.Iterator<String> it = le.keys(); it.hasNext(); ) { String key = it.next(); lastEv.put(key, le.getInt(key)); }
+            return step > 0;
+        } catch (Exception e) { return false; }
+    }
+    void clearSave() { getSharedPreferences("yar", MODE_PRIVATE).edit().remove("save").apply(); }
+
+    boolean runStep(int s) {
+        switch (s) {
+            case 0: prologue(); return true;
+            case 1: ch1(); return true;
+            case 2: ch2(); return true;
+            case 3: ch3(); return true;
+            case 4: ch4(); return true;
+            case 5: ch5(); return true;
+            case 6: ch6(); return true;
+            case 7: ch7(); return true;
+            case 8: ch8(); return true;
+            case 9: ch9(); return true;
+            case 10: return finale();
+            case 11: return act2();
+            case 12: return finale2();
+            case 13: return act3();
+        }
+        return false;
     }
 
     void gameLoop() {
         try {
+            boolean resume = !autoplay && load();
             while (true) {
-                newGame();
+                if (resume) {
+                    resume = false;
+                    post(() -> city.reset());
+                    hud(); clear();
+                    say("Угольный Яр", H);
+                    say("Сохранённая игра: <b>" + chapter + "</b>, " + fmt(pop) + " жителей, " + money(budget) + ".");
+                    String k = choose("Продолжить?", new Opt("▶ Продолжить", 0, "go", 1), new Opt("Новая игра ↻", 0, "new"));
+                    clear();
+                    if (k.equals("new")) { clearSave(); newGame(); }
+                } else newGame();
                 try {
-                    prologue();
-                    ch1(); ch2(); ch3(); ch4(); ch5(); ch6(); ch7(); ch8(); ch9();
-                    finale();
+                    while (step <= 13) {
+                        save();
+                        if (!runStep(step)) break;
+                        step++;
+                    }
                 } catch (Bankrupt e) {
                     bankrupt();
                 }
+                clearSave();
             }
         } catch (Quit ignored) {
             // активити закрыта

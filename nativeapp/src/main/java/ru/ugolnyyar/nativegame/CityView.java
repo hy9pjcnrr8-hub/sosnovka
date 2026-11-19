@@ -173,7 +173,16 @@ public class CityView extends View {
         k.put("ratrak", g.ratrak ? "on" : "off");
         k.put("hotel", g.hotel ? "on" : "off");
         k.put("renov", g.housingChoice == null ? "off" : g.housingChoice);
-        for (int i = 0; i < 12; i++) { k.put("fac" + i, i < g.factories ? "on" : "off"); k.put("blk" + i, i < g.blocks ? "on" : "off"); }
+        int nF = Math.max(12, g.factories), nB = Math.max(12, g.blocks);
+        for (int i = 0; i < nF; i++) k.put("fac" + i, i < g.factories ? "on" : "off");
+        for (int i = 0; i < nB; i++) k.put("blk" + i, i < g.blocks ? "on" : "off");
+        k.put("rail", g.rail == null ? "off" : g.rail); k.put("energy", g.energy == null ? "off" : g.energy); k.put("airport", g.airport == null ? "off" : g.airport);
+        k.put("uni", g.uni ? "on" : "off"); k.put("med", g.med ? "on" : "off"); k.put("tram", g.tram ? "on" : "off");
+        k.put("museum", g.museum ? "on" : (g.demolished ? "gone" : "off")); k.put("mineFate", g.mineFate == null ? "off" : g.mineFate);
+        k.put("cup", g.cup ? "on" : "off"); k.put("filters", g.filters ? "on" : "off");
+        for (int i = 0; i < 30; i++) k.put("mic" + i, i < g.micro ? "on" : "off");
+        for (int i = 0; i < 12; i++) { k.put("sch" + i, i < g.schools ? "on" : "off"); k.put("hos" + i, i < g.hospitals ? "on" : "off"); k.put("par" + i, i < g.parks ? "on" : "off"); k.put("mal" + i, i < g.malls ? "on" : "off"); }
+        k.put("sky", g.pop >= 200000 ? String.valueOf(Math.min(9, (g.pop - 200000) / 100000 + 1)) : "off");
         return k;
     }
 
@@ -186,12 +195,24 @@ public class CityView extends View {
         SPOTS.put("shops", new float[]{420, 320, 1, 2.0f}); SPOTS.put("lift", new float[]{770, 210, .55f, 1.4f});
         SPOTS.put("ratrak", new float[]{770, 250, .55f, 1.6f}); SPOTS.put("hotel", new float[]{915, 300, 1, 1.9f});
         SPOTS.put("renov", new float[]{440, 280, 1, 1.4f}); SPOTS.put("town", new float[]{520, 260, 1, 1.0f});
+        SPOTS.put("wide", new float[]{540, 235, 1, .62f}); SPOTS.put("rail", new float[]{-130, 340, 1, 1.4f});
+        SPOTS.put("energy", new float[]{-400, 240, .8f, 1.2f}); SPOTS.put("hydro", new float[]{-280, 290, .7f, 1.4f}); SPOTS.put("wind", new float[]{200, 200, .35f, 1.0f});
+        SPOTS.put("airport", new float[]{-80, 190, .5f, 1.1f}); SPOTS.put("uni", new float[]{1210, 280, 1, 1.5f}); SPOTS.put("med", new float[]{1060, 290, 1, 1.7f});
+        SPOTS.put("north", new float[]{1450, 220, .9f, 1.0f}); SPOTS.put("tram", new float[]{500, 330, 1, 1.4f}); SPOTS.put("museum", new float[]{95, 230, 1, 1.5f});
+        SPOTS.put("mineFate", new float[]{95, 260, 1, 1.6f}); SPOTS.put("cup", new float[]{770, 200, .55f, 1.3f}); SPOTS.put("filters", new float[]{400, 220, .78f, 1.0f});
+        SPOTS.put("sky", new float[]{1400, 200, .84f, .9f});
     }
     float[] spotFor(String k) {
+        if (k.equals("energy") && g.energy != null && !g.energy.equals("tec")) k = g.energy;
         float[] s = SPOTS.get(k);
         if (s != null) return s;
-        if (k.startsWith("fac")) { float[] f = FAC[Integer.parseInt(k.substring(3))]; return new float[]{f[0], 270, .78f, 1.3f}; }
-        if (k.startsWith("blk")) { float[] b = NEWB[Integer.parseInt(k.substring(3))]; return new float[]{b[0] + b[1] / 2, 260, .88f, 1.35f}; }
+        if (k.startsWith("fac")) { float[] f = facPos(Integer.parseInt(k.substring(3))); return new float[]{f[0], 270, .78f, 1.3f}; }
+        if (k.startsWith("blk")) { float[] b = blkPos(Integer.parseInt(k.substring(3))); return new float[]{b[0] + b[1] / 2, 260, .88f, 1.35f}; }
+        if (k.startsWith("mic")) return new float[]{micPos(Integer.parseInt(k.substring(3))) + 60, 220, .9f, 1.1f};
+        if (k.startsWith("sch")) return new float[]{SCH[Integer.parseInt(k.substring(3)) % 12] + 30, 300, 1, 1.8f};
+        if (k.startsWith("hos")) return new float[]{HOS[Integer.parseInt(k.substring(3)) % 12] + 35, 300, 1, 1.8f};
+        if (k.startsWith("par")) return new float[]{PAR[Integer.parseInt(k.substring(3)) % 12], 290, .97f, 1.6f};
+        if (k.startsWith("mal")) return new float[]{MAL[Integer.parseInt(k.substring(3)) % 12] + 40, 300, 1, 1.7f};
         return SPOTS.get("town");
     }
 
@@ -251,7 +272,7 @@ public class CityView extends View {
 
     void drawFarHills() {
         layer(.3f);
-        poly(snowy ? "#2a3763" : "#2a2e52", -600, 340, -400, 230, -200, 270, 0, 210, 220, 260, 420, 205, 640, 255, 860, 200, 1100, 250, 1400, 215, 1700, 260, 1700, 400, -600, 400);
+        poly(snowy ? "#2a3763" : "#2a2e52", -1400, 340, -1100, 250, -800, 280, -600, 240, -400, 230, -200, 270, 0, 210, 220, 260, 420, 205, 640, 255, 860, 200, 1100, 250, 1400, 215, 1700, 260, 2000, 230, 2400, 270, 2400, 400, -1400, 400);
         if (snowy) {
             ga = .35f;
             poly("#cfd8ea", -400, 230, -360, 245, -330, 240, -300, 250, -200, 270, -280, 255);
@@ -309,6 +330,7 @@ public class CityView extends View {
                 }
             }
         }
+        if (g.cup) { float cp = prog("cup", 2); for (int i = 0; i < 14; i++) { float t = i / 13f; glow(860 - t * 85 + 8, 112 + t * 225, 10, WHITE, .8f * cp, .55f); } }
         if (g.ratrak && snowy) {
             float rp = prog("ratrak", 1.5f), t = (T * .02f) % 1, yy = 300 - Math.abs((float) Math.sin(t * Math.PI)) * 150;
             float xx = 790 + (yy - 300) * -.25f;
@@ -323,9 +345,9 @@ public class CityView extends View {
             {860, 90, 76}, {370, 70, 60}, {650, 74, 62}, {980, 84, 70}, {-60, 80, 64}, {520, 66, 58}};
     void drawFactories() {
         layer(.78f);
-        for (int i = 0; i < FAC.length; i++) {
+        for (int i = 0; i < Math.max(FAC.length, g.factories); i++) {
             if (i >= g.factories) continue;
-            float x = FAC[i][0], w = FAC[i][1], h = FAC[i][2];
+            float[] fp = facPos(i); float x = fp[0], w = fp[1], h = fp[2];
             float pr = prog("fac" + i, 2), hh = h * pr, top = GROUND - 40 - hh;
             R(x, top, w, hh, "#2b3350");
             for (int k = 0; k < w; k += 14) poly("#39436a", x + k, top, x + k + 14, top - 8 * pr, x + k + 14, top);
@@ -350,7 +372,7 @@ public class CityView extends View {
     void drawPylons() {
         layer(.9f);
         boolean lit = "trafo".equals(g.light);
-        float[] xs = {-120, 140, 400, 660, 920, 1180};
+        float[] xs = {-900, -640, -380, -120, 140, 400, 660, 920, 1180, 1440, 1700, 1960};
         for (float x : xs) {
             float b = GROUND - 20, t = 200;
             line(x - 10, b, x, t, 1.6f, "#4a5470"); line(x + 10, b, x, t, 1.6f, "#4a5470");
@@ -375,9 +397,9 @@ public class CityView extends View {
             {230, 58, 162}, {860, 58, 150}, {150, 62, 178}, {945, 58, 160}, {70, 58, 148}, {1025, 62, 170}};
     void drawNewBlocks(float litF) {
         layer(.88f);
-        for (int i = 0; i < NEWB.length; i++) {
+        for (int i = 0; i < Math.max(NEWB.length, g.blocks); i++) {
             if (i >= g.blocks) continue;
-            float x = NEWB[i][0], w = NEWB[i][1], h = NEWB[i][2];
+            float[] bp = blkPos(i); float x = bp[0], w = bp[1], h = bp[2];
             float pr = prog("blk" + i, 2.4f);
             drawBlock(x, GROUND - 14, w, h, 2000 + i * 131, litF, true, pr, i % 3, .88f, false);
             if (pr < 1) {
@@ -427,6 +449,8 @@ public class CityView extends View {
         boolean mineOpen = g.mineOpen, flooded = "flooded".equals(g.mine);
         float mx = 95, mb = GROUND;
         String mc = flooded ? "#3a3440" : "#8a2f2b";
+        if (g.demolished) drawBlock(mx - 40, GROUND, 84, 120, 4242, litF, true, 1, 2, 1, snowy);
+        else {
         line(mx - 32, mb, mx, 168, 4, mc); line(mx + 32, mb, mx, 168, 4, mc);
         line(mx - 22, 270, mx + 22, 270, 3, mc); line(mx - 14, 222, mx + 14, 222, 3, mc);
         line(mx - 26, 300, mx + 18, 236, 2.4f, mc); line(mx + 26, 300, mx - 18, 236, 2.4f, mc);
@@ -437,7 +461,8 @@ public class CityView extends View {
         cv.save(); cv.translate(mx, 150);
         poly(mineOpen ? "#ff5a4f" : "#5a2a2a", 0, -9, 2.6f, -3, 9, -3, 4, 1.5f, 6, 8, 0, 4, -6, 8, -4, 1.5f, -9, -3, -2.6f, -3);
         cv.restore();
-        if (mineOpen) glow(mx, 147, 26, REDL, .9f + .1f * (float) Math.sin(T * 2), 1);
+        if (mineOpen || g.museum) glow(mx, 147, 26, REDL, .9f + .1f * (float) Math.sin(T * 2), 1);
+        }
         R(mx - 40, GROUND - 40, 80, 40, "#2c3352"); R(mx - 40, GROUND - 43, 80, 4, "#1d2340");
         if (snowy) R(mx - 40, GROUND - 46, 80, 3, "#e8eef7");
         for (int k = 0; k < 4; k++) R(mx - 32 + k * 18, GROUND - 32, 9, 12, mineOpen ? "#ffcf72" : "#151a2c");
@@ -583,14 +608,15 @@ public class CityView extends View {
     void drawStreet() {
         layer(1);
         int road = g.roadSet ? g.road : -1;
-        R(-200, GROUND, 1400, 10, snowy ? "#c9d3e4" : "#4a4f5e");
+        R(-1200, GROUND, 3400, 10, snowy ? "#c9d3e4" : "#4a4f5e");
         String rc = road == 2 ? "#2a2d38" : road == 1 ? (snowy ? "#9aa6bc" : "#6b6556") : (snowy ? "#dfe6f1" : "#5a5245");
-        R(-200, GROUND + 10, 1400, 26, rc);
-        if (road == 2) for (int x = -200; x < 1200; x += 30) R(x, GROUND + 22, 15, 2, "#f4c84a");
-        if (road <= 0 && snowy) for (int i = 0; i < 24; i++) { float x = -150 + i * 55 + hash(i) * 20; poly("#f2f6fb", x, GROUND + 36, x + 14, GROUND + 18 + hash(i * 3) * 6, x + 34, GROUND + 36); }
-        if (road == 1) for (int x = -200; x < 1200; x += 22) { R(x, GROUND + 37, 2, 10, "#6a4b30"); R(x - 1, GROUND + 39, 22, 2, "#6a4b30"); R(x - 1, GROUND + 43, 22, 2, "#6a4b30"); }
+        R(-1200, GROUND + 10, 3400, 26, rc);
+        if (road == 2) for (int x = -1200; x < 2200; x += 30) R(x, GROUND + 22, 15, 2, "#f4c84a");
+        if (road <= 0 && snowy) for (int i = 0; i < 60; i++) { float x = -1150 + i * 55 + hash(i) * 20; poly("#f2f6fb", x, GROUND + 36, x + 14, GROUND + 18 + hash(i * 3) * 6, x + 34, GROUND + 36); }
+        if (road == 1) for (int x = -1200; x < 2200; x += 22) { R(x, GROUND + 37, 2, 10, "#6a4b30"); R(x - 1, GROUND + 39, 22, 2, "#6a4b30"); R(x - 1, GROUND + 43, 22, 2, "#6a4b30"); }
         boolean lampsOn = g.light != null;
-        for (int x = 30; x < 1000; x += 92) {
+        float[] bnd = bounds(); float LB = bnd[0], RB = bnd[1];
+        for (int x = (int) LB + 30; x < RB; x += 92) {
             line(x, GROUND + 4, x, GROUND - 30, 1.4f, "#3a4262"); line(x, GROUND - 30, x + 7, GROUND - 32, 1.4f, "#3a4262");
             if (lampsOn) {
                 float fl = "diesel".equals(g.light) ? .8f + .2f * (float) Math.sin(T * 13 + x) : 1;
@@ -604,7 +630,7 @@ public class CityView extends View {
         ArrayList<float[]> veh = new ArrayList<>();
         if (road >= 1) {
             veh.add(new float[]{0, 34, 0, 1, 0});
-            int cars = Math.min(9, 1 + g.pop / 4500);
+            int cars = Math.min(g.act >= 2 ? 22 : 9, 1 + g.pop / (g.act >= 2 ? 9000 : 4500));
             for (int i = 0; i < cars; i++) veh.add(new float[]{1, 40 + hash(i) * 30, hash(i * 7) * 1400, i % 2 == 1 ? -1 : 1, i % 5});
         }
         if (g.mineOpen) for (int i = 0; i < 2; i++) veh.add(new float[]{2, 26, i * 700, 1, 0});
@@ -613,7 +639,8 @@ public class CityView extends View {
         String[] carCols = {"#d6452f", "#2c7be5", "#e7e7e7", "#3ccf7a", "#f4c84a"};
         for (float[] v : veh) {
             int kind = (int) v[0]; float dir = v[3];
-            float x = ((T * v[1] + v[2]) % 1500) - 250; if (dir < 0) x = 1250 - x - 250;
+            float vspan = RB - LB + 500;
+            float x = ((T * v[1] + v[2]) % vspan) + LB - 250; if (dir < 0) x = RB + LB - x;
             float y = GROUND + (dir > 0 ? 30 : 20);
             cv.save(); cv.translate(x, y); if (dir < 0) cv.scale(-1, 1);
             if (kind == 0) {
@@ -640,21 +667,270 @@ public class CityView extends View {
             }
         }
         // люди
-        int nppl = Math.min(46, 2 + g.pop / 900);
+        int nppl = Math.min(g.act >= 2 ? 110 : 46, 2 + g.pop / (g.act >= 2 ? 2500 : 900));
+        float pspan = RB - LB + 200;
         String[] jc = {"#d6452f", "#2c7be5", "#f4c84a", "#3ccf7a", "#e67e22", "#9b59b6"};
         for (int i = 0; i < nppl; i++) {
             float sp = 6 + hash(i * 5) * 8, dir = hash(i * 11) > .5f ? 1 : -1;
-            float x = ((T * sp + hash(i * 3) * 1200) % 1200) - 100; if (dir < 0) x = 1100 - x;
+            float x = ((T * sp + hash(i * 3) * pspan) % pspan) + LB - 100; if (dir < 0) x = RB + LB - x;
             float y = GROUND + 7 + hash(i * 13) * 2, bob = Math.abs((float) Math.sin(T * 6 + i)) * .8f;
             String col = jc[i % 6];
             R(x - 1.6f, y - 8 - bob, 3.2f, 6, col); R(x - 1.4f, y - 2 - bob, 1.2f, 2.4f, "#1b1f2a"); R(x + .2f, y - 2 - bob, 1.2f, 2.4f, "#1b1f2a");
             circ(x, y - 9.6f - bob, 1.6f, "#f1c7a5"); R(x - 1.8f, y - 11.6f - bob, 3.6f, 1.6f, snowy ? "#5a4a3a" : col);
         }
-        R(-400, GROUND + 36, 1800, 300, snowy ? "#e9eff8" : "#22372a");
+        R(-1400, GROUND + 36, 3800, 300, snowy ? "#e9eff8" : "#22372a");
         if (snowy) {
             p.setColor(C("#f5f8fc"));
-            for (int i = 0; i < 30; i++) { float x = -150 + i * 45; float rx = 30 + hash(i) * 20, ry = 6 + hash(i * 3) * 4; rf.set(x - rx, GROUND + 40 - ry, x + rx, GROUND + 40 + ry); cv.drawArc(rf, 180, 180, true, p); }
+            for (int i = 0; i < 80; i++) { float x = -1150 + i * 45; float rx = 30 + hash(i) * 20, ry = 6 + hash(i * 3) * 4; rf.set(x - rx, GROUND + 40 - ry, x + rx, GROUND + 40 + ry); cv.drawArc(rf, 180, 180, true, p); }
         }
+    }
+
+
+    // ════════════════ ЧАСТЬ II: новые районы ════════════════
+    float[] bounds() { return g.act >= 2 ? new float[]{-820, 1900} : new float[]{0, 1000}; }
+    float LITF = .5f;
+    static final float[] SCH = {1400, 975, 1815, 1500, 1060, 1745, 1340, 1880, 1190, 1630, 1270, 1560};
+    static final float[] HOS = {1300, 1885, 1045, 1660, 1480, 1220, 1770, 1100, 1590, 1370, 1700, 1150};
+    static final float[] PAR = {1520, 1130, 1760, 1300, 1480, 1850, 1010, 1650, 1240, 1400, 1700, 1070};
+    static final float[] MAL = {1720, 1000, 1850, 1240, 1480, 1600, 1120, 1780, 1360, 1060, 1540, 1900};
+    static final float[] MICX = {1060, 1230, 1400, 1570, 1740, 1145, 1315, 1485, 1655, 975};
+    float[] facPos(int i) { if (i < FAC.length) return FAC[i]; int j = i - FAC.length; return new float[]{-280 + (j * 137) % 2160, 76 + (j % 4) * 6, 60 + (j % 3) * 9}; }
+    float[] blkPos(int i) { if (i < NEWB.length) return NEWB[i]; int j = i - NEWB.length; return new float[]{-260 + (j * 89) % 2140, 56 + (j % 3) * 4, 150 + (j * 37) % 50}; }
+    float micPos(int i) { return MICX[i % MICX.length] + ((i / MICX.length) % 3) * 28 - 28; }
+
+    void sign(float x, float y, float w, String label, String bg, String fg, int glowCol, float a) {
+        ga = a; R(x, y, w, 9, bg); text(label, x + w / 2, y + 4.6f, 4.2f, fg); ga = 1;
+        glow(x + w / 2, y + 4.5f, w * .6f, glowCol, .45f * a, 1);
+    }
+
+    void drawWind() {
+        if (!"wind".equals(g.energy)) return;
+        layer(.35f);
+        float p0 = prog("energy", 2.5f);
+        for (int i = 0; i < 9; i++) {
+            float x = -160 + i * 90, bs = 252 + (float) Math.sin(i * 1.7) * 10, h = 70 * p0;
+            line(x, bs, x, bs - h, 2, "#cfd6e6");
+            if (p0 < 1) continue;
+            cv.save(); cv.translate(x, bs - h); cv.rotate((float) Math.toDegrees(T * 1.4f + i));
+            for (int b = 0; b < 3; b++) { cv.rotate(120); poly("#e8eef7", 0, 0, 2.5f, -2, 30, -1, 30, 1, 2.5f, 2); }
+            cv.restore();
+            circ(x, bs - h, 2.2f, "#e8eef7");
+            glow(x, bs - h - 3, 8, REDL, (T + i * .3f) % 1.6f < .8f ? .9f : .15f, .35f);
+        }
+    }
+    void drawAirport() {
+        String a = g.airport; if (a == null) return;
+        layer(.5f);
+        float ap = prog("airport", 2);
+        R(-330, GROUND - 6, 420, 5, "#3a4060");
+        for (int i = 0; i < 20; i++) glow(-320 + i * 21, GROUND - 4, 5, ((int) Math.floor(T * 8) + i) % 20 == 0 ? WHITE : WARM, .6f * ap, .5f);
+        float tx = -80; R(tx - 4, GROUND - 70 * ap, 8, 70 * ap, "#4a5470"); R(tx - 12, GROUND - 82 * ap, 24, 13, "#2f3757");
+        R(tx - 10, GROUND - 80 * ap, 20, 7, "#9ad8ff"); glow(tx, GROUND - 77 * ap, 22, COLD, .5f * ap, .5f);
+        glow(tx, GROUND - 88 * ap, 12, (T % 1.2f) < .6f ? GREENL : WHITE, ap, .5f);
+        if (ap < 1) return;
+        if (a.equals("full")) {
+            float t = (T % 16) / 16, px = 1300 - t * 1700, py = 60 + t * 200 + (float) Math.sin(t * 6) * 4;
+            cv.save(); cv.translate(px, py); cv.rotate(3.4f);
+            poly("#d9dfeb", -22, 0, 20, -2, 26, 0, 20, 2); poly("#b9c2d6", -2, 0, 6, -12, 10, -12, 6, 0); poly("#b9c2d6", -2, 0, 6, 10, 10, 10, 6, 0); poly("#c0392b", 18, -1, 24, -8, 26, -8, 24, 0);
+            cv.restore();
+            glow(px + 26, py, 10, (T % 1) < .1f ? WHITE : REDL, .9f, .5f); glow(px + 8, py - 12, 7, REDL, .8f, .5f); glow(px + 8, py + 10, 7, GREENL, .8f, .5f);
+            if (t > .02f) { ga = .18f; line(px + 26, py, px + 200, py - 26, 2, "#dfe6f1"); ga = 1; }
+        } else {
+            float t = (T % 22) / 22, hx = -800 + t * 2600, hy = 120 + (float) Math.sin(T * .7f) * 10;
+            R(hx - 8, hy - 3, 16, 6, "#e8eef7"); R(hx + 6, hy - 1, 10, 2, "#e8eef7"); line(hx - 14, hy - 6, hx + 14, hy - 6, 1, "#999aaa");
+            glow(hx, hy, 8, REDL, (T % .8f) < .4f ? 1 : .2f, .5f);
+        }
+    }
+    void drawHydro() {
+        if (!"hydro".equals(g.energy)) return;
+        layer(.7f);
+        float p0 = prog("energy", 2.5f);
+        poly(snowy ? "#c8d4e8" : "#2c4f7a", -700, GROUND - 50, -120, GROUND - 50, -120, GROUND, -700, GROUND);
+        ga = p0;
+        poly("#7d8496", -400, GROUND - 52, -170, GROUND - 52, -155, GROUND + 5, -415, GROUND + 5);
+        for (int i = 0; i < 6; i++) { R(-390 + i * 38, GROUND - 40, 20, 40, "#5f6678"); ga = .55f * p0; R(-388 + i * 38, GROUND - 2, 16, 8 + (float) Math.sin(T * 5 + i) * 2, "#9ad8ff"); ga = p0; }
+        ga = 1;
+        for (int i = 0; i < 12; i++) glow(-395 + i * 20, GROUND - 54, 8, WARM, .6f * p0, .7f);
+        glow(-285, GROUND, 70, COLD, .25f * p0, .7f);
+    }
+    void drawTEC() {
+        if (!"tec".equals(g.energy)) return;
+        layer(.8f);
+        float p0 = prog("energy", 2.5f);
+        for (int k = 0; k < 2; k++) {
+            float cx = -470 + k * 95, b = GROUND - 30, h = 120 * p0, w = 34;
+            path.reset(); path.moveTo(cx - w, b); path.quadTo(cx - w * .45f, b - h * .55f, cx - w * .62f, b - h);
+            path.lineTo(cx + w * .62f, b - h); path.quadTo(cx + w * .45f, b - h * .55f, cx + w, b); path.close();
+            p.setStyle(Paint.Style.FILL); p.setColor(C("#59617c")); cv.drawPath(path, p); R(cx - w, b - 8, w * 2, 3, "#c0392b");
+            if (p0 >= 1 && every("tec" + k, .18f)) puff(cx + (rnd.nextFloat() - .5f) * 20, b - h, .8f, Color.rgb(235, 238, 246), 3.2f, -16);
+            glow(cx, b - h, 40, HOT, .12f, .8f);
+        }
+        float sh = 150 * p0;
+        R(-320, GROUND - 30 - sh, 10, sh, "#6a2f2b");
+        for (int q = 8; q < sh - 4; q += 18) R(-320, GROUND - 30 - sh + q, 10, 5, q % 36 < 18 ? "#e3e3e3" : "#c0392b");
+        glow(-315, GROUND - 30 - sh, 10, REDL, .5f + .5f * (float) Math.sin(T * 3), .8f);
+        if (p0 >= 1 && every("tecs", .4f)) puff(-315, GROUND - 32 - sh, .8f, Color.rgb(160, 160, 170), 1.6f, -12);
+    }
+    void drawSkyscrapers() {
+        int n = g.pop >= 200000 ? Math.min(9, (g.pop - 200000) / 100000 + 1) : 0;
+        if (n == 0) return;
+        layer(.84f);
+        float[] xs = {1180, 1290, 1400, 1510, 1080, 1620, 980, 1720, 1340};
+        for (int i = 0; i < n; i++) {
+            float pr = i == n - 1 ? prog("sky", 2.5f) : 1;
+            float x = xs[i], w = 46 + (i % 3) * 8, h = (230 + (i * 47) % 90) * pr, top = GROUND - 30 - h;
+            p.setShader(new LinearGradient(x, top, x + w, top, new int[]{C("#2b4a7a"), C("#3f6aa6"), C("#22385e")}, null, Shader.TileMode.CLAMP));
+            p.setStyle(Paint.Style.FILL); cv.drawRect(x, top, x + w, top + h, p); p.setShader(null);
+            for (float y = top + 6; y < GROUND - 34; y += 7) { ga = .35f + .4f * hash(i * 100 + (int) y); R(x + 3, y, w - 6, 2.2f, "#9ad8ff"); }
+            ga = 1;
+            line(x + w / 2, top, x + w / 2, top - 30 * pr, 1.4f, "#cfd6e6");
+            glow(x + w / 2, top - 30 * pr, 12, REDL, (T + i * .4f) % 1.4f < .7f ? 1 : .2f, .84f);
+            glow(x + w / 2, top + h / 2, 70, COLD, .12f, .84f);
+        }
+        if (g.pop >= 1000000) {
+            float x = 1450, h = 380, top = GROUND - 30 - h;
+            poly("#4a7ac0", x - 30, GROUND - 30, x - 18, top + 60, x, top, x + 18, top + 60, x + 30, GROUND - 30);
+            line(x, top, x, top - 60, 2, "#e8eef7"); glow(x, top - 60, 26, WHITE, .5f + .5f * (float) Math.sin(T * 2), .84f);
+            text("ЯР-СИТИ", x, top + 90, 7, "#ffffff");
+        }
+    }
+    void drawMicro() {
+        int n = g.micro; if (n == 0) return;
+        layer(.9f);
+        for (int i = 0; i < n; i++) {
+            float x0 = micPos(i), pr = prog("mic" + i, 2.6f);
+            for (int t = 0; t < 3; t++) {
+                float x = x0 + t * 52, w = 44, h = 190 + ((i + t) % 3) * 22;
+                drawBlock(x, GROUND - 22, w, h, 5000 + i * 77 + t * 13, LITF, true, pr, (i + t) % 3, .9f, false);
+                if (pr >= 1 && "dev".equals(g.north)) R(x - 1, GROUND - 22 - h - 6, w + 2, 4, "#7a2a2a");
+            }
+            if (pr < 1) { float cx = x0 + 160, ct = GROUND - 22 - 240; line(cx, GROUND - 22, cx, ct, 2.4f, "#f4c84a"); line(cx - 60, ct + 4, cx + 16, ct + 4, 2.4f, "#f4c84a"); glow(cx, ct, 10, REDL, Math.sin(T * 6) > 0 ? 1 : .2f, .9f); }
+        }
+    }
+    static final int[] PARK_COLS = {0xFFFFC86E, 0xFFFF6EA0, 0xFF6EC8FF};
+    void drawCivic(float litF) {
+        layer(1);
+        for (int i = 0; i < Math.min(12, g.schools); i++) {
+            float x = SCH[i], pr = prog("sch" + i, 1.8f);
+            drawBlock(x, GROUND, 64, 56, 9000 + i * 7, Math.max(litF, .6f), true, pr, 1, 1, snowy);
+            if (pr >= 1) sign(x + 10, GROUND - 68, 44, "ШКОЛА", "#2c7be5", "#ffffff", COLD, 1);
+        }
+        for (int i = 0; i < Math.min(12, g.hospitals); i++) {
+            float x = HOS[i], pr = prog("hos" + i, 1.8f); boolean big = i == 0 && g.med;
+            float w = big ? 96 : 70, h = big ? 92 : 70;
+            R(x, GROUND - h * pr, w, h * pr, "#e6ebf3"); R(x + w * .62f, GROUND - h * pr, w * .38f, h * pr, "#cfd6e2");
+            for (int r = 0; r < (int) (h / 16); r++) for (int c = 0; c < (int) (w / 14); c++) if (GROUND - h * pr + 6 + r * 16 < GROUND - 10) R(x + 5 + c * 14, GROUND - h * pr + 6 + r * 16, 8, 8, hash(i * 50 + r * 9 + c) < .7f ? "#bfe3ff" : "#7e8aa6");
+            if (pr >= 1) { R(x + w / 2 - 7, GROUND - h - 18, 14, 4, "#e23b3b"); R(x + w / 2 - 2, GROUND - h - 23, 4, 14, "#e23b3b"); glow(x + w / 2, GROUND - h - 16, 22, REDL, .8f, 1); }
+        }
+        if (g.uni) {
+            float x = 1130, pr = prog("uni", 2.2f), w = 160, h = 84 * pr;
+            R(x, GROUND - h, w, h, "#d9c7a7"); poly("#b9a17c", x - 8, GROUND - h, x + w / 2, GROUND - h - 26 * pr, x + w + 8, GROUND - h);
+            for (int k = 0; k < 8; k++) R(x + 10 + k * 19, GROUND - h + 22, 6, h - 22, "#efe3cc");
+            circ(x + w / 2, GROUND - h - 30 * pr, 14 * pr, "#8fa8c8");
+            for (int k = 0; k < 7; k++) R(x + 16 + k * 19, GROUND - h + 8, 8, 8, "#ffd27a");
+            if (pr >= 1) sign(x + 22, GROUND - h - 14, w - 44, "ГОРНЫЙ ИНСТИТУТ", "#6b4e2e", "#ffffff", WARM, 1);
+            glow(x + w / 2, GROUND - 30, 80, WARM, .35f * pr, 1);
+        }
+        for (int i = 0; i < Math.min(12, g.parks); i++) {
+            float x = PAR[i], pr = prog("par" + i, 1.8f);
+            for (int t = 0; t < 7; t++) {
+                float tx = x - 60 + t * 20, th = (16 + hash(i * 9 + t) * 10) * pr;
+                poly(snowy ? "#2a4a3a" : "#2f6a43", tx, GROUND - th - 6, tx - 8, GROUND - 4, tx + 8, GROUND - 4);
+                if (snowy) poly("#e8eef7", tx, GROUND - th - 6, tx - 4, GROUND - th + 2, tx + 4, GROUND - th + 2);
+                glow(tx, GROUND - th + 4, 8, PARK_COLS[t % 3], .55f * pr, 1);
+            }
+            if (i == 0 && pr > .3f) {
+                float cx = x + 90, cy = GROUND - 62, r = 50 * pr;
+                line(cx - 18, GROUND, cx, cy, 2, "#9aa4bd"); line(cx + 18, GROUND, cx, cy, 2, "#9aa4bd");
+                p.setStyle(Paint.Style.STROKE); p.setStrokeWidth(1.4f); p.setColor(C("#c9d1e3")); cv.drawCircle(cx, cy, r, p); p.setStyle(Paint.Style.FILL);
+                String[] cc = {"#d6452f", "#f4c84a", "#2c7be5", "#3ccf7a"};
+                for (int k = 0; k < 12; k++) {
+                    double a = T * .25 + k * .5236; float kx = cx + (float) Math.cos(a) * r, ky = cy + (float) Math.sin(a) * r;
+                    line(cx, cy, kx, ky, .5f, "#9aa4bd"); R(kx - 3, ky, 6, 5, cc[k % 4]);
+                    glow(kx, ky + 2, 7, WARM, .6f, 1);
+                }
+                glow(cx, cy, 60, 0xFFFF78C8, .12f, 1);
+            }
+        }
+        String[] mc = {"#d6452f", "#9b59b6", "#16a085"};
+        for (int i = 0; i < Math.min(12, g.malls); i++) {
+            float x = MAL[i], pr = prog("mal" + i, 1.8f), w = 92, h = 50 * pr;
+            p.setShader(new LinearGradient(x, GROUND - h, x, GROUND, C("#3b6aa0"), C("#1d3352"), Shader.TileMode.CLAMP));
+            cv.drawRect(x, GROUND - h, x + w, GROUND, p); p.setShader(null);
+            for (int k = 0; k < 6; k++) R(x + 4 + k * 15, GROUND - h + 6, 11, h - 12, Color.argb(115, 170, 220, 255));
+            if (pr >= 1) sign(x + 16, GROUND - h - 11, w - 32, "ТЦ «ЯР»", mc[i % 3], "#ffffff", 0xFFFF78C8, 1);
+            glow(x + w / 2, GROUND - h / 2, 50, COLD, .3f * pr, 1);
+        }
+        if ("it".equals(g.mineFate)) {
+            float pr = prog("mineFate", 2); ga = pr;
+            R(30, GROUND - 58, 52, 18, "#18324f");
+            for (int k = 0; k < 6; k++) R(33 + k * 8, GROUND - 55, 5, 12, ((int) Math.floor(T * 4) + k) % 3 != 0 ? "#4ab0ff" : "#9ad8ff");
+            ga = 1; sign(36, GROUND - 70, 40, "ЯР-IT", "#0e5aa8", "#ffffff", COLD, pr);
+            glow(56, GROUND - 50, 40, COLD, .5f * pr, 1);
+        }
+        if (g.museum) {
+            float pr = prog("museum", 2);
+            p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.ADD)); ga = .12f * pr;
+            for (float sx : new float[]{40, 150}) { float a = (float) Math.sin(T * .6f + sx) * .25f; float dx = (float) Math.sin(a) * 300; poly("#fff2c8", sx, GROUND, sx + dx - 30, -100, sx + dx + 30, -100); }
+            ga = 1; p.setXfermode(null);
+            glow(95, 200, 90, WARM, .25f * pr, 1);
+            sign(60, GROUND - 56, 70, "МУЗЕЙ ШАХТЫ", "#8a2f2b", "#ffffff", REDL, pr);
+        }
+    }
+    void drawRail() {
+        String r = g.rail; if (r == null) return;
+        layer(1);
+        float[] bb = bounds(); float LB = bb[0], RB = bb[1], y = GROUND + 58, pr = prog("rail", 2.4f);
+        float end = LB - 100 + (RB - LB + 200) * pr;
+        R(LB - 100, y + 2, end - LB + 100, 6, snowy ? "#b9c3d6" : "#5a5245");
+        for (float x = LB - 100; x < end; x += 9) R(x, y + 1, 3, 5, "#6a4b30");
+        line(LB - 100, y + 1, end, y + 1, 1, "#8a93a8"); line(LB - 100, y + 5, end, y + 5, 1, "#8a93a8");
+        if (r.equals("electric")) { for (float x = LB - 60; x < end; x += 70) { line(x, y, x, y - 30, 1, "#59607e"); line(x, y - 28, x + 8, y - 28, 1, "#59607e"); } line(LB - 100, y - 26, end, y - 26, .5f, "#8a93a8"); }
+        float sx = -200;
+        R(sx, y - 46, 110, 46, "#c9b48f"); poly("#8a5a3a", sx - 6, y - 46, sx + 55, y - 62, sx + 116, y - 46);
+        for (int k = 0; k < 5; k++) R(sx + 10 + k * 20, y - 36, 10, 16, "#ffd27a");
+        sign(sx + 30, y - 58, 50, "ЯР", "#2a3150", "#f4c84a", WARM, pr);
+        glow(sx + 55, y - 30, 60, WARM, .4f * pr, 1);
+        R(sx - 40, y - 4, 190, 4, "#9aa4bd");
+        if (pr < 1) return;
+        boolean el = r.equals("electric");
+        float per = el ? 14 : 26, t = (T % per) / per, span = RB - LB + 600, tx = LB - 300 + t * span;
+        int cars = el ? 5 : 8;
+        for (int c = 0; c < cars; c++) {
+            float cx = tx - c * 44;
+            if (el) {
+                R(cx - 20, y - 16, 40, 14, c == 0 ? "#d6452f" : "#cfd6e6"); R(cx - 20, y - 8, 40, 3, "#d6452f");
+                for (int k = 0; k < 5; k++) R(cx - 17 + k * 7.5f, y - 14, 5, 4, "#ffe7a8");
+                if (c % 2 == 0) { line(cx - 4, y - 16, cx + 2, y - 26, .8f, "#59607e"); if (hash((int) Math.floor(T * 9) + c) > .85f) glow(cx + 2, y - 26, 10, COLD, 1, 1); }
+            } else {
+                if (c == 0) { R(cx - 20, y - 18, 40, 16, "#2f7a4a"); R(cx + 8, y - 22, 10, 6, "#2f7a4a"); if (every("loco", .3f)) puff(cx - 10, y - 22, 1, Color.rgb(120, 120, 130), 1, -12); }
+                else { poly("#5a3a2a", cx - 20, y - 14, cx + 20, y - 14, cx + 16, y - 2, cx - 16, y - 2); R(cx - 18, y - 16, 36, 3, "#1a1a1a"); }
+            }
+            circ(cx - 12, y - 1, 2, "#111111"); circ(cx + 12, y - 1, 2, "#111111");
+        }
+        glow(tx + 22, y - 10, 30, WHITE, .9f, 1);
+    }
+    void drawTram() {
+        if (!g.tram) return;
+        layer(1);
+        float[] bb = bounds(); float LB = bb[0], RB = bb[1], span = RB - LB + 300;
+        for (int i = 0; i < 2; i++) {
+            float dir = i == 1 ? -1 : 1, t = (T * 22 + i * span / 2) % span;
+            float x = dir > 0 ? LB - 150 + t : RB + 150 - t, y = GROUND + 18;
+            R(x - 22, y - 14, 44, 13, "#d6452f"); R(x - 22, y - 9, 44, 3, "#f2f2f2");
+            for (int k = 0; k < 6; k++) R(x - 19 + k * 7, y - 13, 5, 4, "#ffe7a8");
+            line(x, y - 14, x + 6 * dir, y - 24, .8f, "#59607e");
+            if (hash((int) Math.floor(T * 7) + i) > .8f) glow(x + 6 * dir, y - 24, 12, COLD, 1, 1);
+            glow(x + 22 * dir, y - 6, 16, WHITE, .7f, 1);
+        }
+        line(-1200, GROUND + 7, 2200, GROUND + 7, .4f, "#8a93a8");
+    }
+    void drawSmog() {
+        double s = g.smog; if (s < 8) return;
+        screen();
+        float a = (float) Math.min(.5, s / 160);
+        p.setShader(new LinearGradient(0, ch * .2f, 0, ch * .8f, new int[]{Color.argb(0, 120, 100, 80), Color.argb((int) (255 * a), 140, 118, 90), Color.argb((int) (255 * a * .6f), 90, 80, 70)}, new float[]{0, .5f, 1}, Shader.TileMode.CLAMP));
+        cv.drawRect(0, 0, cw, ch, p); p.setShader(null);
     }
 
     void drawParts(float dt) {
@@ -778,28 +1054,41 @@ public class CityView extends View {
         }
         flash = Math.max(0, flash - dt * 1.8f);
 
-        if (T > until) { tz = 1; ty = 260; tx = 520 + (float) Math.sin(T * .045f) * 330; }
+        float[] bd = bounds();
+        if (T > until) { tz = 1; ty = 260; float vw0 = cw / (base * camZ); tx = (bd[0] + bd[1]) / 2 + (float) Math.sin(T * (g.act >= 2 ? .025f : .045f)) * Math.max(0, (bd[1] - bd[0]) / 2 - vw0 / 2 + 40) * .95f; }
         float e = 1 - (float) Math.exp(-dt * 2.2f);
         camX += (tx - camX) * e; camY += (ty - camY) * e; camZ += (tz - camZ) * e;
         float viewW = cw / (base * camZ), viewH = ch / (base * camZ);
-        camX = Math.max(viewW / 2 - 40, Math.min(1040 - viewW / 2, camX));
-        camY = Math.max(viewH / 2 + 30, Math.min(GROUND + 78 - viewH / 2, camY));
-        if (viewW > 1080) camX = 500;
+        camX = Math.max(bd[0] + viewW / 2 - 40, Math.min(bd[1] + 40 - viewW / 2, camX));
+        float maxY = GROUND + 78 - viewH / 2, minY = viewH / 2 + 30;
+        camY = minY > maxY ? maxY : Math.max(minY, Math.min(maxY, camY));
+        if (viewW > bd[1] - bd[0] + 80) camX = (bd[0] + bd[1]) / 2;
 
         mon = month(); snowy = mon >= 9 || mon <= 3; summer = mon >= 5 && mon <= 7;
-        float litF = Math.min(.96f, .015f + .95f * (float) Math.pow(g.pop / 50000f, .6));
+        float litF = g.act >= 2 ? Math.min(.96f, .1f + .86f * (float) Math.pow(Math.min(1, g.pop / (double) Math.max(1, g.housing)), 1.5)) : Math.min(.96f, .015f + .95f * (float) Math.pow(g.pop / 50000f, .6));
+        LITF = litF;
         glows.clear();
         baseSave = canvas.save();
         drawSky();
         drawFarHills();
+        drawWind();
+        drawAirport();
         drawMountain();
+        drawHydro();
         drawFactories();
+        drawTEC();
+        drawSkyscrapers();
         drawPylons();
         drawNewBlocks(litF);
+        drawMicro();
         drawTown(litF);
+        drawCivic(litF);
         drawStreet();
+        drawTram();
+        drawRail();
         drawParts(dt);
         drawGlows();
+        drawSmog();
         post();
         drawSnow(dt);
         drawFloats(dt);

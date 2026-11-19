@@ -9,7 +9,7 @@ shot() {
   timeout 60 adb shell screencap -p /sdcard/s.png && timeout 60 adb pull /sdcard/s.png ci-shots/$1.png >/dev/null && echo "shot $1 ok" || echo "shot $1 FAILED"
 }
 alive() { adb shell pidof ru.ugolnyyar.nativegame >/dev/null && echo "ALIVE at $1" || echo "DEAD at $1"; }
-for t in 12 32 62 102 162 242 332 420; do
+for t in 15 60 120 200 290 380 470 560 650 740; do
   sleep $(( t - ${prev:-0} )); prev=$t
   shot t$(printf %03d $t); alive $t
 done
