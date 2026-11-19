@@ -392,7 +392,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.30</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.31</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -466,7 +466,7 @@
   <div id="aList"></div>
   <details class="aImp"><summary>Перенести аккаунт по коду</summary><div class="row" style="flex-wrap:nowrap;margin:6px 0 0"><input id="aImport" class="nick" placeholder="LR1-…" autocomplete="off" spellcheck="false" style="flex:1;width:auto"><button class="opt" id="aImportGo">Перенести</button></div></details>
   <div id="cloudSt" class="cloud"></div>
-  <div class="help" style="max-width:420px">Ник: 3–16 символов — буквы, цифры, «_» и «-». Пароль — от 4 символов. Аккаунт, деньги, оружие и миссии хранятся на этом устройстве; пароль сохраняется только в зашифрованном виде.</div>
+  <div class="help" style="max-width:420px">Ник: 3–16 символов — буквы, цифры, «_» и «-». Пароль — от 4 символов. Аккаунт сохраняется на сервере игры: войти можно с любого устройства по нику и паролю. Пароль никуда не отправляется — на сервере лежат только зашифрованные данные.</div>
 </div>
 <div id="accCode" class="ov hidden"><h1 style="font-size:22px">КОД АККАУНТА</h1>
   <div class="help" style="max-width:460px">Этот код переносит аккаунт со всеми деньгами, оружием и миссиями на другое устройство или в новую версию игры по другой ссылке. Там нажмите «Перенести аккаунт по коду» на экране входа. Пароль остаётся прежним. Не отправляйте код посторонним.</div>
@@ -2730,7 +2730,7 @@ function useAccount(key){ ACC = ACCS[key]; PROG = progFrom(ACC.prog); LOADOUT = 
   for (const k in SLOTS) for (const sl in SLOTS[k]) if (!ownsOpt(k, sl, LOADOUT[k][sl])) LOADOUT[k][sl] = DEFAULT_LOADOUT[k][sl]; }
 { let ses = null; try { ses = localStorage.getItem(SES_KEY) || sessionStorage.getItem(SES_KEY); } catch(e){}
   if (ses && ACCS[ses]) useAccount(ses); else LOADOUT = JSON.parse(JSON.stringify(DEFAULT_LOADOUT)); }
-function saveProg(){ if (ACC){ ACC.prog = PROG; ACC.loadout = LOADOUT; ACC.seen = Date.now(); saveAccs(); } renderMoney(); }
+function saveProg(){ if (ACC){ ACC.prog = PROG; ACC.loadout = LOADOUT; ACC.seen = Date.now(); saveAccs(); if (typeof accSync === 'function') accSync(); } renderMoney(); }
 const fmtMoney = n => n.toLocaleString('ru-RU') + ' КР';
 function firstOpt(wk, sl){ const o = SLOTS[wk][sl][0]; return Array.isArray(o) ? o[0] : o; }
 function ownsOpt(wk, sl, id){ return firstOpt(wk, sl) === id || !!(PROG.att[wk] && PROG.att[wk][sl+':'+id]); }
@@ -3996,24 +3996,7 @@ function enterAccount(remember){
   $('auth').classList.add('hidden'); $('menu').classList.remove('hidden'); saveProg();
   if (typeof tryAutoAdmin === 'function') tryAutoAdmin();
 }
-$('aGo').addEventListener('click', () => {
-  const nick = $('aNick').value.trim(), pw = $('aPass').value, key = accKey(nick), err = t => { $('aErr').textContent = t; };
-  if (!NICK_RE.test(nick)) return err('Ник: 3–16 символов, буквы, цифры, «_» или «-»');
-  if (pw.length < 4) return err('Пароль должен быть не короче 4 символов');
-  if (authMode === 'up'){
-    if (ACCS[key]) return err('Такой ник уже занят на этом устройстве');
-    if (pw !== $('aPass2').value) return err('Пароли не совпадают');
-    const salt = newSalt(), first = !Object.keys(ACCS).length;
-    ACCS[key] = {nick, salt, hash:pwHash(salt, pw), created:Date.now(), seen:Date.now(), prog:first && LEGACY ? LEGACY.prog : freshProg(), loadout:first && LEGACY ? LEGACY.loadout : null};
-    saveAccs(); useAccount(key); enterAccount($('aRemember').checked);
-    toast(first && LEGACY ? 'Аккаунт создан · прошлый прогресс перенесён' : 'Аккаунт создан · добро пожаловать, ' + nick);
-  } else {
-    const a = ACCS[key]; if (!a) return err('Аккаунт не найден — зарегистрируйтесь');
-    if (pwHash(a.salt, pw) !== a.hash) return err('Неверный пароль');
-    useAccount(key); enterAccount($('aRemember').checked); toast('С возвращением, ' + a.nick);
-  }
-  $('aPass').value = $('aPass2').value = '';
-});
+$('aGo').addEventListener('click', () => { authSubmit(); });
 $('logout').addEventListener('click', () => { try { localStorage.removeItem(SES_KEY); sessionStorage.removeItem(SES_KEY); } catch(e){}
   ACC = null; PROG = freshProg(); LOADOUT = JSON.parse(JSON.stringify(DEFAULT_LOADOUT)); WEAPONS.forEach((w, i) => applyLoadout(i)); $('nick').readOnly = false; isAdmin = false; adminPriv = null; adminProof = null; updateAdminUi(); showAuth(); });
 
@@ -4693,7 +4676,7 @@ function renderProfile(){
   const nick = ACC ? ACC.nick : myName;
   $('profBody').innerHTML = `<div class="pfTop"><i class="av t${PROG.team}">${esc(nick.slice(0,1).toUpperCase())}</i><div class="pfId"><b>${PROG.clan ? `<span class="clt">[${esc(PROG.clan)}]</span> ` : ''}${esc(nick)}</b>
       <span>${rankBadge(r, 26)} ${RANKS[r]} · уровень ${L}${L >= MAX_LVL ? ' (максимум)' : ''}</span>
-      <div class="xpb"><i style="width:${Math.round(k*100)}%"></i></div><div class="pfAcc"><button class="opt" id="pfCode">Код аккаунта</button><button class="opt" id="pfOut">Выйти из аккаунта</button></div><small>${L >= MAX_LVL ? 'Максимальный уровень' : `${(PROG.xp - a).toLocaleString('ru-RU')} / ${(b - a).toLocaleString('ru-RU')} опыта до уровня ${L + 1}`}</small></div>
+      <div class="xpb"><i style="width:${Math.round(k*100)}%"></i></div><div id="accCloud" class="cloud ${ACC && ACC.cloud ? 'ok' : 'err'}">${ACC && ACC.cloud ? '☁ аккаунт на сервере — войти можно с любого устройства по нику и паролю' : '☁ аккаунт пока только на этом устройстве'}</div><div class="pfAcc"><button class="opt" id="pfCode">Код аккаунта</button><button class="opt" id="pfOut">Выйти из аккаунта</button></div><small>${L >= MAX_LVL ? 'Максимальный уровень' : `${(PROG.xp - a).toLocaleString('ru-RU')} / ${(b - a).toLocaleString('ru-RU')} опыта до уровня ${L + 1}`}</small></div>
       ${PROG.medals.length ? `<div class="medals">${PROG.medals.map(m => `<span title="${esc(m)}">🏅</span>`).join('')}</div>` : ''}</div>
     <div class="pfGrid">${tiles.map(([n, v]) => `<div><b>${esc(String(v))}</b><span>${n}</span></div>`).join('')}</div>
     <h3>Клан</h3><div class="row" style="justify-content:flex-start"><input class="nick" id="clanIn" maxlength="5" placeholder="ТЕГ" value="${esc(PROG.clan)}" style="width:90px;text-transform:uppercase" autocomplete="off" spellcheck="false">
@@ -4938,7 +4921,121 @@ function quickMatch(){
 }
 $('quickGo').addEventListener('click', quickMatch);
 
-if (ACC) enterAccount(!!(function(){ try { return localStorage.getItem(SES_KEY); } catch(e){ return null; } })()); else showAuth();
+// =============== ACCOUNTS BY NICK: stored on the game's public relay (all three nodes), signed and password-encrypted ===============
+const ACC_TOPIC = 'lesnoyrubezh/acc3/';
+const cs = window.crypto && window.crypto.subtle;
+const accTopic = nick => ACC_TOPIC + sha256hex('lr|' + accKey(nick)).slice(0, 32);
+function u8b64(u){ let s = ''; for (const c of new Uint8Array(u)) s += String.fromCharCode(c); return btoa(s); }
+function b64u8(s){ return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
+function canon(o){ return JSON.stringify(o, Object.keys(o).sort()); }
+function recBody(r){ return canon({nick:r.nick, salt:r.salt, pub:JSON.stringify(r.pub), enc:r.enc, iv:r.iv, data:JSON.stringify(r.data), v:r.v}); }
+async function pwKey(pw, salt){ const base = await cs.importKey('raw', utf8e.encode(pw), 'PBKDF2', false, ['deriveKey']);
+  return cs.deriveKey({name:'PBKDF2', salt:utf8e.encode('lr3|' + salt), iterations:120000, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['encrypt', 'decrypt']); }
+async function privFromD(pub, d){ return cs.importKey('jwk', {kty:'EC', crv:'P-256', x:pub.x, y:pub.y, d, ext:true}, {name:'ECDSA', namedCurve:'P-256'}, false, ['sign']); }
+async function recVerify(r){
+  try { if (!r || r.v !== 3 || !r.pub || !r.sig || !r.data) return false;
+    const k = await cs.importKey('jwk', {kty:'EC', crv:'P-256', x:r.pub.x, y:r.pub.y, ext:true}, {name:'ECDSA', namedCurve:'P-256'}, false, ['verify']);
+    return await cs.verify({name:'ECDSA', hash:'SHA-256'}, k, b64u8(r.sig), utf8e.encode(recBody(r))); } catch(e){ return false; } }
+async function recSign(r, priv){ r.sig = u8b64(await cs.sign({name:'ECDSA', hash:'SHA-256'}, priv, utf8e.encode(recBody(r)))); return r; }
+// talk to every relay node separately so the account survives if one node drops it
+function mqttAt(url, onReady, onFail){
+  let ws, buf = new Uint8Array(0), done = false, subs = [], pid = 1;
+  const id = 'a' + Math.random().toString(36).slice(2, 10);
+  const send = u8 => { if (ws && ws.readyState === 1) try { ws.send(u8); } catch(e){} };
+  const api = { publish(t, s, retain){ send(mqPacket(retain ? 0x31 : 0x30, mqStr(t), utf8e.encode(s))); },
+    subscribe(f, fn){ subs.push([f, fn]); const p = pid++; send(mqPacket(0x82, new Uint8Array([p >> 8, p & 255]), mqStr(f), new Uint8Array([0]))); },
+    close(){ try { send(new Uint8Array([0xe0, 0])); ws.close(); } catch(e){} } };
+  try { ws = new WebSocket(url, ['mqtt']); } catch(e){ onFail && onFail(); return; }
+  ws.binaryType = 'arraybuffer'; const to = setTimeout(() => { if (!done){ done = true; try { ws.close(); } catch(e){} onFail && onFail(); } }, 5000);
+  ws.onopen = () => send(mqPacket(0x10, mqStr('MQTT'), new Uint8Array([4, 2, 0, 30]), mqStr(id)));
+  ws.onmessage = ev => { const d = new Uint8Array(ev.data), nb = new Uint8Array(buf.length + d.length); nb.set(buf); nb.set(d, buf.length); buf = nb;
+    while (buf.length >= 2){ let mul = 1, len = 0, i = 1, b; do { if (i >= buf.length) return; b = buf[i++]; len += (b & 127)*mul; mul *= 128; } while (b & 128 && i < 5);
+      if (buf.length < i + len) return; const type = buf[0] >> 4, body = buf.subarray(i, i + len); buf = buf.slice(i + len);
+      if (type === 2 && !done){ done = true; clearTimeout(to); onReady(api); }
+      else if (type === 3){ const tl = (body[0] << 8) | body[1], topic = utf8d.decode(body.subarray(2, 2 + tl)), pl = body.subarray(2 + tl);
+        for (const [f, fn] of subs) if (f === topic) try { fn(pl.length ? utf8d.decode(pl) : ''); } catch(e){} } } };
+  ws.onclose = () => { clearTimeout(to); if (!done){ done = true; onFail && onFail(); } }; ws.onerror = () => {};
+}
+function recFetch(nick){ return new Promise(res => {
+  const topic = accTopic(nick), found = []; let left = BROKERS.length;
+  const fin = () => { if (--left > 0) return; res(found); };
+  for (const url of BROKERS) mqttAt(url, api => { api.subscribe(topic, s => { if (s) try { found.push(JSON.parse(s)); } catch(e){} }); setTimeout(() => { api.close(); fin(); }, 2200); }, fin);
+}); }
+async function bestRecord(nick){ const list = await recFetch(nick); let best = null;
+  for (const r of list) if (r && accKey(String(r.nick || '')) === accKey(nick) && await recVerify(r) && (!best || (r.data.seen || 0) > (best.data.seen || 0))) best = r; return best; }
+function recPublish(r){ const topic = accTopic(r.nick), s = JSON.stringify(r); let ok = 0, left = BROKERS.length;
+  return new Promise(res => { for (const url of BROKERS) mqttAt(url, api => { api.publish(topic, s, true); ok++; setTimeout(() => { api.close(); if (--left === 0) res(ok); }, 700); }, () => { if (--left === 0) res(ok); }); }); }
+let cloudPriv = null, accSyncT = 0, accSyncBusy = false;
+function accCloudState(t, good){ const el = $('accCloud'); if (el){ el.textContent = t; el.className = 'cloud ' + (good ? 'ok' : 'err'); } }
+async function makeRecord(nick, pw, prog, loadout){
+  const kp = await cs.generateKey({name:'ECDSA', namedCurve:'P-256'}, true, ['sign', 'verify']), jwk = await cs.exportKey('jwk', kp.privateKey);
+  const salt = newSalt(), iv = cs ? crypto.getRandomValues(new Uint8Array(12)) : null, key = await pwKey(pw, salt);
+  const enc = await cs.encrypt({name:'AES-GCM', iv}, key, utf8e.encode(JSON.stringify({d:jwk.d})));
+  const r = {v:3, nick, salt, pub:{x:jwk.x, y:jwk.y}, enc:u8b64(enc), iv:u8b64(iv), data:{prog, loadout, seen:Date.now()}};
+  await recSign(r, kp.privateKey); return {r, d:jwk.d, priv:kp.privateKey};
+}
+async function openRecord(r, pw){ try { const key = await pwKey(pw, r.salt), plain = await cs.decrypt({name:'AES-GCM', iv:b64u8(r.iv)}, key, b64u8(r.enc));
+  const {d} = JSON.parse(utf8d.decode(plain)); return {d, priv:await privFromD(r.pub, d)}; } catch(e){ return null; } }
+// push the logged-in account's progress (debounced) — called from saveProg
+function accSync(){ if (!ACC || !ACC.cloud || !cs) return; clearTimeout(accSyncT); accSyncT = setTimeout(accSyncNow, 5000); }
+async function accSyncNow(){
+  if (!ACC || !ACC.cloud || accSyncBusy) return; accSyncBusy = true;
+  try { if (!cloudPriv && ACC.cloud.d) cloudPriv = await privFromD(ACC.cloud.pub, ACC.cloud.d);
+    const r = Object.assign({}, ACC.cloud.rec, {data:{prog:PROG, loadout:LOADOUT, seen:Date.now()}}); await recSign(r, cloudPriv);
+    const ok = await recPublish(r); ACC.cloud.rec = r; ACC.seen = r.data.seen; try { localStorage.setItem(ACC_KEY, JSON.stringify(ACCS)); } catch(e){}
+    accCloudState(ok ? `☁ аккаунт сохранён на сервере (узлов: ${ok}/${BROKERS.length})` : '☁ нет связи — сохранено на устройстве', ok > 0); }
+  catch(e){ accCloudState('☁ не удалось сохранить на сервере', false); }
+  accSyncBusy = false;
+}
+// on start / after login: pull a newer copy made on another device
+async function accPull(){
+  if (!ACC || !ACC.cloud || !cs) return; const r = await bestRecord(ACC.nick); if (!r) { accSync(); return; }
+  if (r.pub.x !== ACC.cloud.pub.x || r.pub.y !== ACC.cloud.pub.y){ accCloudState('☁ запись на сервере не совпадает с этим аккаунтом', false); return; }
+  if ((r.data.seen || 0) > (ACC.seen || 0) + 1000){ ACC.prog = r.data.prog; ACC.loadout = r.data.loadout; ACC.seen = r.data.seen; ACC.cloud.rec = r;
+    try { localStorage.setItem(ACC_KEY, JSON.stringify(ACCS)); } catch(e){} useAccount(accKey(ACC.nick)); enterAccount(true); toast('Прогресс загружен с сервера'); }
+  else if ((ACC.seen || 0) > (r.data.seen || 0) + 1000) accSync();
+  accCloudState('☁ аккаунт на сервере', true);
+}
+async function authSubmit(){
+  const nick = $('aNick').value.trim(), pw = $('aPass').value, key = accKey(nick), err = t => { $('aErr').textContent = t; $('aGo').disabled = false; };
+  if (!NICK_RE.test(nick)) return err('Ник: 3–16 символов, буквы, цифры, «_» или «-»');
+  if (pw.length < 4) return err('Пароль должен быть не короче 4 символов');
+  $('aGo').disabled = true; $('aErr').textContent = '';
+  const net = !!cs && typeof WebSocket !== 'undefined';
+  if (authMode === 'up'){
+    if (pw !== $('aPass2').value) return err('Пароли не совпадают');
+    if (ACCS[key]) return err('Такой ник уже есть на этом устройстве — войдите');
+    let cloud = null;
+    if (net){ $('aErr').textContent = 'Проверяем ник на сервере…'; const exist = await bestRecord(nick); if (exist) return err('Этот ник уже занят другим игроком');
+      const first = !Object.keys(ACCS).length, prog = first && LEGACY ? LEGACY.prog : freshProg(), loadout = first && LEGACY ? LEGACY.loadout : null;
+      const m = await makeRecord(nick, pw, prog, loadout); const ok = await recPublish(m.r); cloudPriv = m.priv;
+      cloud = {pub:m.r.pub, d:m.d, rec:m.r}; if (!ok) toast('Сервер недоступен — аккаунт сохранится на сервере позже'); }
+    const salt = newSalt(), first = !Object.keys(ACCS).length;
+    ACCS[key] = {nick, salt, hash:pwHash(salt, pw), created:Date.now(), seen:Date.now(), prog:cloud ? cloud.rec.data.prog : (first && LEGACY ? LEGACY.prog : freshProg()), loadout:cloud ? cloud.rec.data.loadout : (first && LEGACY ? LEGACY.loadout : null), cloud};
+    saveAccs(); useAccount(key); enterAccount($('aRemember').checked); toast('Аккаунт создан · ' + (cloud ? 'войти можно с любого устройства' : 'сохранён на этом устройстве'));
+  } else {
+    const a = ACCS[key];
+    if (a && pwHash(a.salt, pw) === a.hash){
+      if (!a.cloud && net){ // older local account: put it on the server now
+        const exist = await bestRecord(nick);
+        if (!exist){ const m = await makeRecord(a.nick, pw, a.prog || freshProg(), a.loadout || null); await recPublish(m.r); cloudPriv = m.priv; a.cloud = {pub:m.r.pub, d:m.d, rec:m.r}; toast('Аккаунт перенесён на сервер'); }
+        else { const o = await openRecord(exist, pw); if (o){ a.cloud = {pub:exist.pub, d:o.d, rec:exist}; cloudPriv = o.priv; if ((exist.data.seen || 0) > (a.seen || 0)){ a.prog = exist.data.prog; a.loadout = exist.data.loadout; a.seen = exist.data.seen; } } } }
+      saveAccs(); useAccount(key); enterAccount($('aRemember').checked); toast('С возвращением, ' + a.nick); accPull();
+    } else if (a && !net) return err('Неверный пароль');
+    else {
+      if (!net) return err('Аккаунт не найден на этом устройстве, а сервер недоступен');
+      $('aErr').textContent = 'Ищем аккаунт на сервере…';
+      const r = await bestRecord(nick); if (!r) return err(a ? 'Неверный пароль' : 'Аккаунт не найден — зарегистрируйтесь');
+      const o = await openRecord(r, pw); if (!o) return err('Неверный пароль');
+      const salt = newSalt(); cloudPriv = o.priv;
+      ACCS[key] = {nick:r.nick, salt, hash:pwHash(salt, pw), created:Date.now(), seen:r.data.seen || Date.now(), prog:r.data.prog, loadout:r.data.loadout, cloud:{pub:r.pub, d:o.d, rec:r}};
+      saveAccs(); useAccount(key); enterAccount($('aRemember').checked); toast('Аккаунт загружен с сервера · с возвращением, ' + r.nick);
+    }
+  }
+  $('aPass').value = $('aPass2').value = ''; $('aGo').disabled = false; $('aErr').textContent = '';
+}
+
+if (ACC){ enterAccount(!!(function(){ try { return localStorage.getItem(SES_KEY); } catch(e){ return null; } })()); setTimeout(accPull, 1500); } else showAuth();
 updateAdminUi();
 if (settings.gyro){ if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') addEventListener('touchend', () => enableGyro(true), {once:true}); else enableGyro(true); }
 
