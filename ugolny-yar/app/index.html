@@ -70,6 +70,18 @@
   .cap{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 9px;font-size:12px;color:var(--dim)}
   .cap b{display:block;font-size:17px;color:var(--text)}
   .opts{max-height:40vh;overflow-y:auto}
+  .caps{flex-wrap:wrap}
+  .cap{min-width:calc(33% - 6px)}
+  .cap.warn{border-color:#6b2a2a;color:#ff9a8f}
+  .cap.warn b{color:var(--red)}
+  .opts.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:38vh}
+  .opts.grid .btn{margin:0;padding:9px 10px;font-size:14px;font-weight:700}
+  .opts.grid .btn small{display:block;font-weight:500;font-size:11.5px;color:var(--dim);margin-top:2px;line-height:1.25}
+  .opts.grid .btn .cost{font-size:12px;margin-top:3px}
+  .pin{padding-top:8px}
+  .pin .btn{margin:0}
+  .btn.next{text-align:center;background:var(--gold);color:#1a1405;font-weight:900;border:none}
+
 </style>
 </head>
 <body>
@@ -120,6 +132,7 @@ const City = (() => {
         REDL = "rgba(255,70,60,1)", GREENL = "rgba(110,255,170,1)", WHITE = "rgba(255,245,225,1)";
   function glow(x, y, r, col, a = 1, p = 1) { glows.push([x, y, r, col, a, p]); }
 
+  function bounds() { return G && G.act >= 2 ? [-820, 1900] : [0, 1000]; }
   // ── сезон и время ──
   function dateOf() { return new Date(2026, 10, 13 + (G ? G.day : 0)); }
   function season() {
@@ -140,7 +153,14 @@ const City = (() => {
       lift: f.lift || "off", ratrak: f.ratrak ? "on" : "off", hotel: f.hotel ? "on" : "off",
       renov: f.housing_choice || "off",
     };
-    for (let i = 0; i < 12; i++) { k["fac" + i] = i < G.factories ? "on" : "off"; k["blk" + i] = i < G.blocks ? "on" : "off"; }
+    const nF = Math.max(12, G.factories), nB = Math.max(12, G.blocks);
+    for (let i = 0; i < nF; i++) k["fac" + i] = i < G.factories ? "on" : "off";
+    for (let i = 0; i < nB; i++) k["blk" + i] = i < G.blocks ? "on" : "off";
+    Object.assign(k, { rail: f.rail || "off", energy: f.energy || "off", airport: f.airport || "off", uni: f.uni ? "on" : "off", med: f.med ? "on" : "off",
+      tram: f.tram ? "on" : "off", museum: f.museum ? "on" : (f.demolished ? "gone" : "off"), mineFate: f.mineFate || "off", cup: f.cup ? "on" : "off", filters: f.filters ? "on" : "off" });
+    for (let i = 0; i < 30; i++) { k["mic" + i] = i < (G.micro || 0) ? "on" : "off"; }
+    for (let i = 0; i < 12; i++) { k["sch" + i] = i < (G.schools || 0) ? "on" : "off"; k["hos" + i] = i < (G.hospitals || 0) ? "on" : "off"; k["par" + i] = i < (G.parks || 0) ? "on" : "off"; k["mal" + i] = i < (G.malls || 0) ? "on" : "off"; }
+    k.sky = G.pop >= 200000 ? String(Math.min(9, Math.floor((G.pop - 200000) / 100000) + 1)) : "off";
     return k;
   }
   // где находится элемент: [x, y, слой параллакса, зум]
@@ -149,11 +169,20 @@ const City = (() => {
     vent: [160, 315, 1, 2.6], matvey: [160, 320, 1, 2.8], water: [205, 270, 1, 1.9], comm: [690, 220, 0.95, 1.5],
     shops: [420, 320, 1, 2.0], lift: [770, 210, 0.55, 1.4], ratrak: [770, 250, 0.55, 1.6], hotel: [915, 300, 1, 1.9],
     renov: [440, 280, 1, 1.4], town: [520, 260, 1, 1.0],
+    wide: [540, 235, 1, .62], rail: [-130, 340, 1, 1.4], energy: [-400, 240, .8, 1.2], hydro: [-280, 290, .7, 1.4], wind: [200, 200, .35, 1.0], airport: [-80, 190, .5, 1.1],
+    uni: [1210, 280, 1, 1.5], med: [1060, 290, 1, 1.7], north: [1450, 220, .9, 1.0], tram: [500, 330, 1, 1.4],
+    museum: [95, 230, 1, 1.5], mineFate: [95, 260, 1, 1.6], cup: [770, 200, .55, 1.3], filters: [400, 220, .78, 1.0], sky: [1400, 200, .84, .9],
   };
   function spotFor(k) {
+    if (k === "energy" && G && G.flags.energy && SPOTS[G.flags.energy === "tec" ? "energy" : G.flags.energy]) return SPOTS[G.flags.energy === "tec" ? "energy" : G.flags.energy];
     if (SPOTS[k]) return SPOTS[k];
-    if (k.startsWith("fac")) { const s = FAC[+k.slice(3)]; return [s[0], 270, 0.78, 1.3]; }
-    if (k.startsWith("blk")) { const s = NEWB[+k.slice(3)]; return [s[0] + s[1] / 2, 260, 0.88, 1.35]; }
+    if (k.startsWith("fac")) { const s = facPos(+k.slice(3)); return [s[0], 270, 0.78, 1.3]; }
+    if (k.startsWith("blk")) { const s = blkPos(+k.slice(3)); return [s[0] + s[1] / 2, 260, 0.88, 1.35]; }
+    if (k.startsWith("mic")) { const x = micPos(+k.slice(3)); return [x + 60, 220, 0.9, 1.1]; }
+    if (k.startsWith("sch")) { const x = SCH[+k.slice(3) % SCH.length]; return [x + 30, 300, 1, 1.8]; }
+    if (k.startsWith("hos")) { const x = HOS[+k.slice(3) % HOS.length]; return [x + 35, 300, 1, 1.8]; }
+    if (k.startsWith("par")) { const x = PAR[+k.slice(3) % PAR.length]; return [x, 290, .97, 1.6]; }
+    if (k.startsWith("mal")) { const x = MAL[+k.slice(3) % MAL.length]; return [x + 40, 300, 1, 1.7]; }
     return SPOTS.town;
   }
 
@@ -256,7 +285,7 @@ const City = (() => {
   function drawFarHills(se) {
     layer(0.3);
     const c1 = se.snowy ? "#2a3763" : "#2a2e52", c2 = se.snowy ? "#cfd8ea" : "#3d4a5a";
-    poly([-600, 340, -400, 230, -200, 270, 0, 210, 220, 260, 420, 205, 640, 255, 860, 200, 1100, 250, 1400, 215, 1700, 260, 1700, 400, -600, 400], c1);
+    poly([-1400, 340, -1100, 250, -800, 280, -600, 240, -400, 230, -200, 270, 0, 210, 220, 260, 420, 205, 640, 255, 860, 200, 1100, 250, 1400, 215, 1700, 260, 2000, 230, 2400, 270, 2400, 400, -1400, 400], c1);
     if (se.snowy) { ctx.globalAlpha = .35; poly([-400, 230, -360, 245, -330, 240, -300, 250, -200, 270, -280, 255], c2); poly([420, 205, 450, 220, 480, 216, 500, 228, 460, 225], c2); poly([860, 200, 890, 215, 920, 210, 950, 222, 900, 220], c2); ctx.globalAlpha = 1; }
   }
 
@@ -319,6 +348,7 @@ const City = (() => {
         }
       }
     }
+    if (G.flags.cup) { const cp = prog("cup", 2); for (let i = 0; i < 14; i++) { const t = i / 13; glow(860 - t * 85 + 8, 112 + t * 225, 10, WHITE, .8 * cp, .55); } }
     if (G.flags.ratrak && se.snowy) {
       const rp = prog("ratrak", 1.5), t = (T * .02) % 1, yy = 300 - Math.abs(Math.sin(t * Math.PI)) * 150;
       const xx = 790 + (yy - 300) * -.25;
@@ -332,11 +362,18 @@ const City = (() => {
   // заводы (слой 0.78)
   const FAC = [[300, 86, 70], [440, 96, 78], [180, 80, 64], [580, 92, 80], [720, 88, 72], [60, 82, 66],
                [860, 90, 76], [370, 70, 60], [650, 74, 62], [980, 84, 70], [-60, 80, 64], [520, 66, 58]];
+  function facPos(i) { if (i < FAC.length) return FAC[i]; const j = i - FAC.length; return [-280 + (j * 137) % 2160, 76 + (j % 4) * 6, 60 + (j % 3) * 9]; }
+  function blkPos(i) { if (i < NEWB.length) return NEWB[i]; const j = i - NEWB.length; return [-260 + (j * 89) % 2140, 56 + (j % 3) * 4, 150 + (j * 37) % 50]; }
+  function micPos(i) { const xs = [1060, 1230, 1400, 1570, 1740, 1145, 1315, 1485, 1655, 975]; return xs[i % xs.length] + (Math.floor(i / xs.length) % 3) * 28 - 28; }
+  const SCH = [1400, 975, 1815, 1500, 1060, 1745, 1340, 1880, 1190, 1630, 1270, 1560];
+  const HOS = [1300, 1885, 1045, 1660, 1480, 1220, 1770, 1100, 1590, 1370, 1700, 1150];
+  const PAR = [1520, 1130, 1760, 1300, 1480, 1850, 1010, 1650, 1240, 1400, 1700, 1070];
+  const MAL = [1720, 1000, 1850, 1240, 1480, 1600, 1120, 1780, 1360, 1060, 1540, 1900];
   function drawFactories(se) {
     layer(0.78);
-    for (let i = 0; i < FAC.length; i++) {
+    for (let i = 0; i < Math.max(FAC.length, G.factories); i++) {
       if (i >= G.factories) continue;
-      const [x, w, h] = FAC[i];
+      const [x, w, h] = facPos(i);
       const p = prog("fac" + i, 2);
       const hh = h * p, top = GROUND - 40 - hh;
       // корпус с пилообразной крышей
@@ -362,7 +399,7 @@ const City = (() => {
   function drawPylons(se) {
     layer(0.9);
     const lit = G.flags.light === "trafo";
-    const xs = [-120, 140, 400, 660, 920, 1180];
+    const xs = [-900, -640, -380, -120, 140, 400, 660, 920, 1180, 1440, 1700, 1960];
     for (const x of xs) {
       const b = GROUND - 20, t = 200;
       line(x - 10, b, x, t, 1.6, "#4a5470"); line(x + 10, b, x, t, 1.6, "#4a5470");
@@ -387,9 +424,9 @@ const City = (() => {
                 [230, 58, 162], [860, 58, 150], [150, 62, 178], [945, 58, 160], [70, 58, 148], [1025, 62, 170]];
   function drawNewBlocks(se, litF) {
     layer(0.88);
-    for (let i = 0; i < NEWB.length; i++) {
+    for (let i = 0; i < Math.max(NEWB.length, G.blocks); i++) {
       if (i >= G.blocks) continue;
-      const [x, w, h] = NEWB[i];
+      const [x, w, h] = blkPos(i);
       const p = prog("blk" + i, 2.4);
       drawBlock(x, GROUND - 14, w, h, 2000 + i * 131, litF, { fresh: true, grow: p, palette: i % 3, layerP: .88 });
       if (p < 1) { // строительный кран
@@ -445,6 +482,8 @@ const City = (() => {
     const mx = 95, mb = GROUND;
     ctx.lineJoin = "round";
     const mc = flooded ? "#3a3440" : "#8a2f2b";
+    if (f.demolished) { drawBlock(mx - 40, GROUND, 84, 120, 4242, litF, { fresh: true, palette: 2, snowRoof: se.snowy }); }
+    else {
     line(mx - 32, mb, mx, 168, 4, mc); line(mx + 32, mb, mx, 168, 4, mc);
     line(mx - 22, 270, mx + 22, 270, 3, mc); line(mx - 14, 222, mx + 14, 222, 3, mc);
     line(mx - 26, 300, mx + 18, 236, 2.4, mc); line(mx + 26, 300, mx - 18, 236, 2.4, mc);
@@ -455,7 +494,8 @@ const City = (() => {
     ctx.restore();
     // звезда
     ctx.save(); ctx.translate(mx, 150); poly([0, -9, 2.6, -3, 9, -3, 4, 1.5, 6, 8, 0, 4, -6, 8, -4, 1.5, -9, -3, -2.6, -3], mineOpen ? "#ff5a4f" : "#5a2a2a"); ctx.restore();
-    if (mineOpen) glow(mx, 147, 26, REDL, .9 + .1 * Math.sin(T * 2), 1);
+    if (mineOpen || f.museum) glow(mx, 147, 26, REDL, .9 + .1 * Math.sin(T * 2), 1);
+    }
     // надшахтное здание
     R(mx - 40, GROUND - 40, 80, 40, "#2c3352"); R(mx - 40, GROUND - 43, 80, 4, "#1d2340");
     if (se.snowy) R(mx - 40, GROUND - 46, 80, 3, "#e8eef7");
@@ -601,16 +641,17 @@ const City = (() => {
     layer(1);
     const f = G.flags, road = f.road ?? -1;
     // тротуар
-    R(-200, GROUND, 1400, 10, se.snowy ? "#c9d3e4" : "#4a4f5e");
+    R(-1200, GROUND, 3400, 10, se.snowy ? "#c9d3e4" : "#4a4f5e");
     // дорога
     const rc = road === 2 ? "#2a2d38" : road === 1 ? (se.snowy ? "#9aa6bc" : "#6b6556") : (se.snowy ? "#dfe6f1" : "#5a5245");
-    R(-200, GROUND + 10, 1400, 26, rc);
-    if (road === 2) for (let x = -200; x < 1200; x += 30) R(x, GROUND + 22, 15, 2, "#f4c84a");
-    if (road <= 0 && se.snowy) for (let i = 0; i < 24; i++) { const x = -150 + i * 55 + hash(i) * 20; poly([x, GROUND + 36, x + 14, GROUND + 18 + hash(i * 3) * 6, x + 34, GROUND + 36], "#f2f6fb"); }
-    if (road === 1) for (let x = -200; x < 1200; x += 22) { R(x, GROUND + 37, 2, 10, "#6a4b30"); R(x - 1, GROUND + 39, 22, 2, "#6a4b30"); R(x - 1, GROUND + 43, 22, 2, "#6a4b30"); }
+    R(-1200, GROUND + 10, 3400, 26, rc);
+    if (road === 2) for (let x = -1200; x < 2200; x += 30) R(x, GROUND + 22, 15, 2, "#f4c84a");
+    if (road <= 0 && se.snowy) for (let i = 0; i < 60; i++) { const x = -1150 + i * 55 + hash(i) * 20; poly([x, GROUND + 36, x + 14, GROUND + 18 + hash(i * 3) * 6, x + 34, GROUND + 36], "#f2f6fb"); }
+    if (road === 1) for (let x = -1200; x < 2200; x += 22) { R(x, GROUND + 37, 2, 10, "#6a4b30"); R(x - 1, GROUND + 39, 22, 2, "#6a4b30"); R(x - 1, GROUND + 43, 22, 2, "#6a4b30"); }
     // фонари
     const lampsOn = !!f.light;
-    for (let x = 30; x < 1000; x += 92) {
+    const [LB, RB] = bounds();
+    for (let x = LB + 30; x < RB; x += 92) {
       line(x, GROUND + 4, x, GROUND - 30, 1.4, "#3a4262"); line(x, GROUND - 30, x + 7, GROUND - 32, 1.4, "#3a4262");
       if (lampsOn) {
         const fl = f.light === "diesel" ? .8 + .2 * Math.sin(T * 13 + x) : 1;
@@ -624,15 +665,15 @@ const City = (() => {
     const veh = [];
     if (road >= 1) {
       veh.push({ kind: "bus", speed: 34, off: 0 });
-      const cars = Math.min(9, 1 + Math.floor(G.pop / 4500));
+      const cars = Math.min(G.act >= 2 ? 22 : 9, 1 + Math.floor(G.pop / (G.act >= 2 ? 9000 : 4500)));
       for (let i = 0; i < cars; i++) veh.push({ kind: "car", speed: 40 + hash(i) * 30, off: hash(i * 7) * 1400, dir: i % 2 ? -1 : 1, col: ["#d6452f", "#2c7be5", "#e7e7e7", "#3ccf7a", "#f4c84a"][i % 5] });
     }
     if (f.mine_open) for (let i = 0; i < 2; i++) veh.push({ kind: "truck", speed: 26, off: i * 700, dir: 1 });
     if (f.water === "truck") veh.push({ kind: "water", speed: 18, off: 300, dir: -1 });
     if (road === 0 || road === -1) veh.push({ kind: "sled", speed: 12, off: 200, dir: 1 });
     for (const v of veh) {
-      const dir = v.dir || 1, span = 1500;
-      let x = ((T * v.speed + v.off) % span) - 250; if (dir < 0) x = 1250 - x - 250;
+      const dir = v.dir || 1, span = RB - LB + 500;
+      let x = ((T * v.speed + v.off) % span) + LB - 250; if (dir < 0) x = RB + LB - x;
       const y = GROUND + (dir > 0 ? 30 : 20);
       ctx.save(); ctx.translate(x, y); if (dir < 0) ctx.scale(-1, 1);
       if (v.kind === "bus") {
@@ -655,18 +696,267 @@ const City = (() => {
       if (v.kind !== "sled") glow(x - dir * (v.kind === "bus" ? 26 : 10), y - 5, 8, REDL, .6, 1);
     }
     // люди
-    const nppl = Math.min(46, 2 + Math.floor(G.pop / 900));
+    const nppl = Math.min(G.act >= 2 ? 110 : 46, 2 + Math.floor(G.pop / (G.act >= 2 ? 2500 : 900)));
+    const pspan = RB - LB + 200;
     for (let i = 0; i < nppl; i++) {
       const sp = 6 + hash(i * 5) * 8, dir = hash(i * 11) > .5 ? 1 : -1;
-      let x = ((T * sp + hash(i * 3) * 1200) % 1200) - 100; if (dir < 0) x = 1100 - x;
+      let x = ((T * sp + hash(i * 3) * pspan) % pspan) + LB - 100; if (dir < 0) x = RB + LB - x;
       const y = GROUND + 7 + hash(i * 13) * 2, bob = Math.abs(Math.sin(T * 6 + i)) * .8;
       const col = ["#d6452f", "#2c7be5", "#f4c84a", "#3ccf7a", "#e67e22", "#9b59b6"][i % 6];
       R(x - 1.6, y - 8 - bob, 3.2, 6, col); R(x - 1.4, y - 2 - bob, 1.2, 2.4, "#1b1f2a"); R(x + .2, y - 2 - bob, 1.2, 2.4, "#1b1f2a");
       circ(x, y - 9.6 - bob, 1.6, "#f1c7a5"); R(x - 1.8, y - 11.6 - bob, 3.6, 1.6, se.snowy ? "#5a4a3a" : col);
     }
     // передний план — сугробы/трава
-    R(-400, GROUND + 36, 1800, 300, se.snowy ? "#e9eff8" : "#22372a");
-    if (se.snowy) for (let i = 0; i < 30; i++) { const x = -150 + i * 45; ctx.beginPath(); ctx.ellipse(x, GROUND + 40, 30 + hash(i) * 20, 6 + hash(i * 3) * 4, 0, 3.14, 6.28); ctx.fillStyle = "#f5f8fc"; ctx.fill(); }
+    R(-1400, GROUND + 36, 3800, 300, se.snowy ? "#e9eff8" : "#22372a");
+    if (se.snowy) for (let i = 0; i < 80; i++) { const x = -1150 + i * 45; ctx.beginPath(); ctx.ellipse(x, GROUND + 40, 30 + hash(i) * 20, 6 + hash(i * 3) * 4, 0, 3.14, 6.28); ctx.fillStyle = "#f5f8fc"; ctx.fill(); }
+  }
+
+
+  // ════════════════ ЧАСТЬ II: новые районы ════════════════
+  function drawWind(se) {
+    if (G.flags.energy !== "wind") return;
+    layer(0.35);
+    const p0 = prog("energy", 2.5);
+    for (let i = 0; i < 9; i++) {
+      const x = -160 + i * 90, base = 252 + Math.sin(i * 1.7) * 10, h = 70 * p0;
+      line(x, base, x, base - h, 2, "#cfd6e6");
+      if (p0 < 1) continue;
+      ctx.save(); ctx.translate(x, base - h); ctx.rotate(T * 1.4 + i);
+      for (let b = 0; b < 3; b++) { ctx.rotate(2.094); poly([0, 0, 2.5, -2, 30, -1, 30, 1, 2.5, 2], "#e8eef7"); }
+      ctx.restore();
+      circ(x, base - h, 2.2, "#e8eef7");
+      glow(x, base - h - 3, 8, REDL, (T + i * .3) % 1.6 < .8 ? .9 : .15, .35);
+    }
+  }
+  function drawAirport(se) {
+    const a = G.flags.airport; if (!a) return;
+    layer(0.5);
+    const ap = prog("airport", 2);
+    // полоса и огни
+    R(-330, GROUND - 6, 420, 5, "#3a4060");
+    for (let i = 0; i < 20; i++) glow(-320 + i * 21, GROUND - 4, 5, (Math.floor(T * 8) + i) % 20 === 0 ? WHITE : WARM, .6 * ap, .5);
+    // диспетчерская вышка
+    const tx = -80; R(tx - 4, GROUND - 70 * ap, 8, 70 * ap, "#4a5470"); R(tx - 12, GROUND - 82 * ap, 24, 13, "#2f3757");
+    R(tx - 10, GROUND - 80 * ap, 20, 7, "#9ad8ff"); glow(tx, GROUND - 77 * ap, 22, COLD, .5 * ap, .5);
+    glow(tx, GROUND - 88 * ap, 12, (T % 1.2) < .6 ? GREENL : WHITE, ap, .5);
+    if (ap < 1) return;
+    // самолёты / вертолёт
+    if (a === "full") {
+      const per = 16, t = (T % per) / per;
+      const px = 1300 - t * 1700, py = 60 + t * 200 + Math.sin(t * 6) * 4;
+      ctx.save(); ctx.translate(px, py); ctx.rotate(.06);
+      poly([-22, 0, 20, -2, 26, 0, 20, 2], "#d9dfeb"); poly([-2, 0, 6, -12, 10, -12, 6, 0], "#b9c2d6"); poly([-2, 0, 6, 10, 10, 10, 6, 0], "#b9c2d6"); poly([18, -1, 24, -8, 26, -8, 24, 0], "#c0392b");
+      ctx.restore();
+      glow(px + 26, py, 10, (T % 1) < .1 ? WHITE : REDL, .9, .5); glow(px + 8, py - 12, 7, REDL, .8, .5); glow(px + 8, py + 10, 7, GREENL, .8, .5);
+      if (t > .02) { ctx.globalAlpha = .18; line(px + 26, py, px + 200, py - 26, 2, "#dfe6f1"); ctx.globalAlpha = 1; }
+    } else {
+      const t = (T % 22) / 22, hx = -800 + t * 2600, hy = 120 + Math.sin(T * .7) * 10;
+      R(hx - 8, hy - 3, 16, 6, "#e8eef7"); R(hx + 6, hy - 1, 10, 2, "#e8eef7"); line(hx - 14, hy - 6, hx + 14, hy - 6, 1, "#99a");
+      glow(hx, hy, 8, REDL, (T % .8) < .4 ? 1 : .2, .5);
+    }
+  }
+  function drawHydro(se) {
+    if (G.flags.energy !== "hydro") return;
+    layer(0.7);
+    const p = prog("energy", 2.5);
+    poly([-700, GROUND - 50, -120, GROUND - 50, -120, GROUND, -700, GROUND], se.snowy ? "#c8d4e8" : "#2c4f7a"); // водохранилище
+    ctx.globalAlpha = p;
+    poly([-400, GROUND - 52, -170, GROUND - 52, -155, GROUND + 5, -415, GROUND + 5], "#7d8496");
+    for (let i = 0; i < 6; i++) { R(-390 + i * 38, GROUND - 40, 20, 40, "#5f6678"); ctx.globalAlpha = .55 * p; R(-388 + i * 38, GROUND - 2, 16, 8 + Math.sin(T * 5 + i) * 2, "#9ad8ff"); ctx.globalAlpha = p; }
+    ctx.globalAlpha = 1;
+    for (let i = 0; i < 12; i++) glow(-395 + i * 20, GROUND - 54, 8, WARM, .6 * p, .7);
+    glow(-285, GROUND, 70, COLD, .25 * p, .7);
+  }
+  function drawTEC(se) {
+    if (G.flags.energy !== "tec") return;
+    layer(0.8);
+    const p = prog("energy", 2.5);
+    for (let k = 0; k < 2; k++) {
+      const cx = -470 + k * 95, b = GROUND - 30, h = 120 * p, w = 34;
+      ctx.beginPath(); ctx.moveTo(cx - w, b); ctx.quadraticCurveTo(cx - w * .45, b - h * .55, cx - w * .62, b - h);
+      ctx.lineTo(cx + w * .62, b - h); ctx.quadraticCurveTo(cx + w * .45, b - h * .55, cx + w, b); ctx.closePath();
+      ctx.fillStyle = "#59617c"; ctx.fill(); R(cx - w, b - 8, w * 2, 3, "#c0392b");
+      if (p >= 1 && every("tec" + k, .18)) puff(cx + (Math.random() - .5) * 20, b - h, .8, "235,238,246", 3.2, -16);
+      glow(cx, b - h, 40, HOT, .12, .8);
+    }
+    R(-320, GROUND - 30 - 150 * p, 10, 150 * p, "#6a2f2b");
+    for (let q = 8; q < 150 * p - 4; q += 18) R(-320, GROUND - 30 - 150 * p + q, 10, 5, q % 36 < 18 ? "#e3e3e3" : "#c0392b");
+    glow(-315, GROUND - 30 - 150 * p, 10, REDL, .5 + .5 * Math.sin(T * 3), .8);
+    if (p >= 1 && every("tecs", .4)) puff(-315, GROUND - 32 - 150 * p, .8, "160,160,170", 1.6, -12);
+  }
+  function drawSkyscrapers(se) {
+    const n = G.pop >= 200000 ? Math.min(9, Math.floor((G.pop - 200000) / 100000) + 1) : 0;
+    if (!n) return;
+    layer(0.84);
+    const xs = [1180, 1290, 1400, 1510, 1080, 1620, 980, 1720, 1340];
+    for (let i = 0; i < n; i++) {
+      const p = i === n - 1 ? prog("sky", 2.5) : 1;
+      const x = xs[i], w = 46 + (i % 3) * 8, h = (230 + (i * 47) % 90) * p, top = GROUND - 30 - h;
+      const g = ctx.createLinearGradient(x, top, x + w, top);
+      g.addColorStop(0, "#2b4a7a"); g.addColorStop(.5, "#3f6aa6"); g.addColorStop(1, "#22385e");
+      ctx.fillStyle = g; ctx.fillRect(x, top, w, h);
+      for (let y = top + 6; y < GROUND - 34; y += 7) { ctx.globalAlpha = .35 + .4 * hash(i * 100 + Math.floor(y)); R(x + 3, y, w - 6, 2.2, "#9ad8ff"); }
+      ctx.globalAlpha = 1;
+      line(x + w / 2, top, x + w / 2, top - 30 * p, 1.4, "#cfd6e6");
+      glow(x + w / 2, top - 30 * p, 12, REDL, (T + i * .4) % 1.4 < .7 ? 1 : .2, .84);
+      glow(x + w / 2, top + h / 2, 70, COLD, .12, .84);
+    }
+    if (G.pop >= 1000000) { // башня «Яр-Сити»
+      const x = 1450, h = 380, top = GROUND - 30 - h;
+      poly([x - 30, GROUND - 30, x - 18, top + 60, x, top, x + 18, top + 60, x + 30, GROUND - 30], "#4a7ac0");
+      line(x, top, x, top - 60, 2, "#e8eef7"); glow(x, top - 60, 26, WHITE, .5 + .5 * Math.sin(T * 2), .84);
+      text("ЯР-СИТИ", x, top + 90, 7, "#ffffff");
+    }
+  }
+  function drawMicro(se) {
+    const n = G.micro || 0; if (!n) return;
+    layer(0.9);
+    for (let i = 0; i < n; i++) {
+      const x0 = micPos(i), p = prog("mic" + i, 2.6);
+      for (let t = 0; t < 3; t++) {
+        const x = x0 + t * 52, w = 44, h = 190 + ((i + t) % 3) * 22;
+        drawBlock(x, GROUND - 22, w, h, 5000 + i * 77 + t * 13, LITF, { fresh: true, grow: p, palette: (i + t) % 3, layerP: .9 });
+        if (p >= 1 && G.a2 && G.a2.north === "dev") R(x - 1, GROUND - 22 - h - 6, w + 2, 4, "#7a2a2a");
+      }
+      if (p < 1) { const cx = x0 + 160, ct = GROUND - 22 - 240; line(cx, GROUND - 22, cx, ct, 2.4, "#f4c84a"); line(cx - 60, ct + 4, cx + 16, ct + 4, 2.4, "#f4c84a"); glow(cx, ct, 10, REDL, Math.sin(T * 6) > 0 ? 1 : .2, .9); }
+    }
+  }
+  let LITF = .5;
+  function sign(x, y, w, label, bg, fg = "#fff", glowCol = WARM, a = 1) {
+    ctx.globalAlpha = a; R(x, y, w, 9, bg); text(label, x + w / 2, y + 4.6, 4.2, fg); ctx.globalAlpha = 1;
+    glow(x + w / 2, y + 4.5, w * .6, glowCol, .45 * a, 1);
+  }
+  function drawCivic(se, litF) {
+    layer(1);
+    const f = G.flags;
+    // школы
+    for (let i = 0; i < Math.min(12, G.schools || 0); i++) {
+      const x = SCH[i], p = prog("sch" + i, 1.8);
+      drawBlock(x, GROUND, 64, 56, 9000 + i * 7, Math.max(litF, .6), { fresh: true, palette: 1, grow: p, snowRoof: se.snowy });
+      if (p >= 1) sign(x + 10, GROUND - 68, 44, "ШКОЛА", "#2c7be5", "#fff", COLD);
+    }
+    // больницы
+    for (let i = 0; i < Math.min(12, G.hospitals || 0); i++) {
+      const x = HOS[i], p = prog("hos" + i, 1.8), big = i === 0 && f.med;
+      const w = big ? 96 : 70, h = big ? 92 : 70;
+      R(x, GROUND - h * p, w, h * p, "#e6ebf3"); R(x + w * .62, GROUND - h * p, w * .38, h * p, "#cfd6e2");
+      for (let r = 0; r < Math.floor(h / 16); r++) for (let c = 0; c < Math.floor(w / 14); c++) if (GROUND - h * p + 6 + r * 16 < GROUND - 10) R(x + 5 + c * 14, GROUND - h * p + 6 + r * 16, 8, 8, hash(i * 50 + r * 9 + c) < .7 ? "#bfe3ff" : "#7e8aa6");
+      if (p >= 1) { R(x + w / 2 - 7, GROUND - h - 18, 14, 4, "#e23b3b"); R(x + w / 2 - 2, GROUND - h - 23, 4, 14, "#e23b3b"); glow(x + w / 2, GROUND - h - 16, 22, REDL, .8, 1); }
+    }
+    // институт
+    if (f.uni) {
+      const x = 1130, p = prog("uni", 2.2), w = 160, h = 84 * p;
+      R(x, GROUND - h, w, h, "#d9c7a7"); poly([x - 8, GROUND - h, x + w / 2, GROUND - h - 26 * p, x + w + 8, GROUND - h], "#b9a17c");
+      for (let k = 0; k < 8; k++) R(x + 10 + k * 19, GROUND - h + 22, 6, h - 22, "#efe3cc");
+      circ(x + w / 2, GROUND - h - 30 * p, 14 * p, "#8fa8c8");
+      for (let k = 0; k < 7; k++) R(x + 16 + k * 19, GROUND - h + 8, 8, 8, "#ffd27a");
+      if (p >= 1) sign(x + 22, GROUND - h - 14, w - 44, "ГОРНЫЙ ИНСТИТУТ", "#6b4e2e", "#fff", WARM);
+      glow(x + w / 2, GROUND - 30, 80, WARM, .35 * p, 1);
+    }
+    // парки и колесо обозрения
+    for (let i = 0; i < Math.min(12, G.parks || 0); i++) {
+      const x = PAR[i], p = prog("par" + i, 1.8);
+      for (let t = 0; t < 7; t++) {
+        const tx = x - 60 + t * 20, th = (16 + hash(i * 9 + t) * 10) * p;
+        poly([tx, GROUND - th - 6, tx - 8, GROUND - 4, tx + 8, GROUND - 4], se.snowy ? "#2a4a3a" : "#2f6a43");
+        if (se.snowy) poly([tx, GROUND - th - 6, tx - 4, GROUND - th + 2, tx + 4, GROUND - th + 2], "#e8eef7");
+        glow(tx, GROUND - th + 4, 8, ["rgba(255,200,110,1)", "rgba(255,110,160,1)", "rgba(110,200,255,1)"][t % 3], .55 * p, 1);
+      }
+      if (i === 0 && p > .3) { // колесо обозрения
+        const cx = x + 90, cy = GROUND - 62, r = 50 * p;
+        line(cx - 18, GROUND, cx, cy, 2, "#9aa4bd"); line(cx + 18, GROUND, cx, cy, 2, "#9aa4bd");
+        ctx.strokeStyle = "#c9d1e3"; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 6.28); ctx.stroke();
+        for (let k = 0; k < 12; k++) {
+          const a = T * .25 + k * .5236, kx = cx + Math.cos(a) * r, ky = cy + Math.sin(a) * r;
+          line(cx, cy, kx, ky, .5, "#9aa4bd"); R(kx - 3, ky, 6, 5, ["#d6452f", "#f4c84a", "#2c7be5", "#3ccf7a"][k % 4]);
+          glow(kx, ky + 2, 7, WARM, .6, 1);
+        }
+        glow(cx, cy, 60, "rgba(255,120,200,1)", .12, 1);
+      }
+    }
+    // торговые центры
+    for (let i = 0; i < Math.min(12, G.malls || 0); i++) {
+      const x = MAL[i], p = prog("mal" + i, 1.8), w = 92, h = 50 * p;
+      const g = ctx.createLinearGradient(x, GROUND - h, x, GROUND); g.addColorStop(0, "#3b6aa0"); g.addColorStop(1, "#1d3352");
+      ctx.fillStyle = g; ctx.fillRect(x, GROUND - h, w, h);
+      for (let k = 0; k < 6; k++) R(x + 4 + k * 15, GROUND - h + 6, 11, h - 12, "rgba(170,220,255,.45)");
+      if (p >= 1) sign(x + 16, GROUND - h - 11, w - 32, "ТЦ «ЯР»", ["#d6452f", "#9b59b6", "#16a085"][i % 3], "#fff", "rgba(255,120,200,1)");
+      glow(x + w / 2, GROUND - h / 2, 50, COLD, .3 * p, 1);
+    }
+    // ИТ-парк на месте шахты / музей
+    if (f.mineFate === "it") {
+      const p = prog("mineFate", 2); ctx.globalAlpha = p;
+      R(30, GROUND - 58, 52, 18, "#18324f"); for (let k = 0; k < 6; k++) R(33 + k * 8, GROUND - 55, 5, 12, (Math.floor(T * 4) + k) % 3 ? "#4ab0ff" : "#9ad8ff");
+      ctx.globalAlpha = 1; sign(36, GROUND - 70, 40, "ЯР-IT", "#0e5aa8", "#fff", COLD, p);
+      glow(56, GROUND - 50, 40, COLD, .5 * p, 1);
+    }
+    if (f.museum) {
+      const p = prog("museum", 2);
+      ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = .12 * p;
+      for (const sx of [40, 150]) { const a = Math.sin(T * .6 + sx) * .25; poly([sx, GROUND, sx + Math.sin(a) * 300 - 30, -100, sx + Math.sin(a) * 300 + 30, -100], "#fff2c8"); }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+      glow(95, 200, 90, WARM, .25 * p, 1);
+      sign(60, GROUND - 56, 70, "МУЗЕЙ ШАХТЫ", "#8a2f2b", "#fff", REDL, p);
+    }
+  }
+  function drawRail(se) {
+    const r = G.flags.rail; if (!r) return;
+    layer(1);
+    const [LB, RB] = bounds(), y = GROUND + 58, p = prog("rail", 2.4);
+    const end = LB - 100 + (RB - LB + 200) * p;
+    R(LB - 100, y + 2, end - LB + 100, 6, se.snowy ? "#b9c3d6" : "#5a5245");
+    for (let x = LB - 100; x < end; x += 9) R(x, y + 1, 3, 5, "#6a4b30");
+    line(LB - 100, y + 1, end, y + 1, 1, "#8a93a8"); line(LB - 100, y + 5, end, y + 5, 1, "#8a93a8");
+    if (r === "electric") for (let x = LB - 60; x < end; x += 70) { line(x, y, x, y - 30, 1, "#59607e"); line(x, y - 28, x + 8, y - 28, 1, "#59607e"); }
+    if (r === "electric") line(LB - 100, y - 26, end, y - 26, .5, "#8a93a8");
+    // вокзал
+    const sx = -200;
+    R(sx, y - 46, 110, 46, "#c9b48f"); poly([sx - 6, y - 46, sx + 55, y - 62, sx + 116, y - 46], "#8a5a3a");
+    for (let k = 0; k < 5; k++) R(sx + 10 + k * 20, y - 36, 10, 16, "#ffd27a");
+    sign(sx + 30, y - 58, 50, "ЯР", "#2a3150", "#f4c84a", WARM, p);
+    glow(sx + 55, y - 30, 60, WARM, .4 * p, 1);
+    R(sx - 40, y - 4, 190, 4, "#9aa4bd");
+    if (p < 1) return;
+    // поезд
+    const per = r === "electric" ? 14 : 26, t = (T % per) / per, span = RB - LB + 600;
+    const tx = LB - 300 + t * span, dir = 1;
+    const cars = r === "electric" ? 5 : 8;
+    for (let c = 0; c < cars; c++) {
+      const cx = tx - c * 44;
+      if (r === "electric") {
+        R(cx - 20, y - 16, 40, 14, c === 0 ? "#d6452f" : "#cfd6e6"); R(cx - 20, y - 8, 40, 3, "#d6452f");
+        for (let k = 0; k < 5; k++) R(cx - 17 + k * 7.5, y - 14, 5, 4, "#ffe7a8");
+        if (c % 2 === 0) { line(cx - 4, y - 16, cx + 2, y - 26, .8, "#59607e"); if (hash(Math.floor(T * 9) + c) > .85) glow(cx + 2, y - 26, 10, COLD, 1, 1); }
+      } else {
+        if (c === 0) { R(cx - 20, y - 18, 40, 16, "#2f7a4a"); R(cx + 8, y - 22, 10, 6, "#2f7a4a"); if (every("loco", .3)) puff(cx - 10, y - 22, 1, "120,120,130", 1, -12); }
+        else { poly([cx - 20, y - 14, cx + 20, y - 14, cx + 16, y - 2, cx - 16, y - 2], "#5a3a2a"); R(cx - 18, y - 16, 36, 3, "#1a1a1a"); }
+      }
+      circ(cx - 12, y - 1, 2, "#111"); circ(cx + 12, y - 1, 2, "#111");
+    }
+    glow(tx + 22, y - 10, 30, WHITE, .9, 1);
+  }
+  function drawTram(se) {
+    if (!G.flags.tram) return;
+    layer(1);
+    const [LB, RB] = bounds(), span = RB - LB + 300;
+    for (let i = 0; i < 2; i++) {
+      const dir = i ? -1 : 1, t = ((T * 22 + i * span / 2) % span);
+      const x = dir > 0 ? LB - 150 + t : RB + 150 - t, y = GROUND + 18;
+      R(x - 22, y - 14, 44, 13, "#d6452f"); R(x - 22, y - 9, 44, 3, "#f2f2f2");
+      for (let k = 0; k < 6; k++) R(x - 19 + k * 7, y - 13, 5, 4, "#ffe7a8");
+      line(x, y - 14, x + 6 * dir, y - 24, .8, "#59607e");
+      if (hash(Math.floor(T * 7) + i) > .8) glow(x + 6 * dir, y - 24, 12, COLD, 1, 1);
+      glow(x + 22 * dir, y - 6, 16, WHITE, .7, 1);
+    }
+    line(-1200, GROUND + 7, 2200, GROUND + 7, .4, "#8a93a8");
+  }
+  function drawSmog(se) {
+    const s = G.smog || 0; if (s < 8) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const a = Math.min(.5, s / 160);
+    const g = ctx.createLinearGradient(0, ch * .2, 0, ch * .8);
+    g.addColorStop(0, `rgba(120,100,80,0)`); g.addColorStop(.5, `rgba(140,118,90,${a})`); g.addColorStop(1, `rgba(90,80,70,${a * .6})`);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, cw, ch);
   }
 
   // ── частицы ──
@@ -782,30 +1072,44 @@ const City = (() => {
     // камера
     if (T > cam.until) {
       cam.tz = 1; cam.ty = 260;
-      cam.tx = 520 + Math.sin(T * .045) * 330;   // медленный облёт города
+      const [L, Rb] = bounds(), vw = cw / (base * cam.z);
+      cam.tx = (L + Rb) / 2 + Math.sin(T * (G.act >= 2 ? .025 : .045)) * Math.max(0, (Rb - L) / 2 - vw / 2 + 40) * .95;
     }
     const e = 1 - Math.exp(-dt * 2.2);
     cam.x += (cam.tx - cam.x) * e; cam.y += (cam.ty - cam.y) * e; cam.z += (cam.tz - cam.z) * e;
     // ограничения
     const viewW = cw / (base * cam.z), viewH = ch / (base * cam.z);
-    cam.x = Math.max(viewW / 2 - 40, Math.min(1040 - viewW / 2, cam.x));
-    cam.y = Math.max(viewH / 2 + 30, Math.min(GROUND + 78 - viewH / 2, cam.y));
-    if (viewW > 1080) cam.x = 500;
+    const [BL, BR] = bounds();
+    cam.x = Math.max(BL + viewW / 2 - 40, Math.min(BR + 40 - viewW / 2, cam.x));
+    const maxY = GROUND + 78 - viewH / 2, minY = viewH / 2 + 30;
+    cam.y = minY > maxY ? maxY : Math.max(minY, Math.min(maxY, cam.y));
+    if (viewW > BR - BL + 80) cam.x = (BL + BR) / 2;
 
     const se = season();
-    const litF = Math.min(.96, .015 + .95 * Math.pow(G.pop / 50000, .6));
+    const litF = G.act >= 2 ? Math.min(.96, .1 + .86 * Math.pow(Math.min(1, G.pop / Math.max(1, G.housing)), 1.5)) : Math.min(.96, .015 + .95 * Math.pow(G.pop / 50000, .6));
     glows = [];
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+    LITF = litF;
     drawSky(se);
     drawFarHills(se);
+    drawWind(se);
+    drawAirport(se);
     drawMountain(se);
+    drawHydro(se);
     drawFactories(se);
+    drawTEC(se);
+    drawSkyscrapers(se);
     drawPylons(se);
     drawNewBlocks(se, litF);
+    drawMicro(se);
     drawTown(se, litF);
+    drawCivic(se, litF);
     drawStreet(se);
+    drawTram(se);
+    drawRail(se);
     drawParts(dt);
     drawGlows();
+    drawSmog(se);
     post(se);
     drawSnow(se, dt);
     drawFloats(dt);
@@ -823,13 +1127,14 @@ const City = (() => {
   };
 })();
 
+
 </script>
 <script>
 "use strict";
 // ───────────── утилиты ─────────────
 const $ = s => document.querySelector(s);
 const LOG = $("#log"), CTL = $("#ctl"), HUD = $("#hud");
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = ms => new Promise(r => setTimeout(r, ms * (window.__speed ?? 1)));
 const fmt = n => Math.round(n).toLocaleString("ru-RU").replace(/,/g, " ");
 const money = n => (n < 0 ? "−" : "") + fmt(Math.abs(n)) + " ₽";
 
@@ -839,12 +1144,19 @@ const DEADLINE = 365, GOAL = 50000;
 let G;
 function newGame() {
   G = { day: 0, budget: 12000000, pop: 312, trust: 50, income: {}, flags: {}, chapter: "ПРОЛОГ",
-        housing: 0, jobs: 0, factories: 0, blocks: 0, ads: 0, vis: {} };
+        housing: 0, jobs: 0, factories: 0, blocks: 0, ads: 0, vis: {},
+        act: 1, goal: GOAL, deadline: DEADLINE, step: 0, month: 0, year: 1,
+        schools: 0, hospitals: 0, parks: 0, malls: 0, micro: 0, smog: 0, capBonus: 0, a2: {}, log: [] };
   City.reset();
 }
+// ───────────── сохранение ─────────────
+const SAVE_KEY = "yar-save-v2";
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)); } catch (e) {} }
+function loadSave() { try { const s = localStorage.getItem(SAVE_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
 class Bankrupt extends Error {}
 
-const daysLeft = () => Math.max(0, DEADLINE - G.day);
+const daysLeft = () => G.deadline == null ? 99999 : Math.max(0, G.deadline - G.day);
 const monthly = () => Object.values(G.income).reduce((a, b) => a + b, 0) + G.pop * 25;
 const can = x => G.budget >= x;
 
@@ -852,19 +1164,19 @@ function hud() {
   const d = new Date(START.getTime() + G.day * 864e5);
   const ds = d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "2-digit" });
   const inc = monthly(), left = daysLeft();
+  const when = G.deadline == null ? `${ds} · ГОД ${G.year}` : `${ds} · ${left} ДН.`;
   HUD.innerHTML = `
     <div class="row">
-      <span class="chip r">${ds} · ${left} ДН.</span>
+      <span class="chip r">${when}</span>
       <span class="chip y">${G.chapter}</span>
-      <span class="chip b">♥ ${G.trust}</span>
+      <span class="chip b">♥ ${G.trust}</span>${G.smog > 15 ? `<span class="chip" style="color:#c9a27a">🌫 ${Math.round(G.smog)}</span>` : ""}
     </div>
     <div class="row" style="margin-top:5px">
-      <span class="chip g">👥 ${fmt(G.pop)} / ${fmt(GOAL)}</span>
+      <span class="chip g">👥 ${fmt(G.pop)} / ${fmt(G.goal)}</span>
       <span class="chip y">${money(G.budget)} <span style="color:${inc >= 0 ? "var(--green)" : "var(--red)"}">${inc >= 0 ? "+" : ""}${fmt(inc)}/мес</span></span>
     </div>
-    <div class="bar"><i style="width:${Math.min(100, G.pop / GOAL * 100)}%"></i></div>`;
+    <div class="bar"><i style="width:${Math.min(100, G.pop / G.goal * 100)}%"></i></div>`;
 }
-
 // ───────────── вывод текста ─────────────
 async function say(html, cls = "p", wait = 260) {
   const el = document.createElement("div");
@@ -897,29 +1209,31 @@ async function pause(label = "Дальше →") {
   clear();
 }
 
-async function choose(title, options, extraHTML = "") {
+async function choose(title, options, extraHTML = "", grid = false) {
   CTL.innerHTML = extraHTML + `<div class="q">▶ ${title}</div>`;
-  const box = document.createElement("div"); box.className = "opts";
+  const box = document.createElement("div"); box.className = "opts" + (grid ? " grid" : "");
   CTL.appendChild(box);
+  const pin = document.createElement("div"); pin.className = "pin";
   const pairs = [];
   for (const [text, cost, key, cls] of options) {
     const b = document.createElement("button");
     b.className = "btn" + (cls ? " " + cls : "");
     let cs = "";
-    if (cost > 0 && cost < 1e11) cs = `<span class="cost">${money(cost)}${can(cost) ? "" : " · не хватает денег"}</span>`;
+    if (cost > 0 && cost < 1e11) cs = `<span class="cost">${money(cost)}${can(cost) ? "" : " · не хватает"}</span>`;
+    else if (cost >= 1e11) cs = `<span class="cost">недоступно</span>`;
     else if (cost < 0) cs = `<span class="cost plus">+${money(-cost)}</span>`;
     b.innerHTML = text + cs;
     if (cost > 0 && !can(cost)) b.disabled = true;
-    box.appendChild(b);
+    (cls === "end" ? pin : box).appendChild(b);
     pairs.push([b, [key, cost]]);
   }
+  if (pin.children.length) CTL.appendChild(pin);
   const [key, cost] = await waitClick(pairs);
   G.budget -= cost;
   CTL.innerHTML = "";
   hud();
   return key;
 }
-
 async function advance(days, quiet) {
   days = Math.min(days, daysLeft());
   G.budget += monthly() * days / 30;
@@ -1249,13 +1563,6 @@ function infraScore() {
 }
 const support = () => G.jobs + Math.floor(G.pop * 0.3);
 
-async function growthTick(days) {
-  const cap = Math.min(G.housing, support());
-  let rate = Math.max(.08, Math.min(.8, .2 + 1.2 * quality() + .1 * G.ads)) * days / 30;
-  if (cap > G.pop) await addPop(Math.floor((cap - G.pop) * rate), "переехали в город");
-  else if (cap < G.pop) await addPop(-Math.floor((G.pop - cap) * .25 * days / 30), G.housing < support() ? "негде жить" : "нет работы");
-  G.ads = 0;
-}
 
 async function freezeEvent() {
   if (G.flags.water === "shallow" && !G.flags.frozen && G.day >= 320) {
@@ -1272,6 +1579,8 @@ async function freezeEvent() {
 
 async function ch9() {
   G.chapter = "9. РАБОТА"; City.focus("town", 6000); await H("Часть 9 · Работа");
+  if (G.flags.ch9init) { await monthLoop1(); return; }
+  G.flags.ch9init = true;
   G.jobs += Math.floor(G.pop * .5);
   G.housing = Math.max(G.housing, G.pop);
   await BIG("ПРОБЛЕМА №1", true);
@@ -1282,49 +1591,13 @@ async function ch9() {
   await say(`Население растёт к меньшему из двух чисел — «жильё» и «работа». Инвесторы готовы зайти максимум на <b>${infraScore()}</b> заводов: всё, что ты построил раньше, сейчас окупается.`, "dim");
   await pause("К делу →");
 
-  const milestones = [[10000, 4000000], [25000, 6000000]];
-  let month = 0;
+  await monthLoop1();
+}
+async function monthLoop1() {
+  G.chapter = "9. РАБОТА";
   while (daysLeft() > 3) {
-    month++;
-    await say(`Месяц ${month}`, "h");
-    while (true) {
-      const fmax = infraScore();
-      const caps = `<div class="caps">
-        <div class="cap">🏠 Жильё на<b>${fmt(G.housing)}</b></div>
-        <div class="cap">🏭 Работа на<b>${fmt(support())}</b></div>
-        <div class="cap">Заводы<b>${G.factories}/${fmax}</b></div></div>`;
-      const fopt = G.factories < fmax
-        ? [`🏭 Завод: ${FACTORY_NAMES[G.factories % FACTORY_NAMES.length]}`, FACTORY_COST, "factory"]
-        : ["🏭 Завод — инвесторы не идут: не хватает инфраструктуры", 1e12, "factory"];
-      const k = await choose("Что строим?", [
-        fopt,
-        ["🏠 Жилой квартал (ремонт старых пятиэтажек)", BLOCK_COST, "block"],
-        ["📣 Рекламная кампания «Вернись в Яр»", AD_COST, "ad"],
-        ["Завершить месяц →", 0, "end", "end"],
-      ], caps);
-      if (k === "factory") {
-        G.factories++; G.jobs += FACTORY_JOBS;
-        G.income["Заводы"] = (G.income["Заводы"] || 0) + FACTORY_INCOME;
-        await say(`Строится: <b>${FACTORY_NAMES[(G.factories - 1) % FACTORY_NAMES.length]}</b>`, "green");
-      } else if (k === "block") {
-        G.blocks++; G.housing += BLOCK_HOMES;
-        await say("Пятиэтажки в лесах. Скоро — новые жильцы.", "green");
-      } else if (k === "ad") {
-        G.ads++; await say("Ролик про Угольный Яр набирает миллионы просмотров.", "green");
-      } else break;
-    }
-    const days = Math.min(30, daysLeft());
-    await advance(days);
-    await growthTick(days);
-    for (const [m, bonus] of milestones) {
-      if (G.pop >= m && !G.flags["ms" + m]) {
-        G.flags["ms" + m] = true; G.budget += bonus;
-        await say(`🎉 ${fmt(m)} жителей! Область добавляет ${money(bonus)}.`, "gold");
-      }
-    }
-    await freezeEvent();
-    await sleep(500);
-    clear();
+    G.month++;
+    await monthTurn();
   }
 }
 
@@ -1358,15 +1631,23 @@ async function finale() {
     await STAMP("ПОСЁЛОК РАССЕЛЁН");
     await say("Последний автобус уходит к трассе. Окна гаснут одно за другим.");
   }
-  await summary(shown);
+  G.result1 = shown;
+  return await summary(shown, shown >= 5000);
 }
 
-async function summary(shown) {
-  await say(`<span class="dim">Итоги:</span><br>Жителей: <b>${fmt(shown)}</b> / ${fmt(GOAL)}<br>Бюджет: ${money(G.budget)}<br>Доверие: ${G.trust}/100<br>Заводов: ${G.factories}, кварталов: ${G.blocks}<br>Матвей: ${G.flags.matvey ? "встретил у люка" : "так и не поговорили"}`);
+async function summary(shown, canContinue = false) {
+  await say(`<span class="dim">Итоги:</span><br>Жителей: <b>${fmt(shown)}</b> / ${fmt(G.goal)}<br>Бюджет: ${money(G.budget)}<br>Доверие: ${G.trust}/100<br>Заводов: ${G.factories}, кварталов: ${G.blocks}<br>Матвей: ${G.flags.matvey ? "встретил у люка" : "так и не поговорили"}`);
+  if (canContinue) {
+    const k = await choose("История продолжается", [
+      ["▶ Часть II · «Большой Яр»", 0, "cont", "next"],
+      ["Начать заново ↻", 0, "new"],
+    ]);
+    return k === "cont";
+  }
   await say("СПАСИБО, ЧТО БЫЛИ С НАМИ!", "h");
   await pause("Сыграть ещё раз ↻");
+  return false;
 }
-
 async function bankrupt() {
   clear(); await H("Банкротство");
   await say("Деньги на счету посёлка закончились. Котельная встаёт, свет отключают за долги.", "red");
@@ -1374,21 +1655,442 @@ async function bankrupt() {
   await summary(G.pop);
 }
 
+const STEPS = [prologue, ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, finale, act2, finale2, act3];
 async function main() {
+  let resume = loadSave();
   while (true) {
-    newGame();
+    if (resume && resume.step > 0 && resume.step < STEPS.length) {
+      newGame(); Object.assign(G, resume); resume = null;
+      hud(); clear();
+      await H("Угольный Яр");
+      await say(`Сохранённая игра: <b>${G.chapter}</b>, ${fmt(G.pop)} жителей, ${money(G.budget)}.`);
+      const k = await choose("Продолжить?", [["▶ Продолжить", 0, "go", "next"], ["Новая игра ↻", 0, "new"]]);
+      clear();
+      if (k === "new") { clearSave(); newGame(); }
+    } else { resume = null; newGame(); }
     try {
-      await prologue();
-      for (const ch of [ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9]) await ch();
-      await finale();
+      while (G.step < STEPS.length) {
+        save();
+        const r = await STEPS[G.step]();
+        if (r === false) break;          // конец истории или «начать заново»
+        G.step++;
+      }
     } catch (e) {
       if (e instanceof Bankrupt) await bankrupt(); else { console.error(e); await say("Ошибка: " + e.message, "red"); await pause("Заново"); }
+    }
+    clearSave();
+  }
+}
+City.init(document.getElementById("city"));
+main();
+
+// ═══════════════════════════════════════════════════════════════════
+//  ЧАСТЬ II · «БОЛЬШОЙ ЯР» и бесконечный режим
+// ═══════════════════════════════════════════════════════════════════
+
+// ── ход месяца: меню строительства, рост, события ──
+const MS_BONUS = [[10000, 4000000], [25000, 6000000], [75000, 10000000], [100000, 15000000], [150000, 20000000],
+                  [250000, 30000000], [500000, 50000000], [1000000, 100000000]];
+
+function needSchools() { return Math.floor(G.pop / 15000); }
+function needHosp() { return Math.floor(G.pop / 40000); }
+function serviceFactor() {
+  if (G.act < 2) return 1;
+  const ds = Math.max(0, needSchools() - G.schools), dh = Math.max(0, needHosp() - G.hospitals);
+  return Math.max(.3, 1 - .12 * ds - .18 * dh);
+}
+function factoryCap() {
+  return infraScore() + (G.capBonus || 0) + (G.act >= 2 ? Math.floor(G.pop / 12000) : 0);
+}
+function factoryCost() { return G.act >= 2 ? 6000000 + Math.floor(G.factories / 5) * 1000000 : FACTORY_COST; }
+function microCost() { return (G.a2.north === "muni" ? 12000000 : 9000000) + (G.micro || 0) * 600000; }
+const MAX_BLOCKS = 20;
+
+async function growthTick(days) {
+  const cap = Math.min(G.housing, support());
+  const smogF = 1 - Math.min(.5, (G.smog || 0) / 250);
+  let rate = Math.max(.08, Math.min(.8, .2 + 1.2 * quality() + .1 * G.ads)) * serviceFactor() * smogF * days / 30;
+  if (cap > G.pop) {
+    let gain = Math.floor((cap - G.pop) * rate);
+    if (G.act >= 2) gain = Math.min(gain, Math.floor((G.pop * .03 + 2000) * (1 + .3 * G.ads) * serviceFactor() * smogF * days / 30));
+    await addPop(gain, "переехали в город");
+  }
+  else if (cap < G.pop) await addPop(-Math.floor((G.pop - cap) * .25 * days / 30), G.housing < support() ? "негде жить" : "нет работы");
+  G.ads = 0;
+}
+
+function capsHTML() {
+  const fmax = factoryCap();
+  let h = `<div class="caps">
+    <div class="cap">🏠 Жильё<b>${fmt(G.housing)}</b></div>
+    <div class="cap">🏭 Работа<b>${fmt(support())}</b></div>
+    <div class="cap">Заводы<b>${G.factories}/${fmax}</b></div>`;
+  if (G.act >= 2) {
+    const ns = needSchools(), nh = needHosp();
+    h += `<div class="cap ${G.schools < ns ? "warn" : ""}">🏫 Школы<b>${G.schools}/${ns}</b></div>
+          <div class="cap ${G.hospitals < nh ? "warn" : ""}">🏥 Больн.<b>${G.hospitals}/${nh}</b></div>`;
+  }
+  return h + `</div>`;
+}
+
+function buildMenu() {
+  const fmax = factoryCap(), act2 = G.act >= 2;
+  const fname = FACTORY_NAMES[G.factories % FACTORY_NAMES.length];
+  const opts = [];
+  opts.push(G.factories < fmax
+    ? [`🏭 Завод<small>${fname}</small>`, factoryCost(), "factory"]
+    : [`🏭 Завод<small>инвесторам не хватает инфраструктуры</small>`, 1e12, "factory"]);
+  opts.push(act2 && G.blocks >= MAX_BLOCKS
+    ? [`🏠 Квартал<small>старых домов не осталось</small>`, 1e12, "block"]
+    : [`🏠 Квартал<small>+${fmt(BLOCK_HOMES)} жилья${act2 ? ` · осталось ${MAX_BLOCKS - G.blocks}` : ""}</small>`, BLOCK_COST, "block"]);
+  if (act2 && G.a2.north) opts.push([`🏙 Микрорайон<small>+25 000 жилья</small>`, microCost(), "micro"]);
+  if (act2) {
+    opts.push([`🏫 Школа<small>нужна на 15 000 жителей</small>`, 2000000, "school"]);
+    opts.push([`🏥 Больница<small>нужна на 40 000</small>`, 4500000, "hosp"]);
+    opts.push([`🌳 Парк<small>доверие ↑, смог ↓</small>`, 1500000, "park"]);
+    opts.push([`🛍 Торговый центр<small>+2 500 работы, доход</small>`, 3500000, "mall"]);
+  }
+  opts.push([`📣 Реклама<small>быстрее переезжают</small>`, act2 ? 1200000 : AD_COST, "ad"]);
+  opts.push(["Завершить месяц →", 0, "end", "end"]);
+  return opts;
+}
+
+async function doBuild(k) {
+  if (k === "factory") {
+    G.factories++; G.jobs += FACTORY_JOBS;
+    G.income["Заводы"] = (G.income["Заводы"] || 0) + FACTORY_INCOME;
+    if (G.act >= 2) G.smog = Math.min(100, (G.smog || 0) + (G.flags.filters ? 1.5 : 4));
+    await say(`Строится: <b>${FACTORY_NAMES[(G.factories - 1) % FACTORY_NAMES.length]}</b>`, "green", 120);
+  } else if (k === "block") {
+    G.blocks++; G.housing += BLOCK_HOMES;
+    await say("Пятиэтажки в лесах. Скоро — новые жильцы.", "green", 120);
+  } else if (k === "micro") {
+    G.micro++; G.housing += 25000;
+    await say("Микрорайон «Северный»: краны, котлованы, три новые высотки.", "green", 120);
+  } else if (k === "school") {
+    G.schools++; G.jobs += 120; await say("Новая школа: 1 100 мест, бассейн и кружок робототехники.", "green", 120);
+  } else if (k === "hosp") {
+    G.hospitals++; G.jobs += 600; await say("Больница открыта: приёмный покой, роддом, вертолётная площадка.", "green", 120);
+  } else if (k === "park") {
+    G.parks++; G.trust = Math.min(100, G.trust + 3); G.smog = Math.max(0, (G.smog || 0) - 5);
+    await say(G.parks === 1 ? "Парк с колесом обозрения — над городом видно гору и копёр." : "Ещё один парк: аллеи, фонари, каток.", "green", 120);
+  } else if (k === "mall") {
+    G.malls++; G.jobs += 2500; G.income["Торговые центры"] = (G.income["Торговые центры"] || 0) + 400000;
+    await say("Торговый центр: кино, фудкорт, очередь на открытии.", "green", 120);
+  } else if (k === "ad") {
+    G.ads++; await say("Ролик про Угольный Яр набирает миллионы просмотров.", "green", 120);
+  }
+}
+
+async function monthTurn() {
+  save();
+  hud();
+  const title = G.deadline == null ? `Год ${G.year} · месяц ${((G.month - 1) % 12) + 1}` : `Месяц ${G.month}`;
+  await say(title, "h");
+  if (G.act >= 2) {
+    const ns = needSchools(), nh = needHosp();
+    if (G.schools < ns || G.hospitals < nh)
+      await say(`⚠ Не хватает ${G.schools < ns ? `школ: ${ns - G.schools}` : ""}${G.schools < ns && G.hospitals < nh ? ", " : ""}${G.hospitals < nh ? `больниц: ${nh - G.hospitals}` : ""} — люди переезжают медленнее.`, "dim", 150);
+    if ((G.smog || 0) > 40) await say(`🌫 Смог над городом: ${Math.round(G.smog)}. Рост замедляется, доверие падает.`, "dim", 150);
+  }
+  while (true) {
+    const k = await choose("Что строим?", buildMenu(), capsHTML(), true);
+    if (k === "end") break;
+    await doBuild(k);
+  }
+  const days = Math.min(30, daysLeft());
+  await advance(days);
+  await growthTick(days);
+  if ((G.smog || 0) > 40 && G.act >= 2) G.trust = Math.max(0, G.trust - 2);
+  if (G.act >= 2) G.smog = Math.max(0, (G.smog || 0) - (G.parks || 0) * .3);
+  for (const [m, bonus] of MS_BONUS) {
+    if (G.pop >= m && !G.flags["ms" + m]) {
+      G.flags["ms" + m] = true; G.budget += bonus;
+      City.float(`🎉 ${fmt(m)}`, "#f4c84a");
+      await say(`🎉 ${fmt(m)} жителей! Область добавляет ${money(bonus)}.`, "gold");
+    }
+  }
+  await freezeEvent();
+  if (G.deadline == null && G.month % 12 === 0) G.year++;
+  await sleep(500);
+  clear();
+}
+
+// ── случайные события ──
+const RANDOM_EVENTS = [
+  { id: "blizzard", cond: () => true, run: async () => {
+      await H("Метель");
+      await say("Трое суток метёт так, что не видно соседнего дома. Трассу заносит.");
+      if (G.flags.road === 2 || G.flags.rail) { await say("Асфальт и железная дорога выручают: город не отрезан."); }
+      else { G.budget -= 1500000; await say(`Расчистка трассы: <span class="red">${money(1500000)}</span>.`); }
+  } },
+  { id: "investor", cond: () => true, run: async () => {
+      await H("Инвестор");
+      await say("Из Новосибирска приезжает инвестор: хочет вложиться в Яр, но просит налоговые льготы.");
+      const k = await choose("Что ответишь?", [["Подписать соглашение", -6000000, "yes"], ["Отказать — льготы дорого обойдутся", 0, "no"]]);
+      if (k === "yes") { G.income["Льготы инвестору"] = (G.income["Льготы инвестору"] || 0) - 150000; G.capBonus++; await say("Деньги пришли. Инвестор обещает ещё один завод (лимит заводов +1)."); }
+      else await say("Инвестор уезжает. В городе считают, что правильно.");
+  } },
+  { id: "mineAccident", cond: () => G.flags.mine_open && G.flags.mineFate !== "closed" && G.flags.mineFate !== "it", run: async () => {
+      await H("Авария на шахте");
+      await say("Ночью в лаве обвалилась кровля. Люди успели выйти, но крепь надо менять.");
+      const k = await choose("Что делать?", [["Остановить добычу и перекрепить всё", 2500000, "fix"], ["Работать дальше, починить по ходу", 0, "risk"]]);
+      if (k === "fix") { await say("Две недели простоя. Шахтёры уважают решение."); G.trust = Math.min(100, G.trust + 5); }
+      else if (Math.random() < .5) { await say("Через месяц обвал повторился. Пострадали двое. Город в шоке.", "red"); G.trust = Math.max(0, G.trust - 15); await addPop(-Math.floor(G.pop * .01), "уехали после аварии"); }
+      else await say("Обошлось. Но шахтёры ворчат.");
+  } },
+  { id: "blogger", cond: () => true, run: async () => {
+      await H("Видео про Яр");
+      await say("Блогер-миллионник снял ролик «Город, который отказался умирать». 8 миллионов просмотров.");
+      G.ads += 2; await say("В этом месяце люди переезжают заметно быстрее.", "green");
+  } },
+  { id: "festival", cond: () => true, run: async () => {
+      await H("Фестиваль «Огни Яра»");
+      await say("Жители предлагают устроить фестиваль: салют над копром, ярмарка, концерт в ДК.");
+      const k = await choose("Устраиваем?", [["Да, город заслужил праздник", 1000000, "yes"], ["Не сейчас", 0, "no"]]);
+      if (k === "yes") { G.trust = Math.min(100, G.trust + 8); City.float("🎆 Огни Яра", "#f4c84a"); await say("Над шахтой салют. Весь город на улицах."); }
+  } },
+  { id: "coalPrice", cond: () => G.flags.mine_open && G.flags.mineFate !== "closed", run: async () => {
+      await H("Уголь дорожает");
+      await say("На бирже скачок цен на уголь. Разрез работает в три смены.");
+      G.budget += 3000000; await say(`+${money(3000000)} в бюджет.`, "green");
+  } },
+  { id: "frost", cond: () => true, run: async () => {
+      await H("Мороз −52°");
+      await say("Рекордный мороз. Котельная работает на пределе.");
+      if (G.flags.heat === "coal" || G.flags.energy) await say("Тепло держится. В соседних городах лопнули трубы — у нас нет.");
+      else { G.budget -= 1500000; await say(`Аварийный ремонт теплосетей: <span class="red">${money(1500000)}</span>.`); }
+  } },
+  { id: "rink", cond: () => true, run: async () => {
+      await H("Просьба жителей");
+      await say("Школьники собрали 2 000 подписей: просят залить большой каток у ДК.");
+      const k = await choose("Заливаем?", [["Конечно", 600000, "yes"], ["Денег нет", 0, "no"]]);
+      if (k === "yes") { G.trust = Math.min(100, G.trust + 5); await say("Каток с гирляндами — главное место зимних вечеров."); }
+      else { G.trust = Math.max(0, G.trust - 3); await say("Дети расстроены."); }
+  } },
+];
+async function randomEvent() {
+  if (Math.random() > .55) return;
+  const pool = RANDOM_EVENTS.filter(e => e.cond() && G.a2["last_" + e.id] !== G.month - 1);
+  if (!pool.length) return;
+  const e = pool[Math.floor(Math.random() * pool.length)];
+  G.a2["last_" + e.id] = G.month;
+  clear();
+  await e.run();
+  await pause();
+}
+
+// ── сюжет Части II ──
+const A2_STORY = [
+  { id: "rail", at: 1, run: async () => {
+      G.chapter = "II·1 ЖЕЛЕЗНАЯ ДОРОГА"; City.focus("rail", 6000);
+      await H("Железная дорога");
+      await say("Заводам тесно: всё везут фурами по 60 км трассы. До Транссиба — та же дистанция, и насыпь старой ветки ещё цела.");
+      await BIG("60 КМ ПУТЕЙ");
+      const k = await choose("Ветка до Транссиба:", [
+        ["Электрифицированная двухпутка: электрички до областного центра", 18000000, "electric"],
+        ["Однопутка на тепловозах — дешевле, грузы пойдут", 9000000, "diesel"],
+        ["Обойдёмся фурами", 0, "none"],
+      ]);
+      if (k !== "none") {
+        G.flags.rail = k; await advance(k === "electric" ? 40 : 25);
+        G.income["Железная дорога"] = k === "electric" ? 2000000 : 1000000; G.capBonus += k === "electric" ? 2 : 1;
+        await say(k === "electric" ? "По насыпи идёт первая электричка «Яр — Новосибирск». На перроне — оркестр." : "Тепловоз с вагонами угля медленно ползёт к Транссибу.");
+        await addPop(k === "electric" ? 3000 : 1200, "приехали по новой ветке");
+      } else await say("Фуры продолжают стоять в пробке на въезде.");
+  } },
+  { id: "energy", at: 3, run: async () => {
+      G.chapter = "II·2 ЭНЕРГИЯ"; City.focus("energy", 6000);
+      await H("Энергия");
+      await say("Заводам не хватает мощности. Подстанция гудит на пределе, вечером мигает свет.");
+      const k = await choose("Какую станцию строим?", [
+        ["ТЭЦ на угле Яра: дёшево и много, но дым", 15000000, "tec"],
+        ["ГЭС на реке Яр: чисто, но дорого и долго", 28000000, "hydro"],
+        ["Ветряки на сопках: чисто, но мощности меньше", 10000000, "wind"],
+      ]);
+      G.flags.energy = k;
+      await advance(k === "hydro" ? 60 : 35);
+      if (k === "tec") { G.capBonus += 3; G.smog = Math.min(100, (G.smog || 0) + 25); await say("Две градирни поднимаются над городом. Пар видно с трассы."); }
+      if (k === "hydro") { G.capBonus += 3; G.trust = Math.min(100, G.trust + 5); await say("Плотина перекрыла реку. Огни ГЭС отражаются в воде."); }
+      if (k === "wind") { G.capBonus += 1; await say("На сопках крутятся двадцать белых ветряков."); }
+  } },
+  { id: "health", at: 5, run: async () => {
+      G.chapter = "II·3 ЛЮДИ"; City.focus("uni", 6000);
+      await H("Учиться и лечиться");
+      await say("Молодые уезжают учиться и не возвращаются. А в больнице одна скорая на весь город.");
+      const k = await choose("Что первым?", [
+        ["Горный институт: студенты и инженеры для заводов", 12000000, "uni"],
+        ["Большой медицинский центр с роддомом", 10000000, "med"],
+      ]);
+      G.flags[k] = true; await advance(40);
+      if (k === "uni") { G.jobs += 3000; G.capBonus += 1; await say("В сентябре в Горный институт пришли 2 000 первокурсников."); await addPop(5000, "студенты и преподаватели"); }
+      else { G.hospitals += 2; G.trust = Math.min(100, G.trust + 10); await say("В новом роддоме за первый месяц родились 140 детей."); await addPop(2500, "семьи с детьми"); }
+  } },
+  { id: "ecology", at: 7, run: async () => {
+      G.chapter = "II·4 ЭКОЛОГИЯ"; City.focus("town", 6000);
+      await H("Экология");
+      if ((G.smog || 0) < 20) { await say("Учёные из института замерили воздух: Яр — один из самых чистых промышленных городов Сибири."); G.trust = Math.min(100, G.trust + 5); G.ads++; return; }
+      await say(`Над городом серая пелена. Смог — ${Math.round(G.smog)}. Мамы с колясками выходят на митинг.`);
+      const k = await choose("Что делать?", [
+        ["Фильтры на все трубы и новые заводы", 8000000, "filters"],
+        ["Обещать разобраться позже", 0, "ignore"],
+      ]);
+      if (k === "filters") { G.flags.filters = true; G.smog = Math.round((G.smog || 0) * .4); G.trust = Math.min(100, G.trust + 8); await say("Трубы оделись в фильтры. Через месяц снег снова белый."); }
+      else { G.trust = Math.max(0, G.trust - 20); await say("Митинг повторяется каждую субботу.", "red"); }
+  } },
+  { id: "airport", at: 9, run: async () => {
+      G.chapter = "II·5 НЕБО"; City.focus("airport", 6000);
+      await H("Аэропорт");
+      await say("В 20 км — заброшенный военный аэродром. Полоса 2,5 км, бетон ещё советский.");
+      const k = await choose("Что с аэродромом?", [
+        ["Аэропорт: рейсы в Москву и туристы на курорт", 20000000, "full"],
+        ["Вертолётная площадка для санавиации", 4000000, "heli"],
+        ["Пусть зарастает", 0, "none"],
+      ]);
+      if (k !== "none") {
+        G.flags.airport = k; await advance(k === "full" ? 45 : 15);
+        G.income["Аэропорт"] = k === "full" ? (G.flags.lift && G.flags.lift !== "none" ? 2500000 : 1500000) : 200000;
+        await say(k === "full" ? "Первый самолёт заходит на посадку над огнями Яра. В салоне аплодируют." : "Над городом стрекочет санитарный вертолёт.");
+        if (k === "full") await addPop(2000, "прилетели и остались");
+      }
+  } },
+  { id: "north", at: 11, run: async () => {
+      G.chapter = "II·6 СЕВЕРНЫЙ"; City.focus("north", 6000);
+      await H("Микрорайон «Северный»");
+      await say("Старых пятиэтажек больше нет. На месте отвалов шахты — ровное поле на 100 000 человек.");
+      const k = await choose("Кто строит?", [
+        ["Город: школы, дворы без машин, парк", 15000000, "muni"],
+        ["Застройщик: быстро и бесплатно, но человейники", 0, "dev"],
+      ]);
+      G.a2.north = k; G.micro++; G.housing += 25000;
+      if (k === "muni") { G.trust = Math.min(100, G.trust + 5); await say("Первые высотки «Северного» — с детскими площадками во дворах."); }
+      else { G.trust = Math.max(0, G.trust - 5); await say("Застройщик ставит 25-этажки впритык. Зато быстро."); }
+      await say("Теперь в меню строительства есть 🏙 Микрорайон: +25 000 жилья.", "dim");
+  } },
+  { id: "coal", at: 14, cond: () => G.flags.mine_open, run: async () => {
+      G.chapter = "II·7 КРИЗИС"; City.focus("mine", 6000);
+      await H("Уголь никому не нужен");
+      await say("Цены на уголь рухнули вдвое. Разрез работает в убыток. Шахтёры ждут, что скажет мэр.");
+      if (G.flags.matvey) await Q("Шахту я держал не ради угля. Ради людей. Решай, как людям лучше.");
+      const k = await choose("Будущее шахты:", [
+        ["Перепрофилировать: дата-центр «Яр-IT» на дешёвой энергии", 12000000, "it"],
+        ["Субсидировать добычу из бюджета", 0, "subsidy"],
+        ["Закрыть разрез", 0, "closed"],
+      ]);
+      G.flags.mineFate = k;
+      if (k === "it") { G.income["Уголь"] = 0; G.income["Яр-IT"] = 2500000; G.capBonus += 1; await say("В старом здании шахты гудят серверы. Шахтёры учатся на операторов."); await addPop(1500, "айтишники"); }
+      if (k === "subsidy") { G.income["Уголь"] = -1000000; await say("Разрез работает. Бюджет теряет миллион в месяц."); }
+      if (k === "closed") { G.income["Уголь"] = 0; G.jobs = Math.max(0, G.jobs - 3000); G.trust = Math.max(0, G.trust - 15); await say("Самосвалы встали. Второй раз за двенадцать лет.", "red"); }
+  } },
+  { id: "cup", at: 16, cond: () => G.flags.lift && G.flags.lift !== "none", run: async () => {
+      G.chapter = "II·8 КУБОК"; City.focus("lift", 6000);
+      await H("Кубок России");
+      await say("Федерация горных лыж предлагает провести этап Кубка России на склонах Яра. Нужна новая трасса и освещение.");
+      const k = await choose("Берём?", [["Да: трасса с подсветкой и трибуны", 10000000, "yes"], ["Рано", 0, "no"]]);
+      if (k === "yes") { G.flags.cup = true; G.income["Курорт"] = (G.income["Курорт"] || 0) + 1500000; G.ads += 2; await say("Трансляцию смотрят 3 миллиона человек. Трасса светится над городом."); }
+  } },
+  { id: "tram", at: 18, cond: () => !!G.a2.north, run: async () => {
+      G.chapter = "II·9 ТРАМВАЙ"; City.focus("town", 6000);
+      await H("Трамвай до «Северного»");
+      await say("Утром на выезде из «Северного» пробка на час. Люди просят трамвай.");
+      const k = await choose("Трамвай:", [["Строим линию через весь город", 14000000, "yes"], ["Пустим больше автобусов", 2000000, "bus"]]);
+      if (k === "yes") { G.flags.tram = true; G.trust = Math.min(100, G.trust + 8); await say("Красно-белый трамвай звенит по проспекту Шахтёров."); }
+      else await say("Автобусы ходят чаще. Пробки чуть меньше.");
+  } },
+  { id: "museum", at: 21, run: async () => {
+      G.chapter = "II·10 ПАМЯТЬ"; City.focus("mine", 6000);
+      await H("Копёр");
+      await say("Застройщик предлагает снести старый копёр шахты «Северная» — на его месте поместится ещё квартал.");
+      if (G.flags.matvey) await say("Дед Матвей приходит в мэрию сам. Молча кладёт на стол «Журнал вентилятора». Двенадцать лет записей.");
+      const k = await choose("Копёр:", [
+        ["Музей шахты и смотровая площадка с подсветкой", 2500000, "museum"],
+        ["Снести, построить квартал", -3000000, "demolish"],
+      ]);
+      if (k === "museum") { G.flags.museum = true; G.trust = Math.min(100, G.trust + 12); G.income["Музей"] = 300000; await say("Копёр подсвечен прожекторами. На входе в музей — журнал вентилятора под стеклом."); if (G.flags.matvey) await Q("Ну вот. Теперь и на пенсию можно."); }
+      else { G.flags.demolished = true; G.trust = Math.max(0, G.trust - 20); G.housing += 5000; await say("Копёр режут автогеном. Старики стоят у забора и не уходят.", "red"); }
+  } },
+];
+
+async function act2() {
+  if (!G.a2.started) {
+    G.act = 2; G.a2.started = true; G.chapter = "ЧАСТЬ II"; G.month = 0;
+    G.goal = 150000; G.deadline = G.day + 730;
+    G.schools = Math.max(G.schools, 2); G.hospitals = Math.max(G.hospitals, 1);
+    G.housing = Math.max(G.housing, G.pop);
+    clear(); City.focus("wide", 9000);
+    await H("Часть II · Большой Яр");
+    await say("Через неделю после комиссии звонит губернатор.");
+    await Q(`${fmt(G.pop)} человек за год. Такого в области не было. Хочу, чтобы Яр стал вторым городом области. Даю два года.`);
+    await BIG("150 000");
+    await say("Цель — 150 000 жителей за 730 дней. Область выделяет стартовый фонд.");
+    G.budget += 30000000;
+    await say(`+${money(30000000)} на счёт`, "green");
+    await say("Новое в меню: 🏫 школы, 🏥 больницы, 🌳 парки, 🛍 торговые центры. Без школ и больниц город растёт медленнее. Заводы дают смог — следи за ним.", "dim");
+    await pause("Вперёд →");
+    save();
+  }
+  while (daysLeft() > 3) {
+    G.month++;
+    const ev = A2_STORY.find(e => !G.a2[e.id] && G.month >= e.at && (!e.cond || e.cond()));
+    if (ev) { G.a2[ev.id] = true; clear(); await ev.run(); await pause(); }
+    else await randomEvent();
+    if (daysLeft() <= 3) break;
+    G.chapter = "II · СТРОЙКА";
+    await monthTurn();
+  }
+}
+
+async function finale2() {
+  G.chapter = "ФИНАЛ II"; clear();
+  City.focus("wide", 12000);
+  await H("Два года спустя");
+  await say(G.flags.airport === "full" ? "Губернатор прилетает в Яр — теперь сюда можно прилететь." : "Губернатор приезжает в Яр по трассе.");
+  await say("С балкона мэрии видно весь город: от копра до огней «Северного».");
+  await sleep(800);
+  await BIG(fmt(G.pop), G.pop < G.goal);
+  let title;
+  if (G.pop >= 150000) { await STAMP("ВТОРОЙ ГОРОД ОБЛАСТИ"); title = "Большой Яр"; await say("Указ подписан: Угольный Яр получает статус города областного значения."); }
+  else if (G.pop >= 90000) { await say("ПОЧТИ", "gold"); title = "Растущий Яр"; await say("До плана не дотянули, но губернатор доволен: такого роста нет нигде в Сибири."); }
+  else { await say("ПЛАН НЕ ВЫПОЛНЕН", "red"); title = "Упрямый Яр"; await say("В области недовольны. Но город живёт — и будет жить."); }
+  if (G.flags.museum && G.flags.matvey) await say("Вечером дед Матвей поднимается на смотровую площадку копра. Внизу — сто тысяч огней.");
+  await say(`<span class="dim">Итоги части II:</span><br>Жителей: <b>${fmt(G.pop)}</b><br>Заводов: ${G.factories}, микрорайонов: ${G.micro}<br>Школ: ${G.schools}, больниц: ${G.hospitals}, парков: ${G.parks}<br>Смог: ${Math.round(G.smog || 0)} · Доверие: ${G.trust}`);
+  const k = await choose("Дальше:", [
+    ["▶ Свободная игра: строй город без срока", 0, "free", "next"],
+    ["Начать заново ↻", 0, "new"],
+  ]);
+  if (k === "new") return false;
+  G.a2.title = title;
+}
+
+async function act3() {
+  if (!G.a2.free) {
+    G.a2.free = true; G.act = 3; G.deadline = null; G.year = 1; G.month = 0;
+    G.goal = G.pop < 250000 ? 250000 : G.pop < 500000 ? 500000 : 1000000;
+    clear();
+    await H("Свободная игра");
+    await say("Срока больше нет. Цели: 250 000 → 500 000 → миллион. За каждую — награда области.");
+    await say("Игра сохраняется сама каждый месяц.", "dim");
+    await pause("Строить →");
+  }
+  while (true) {
+    G.month++;
+    G.chapter = "ГОРОД";
+    await randomEvent();
+    await monthTurn();
+    if (G.pop >= G.goal) {
+      clear();
+      const titles = { 250000: "Крупный город", 500000: "Большой город", 1000000: "Миллионник" };
+      await H(titles[G.goal] || "Новая цель");
+      await BIG(fmt(G.goal));
+      await STAMP(G.goal >= 1000000 ? "ГОРОД-МИЛЛИОННИК" : "ЦЕЛЬ ДОСТИГНУТА");
+      if (G.goal >= 1000000) { await say("Миллион. Двенадцать лет назад здесь горело 312 окон."); if (G.flags.matvey) await Q("Я ж говорил — вернутся."); G.goal = 2000000; }
+      else G.goal = G.goal === 250000 ? 500000 : 1000000;
+      await say(`Следующая цель: ${fmt(G.goal)}.`);
+      await pause();
     }
   }
 }
 
-City.init(document.getElementById("city"));
-main();
 </script>
 
 <div id="ios-hint" hidden>

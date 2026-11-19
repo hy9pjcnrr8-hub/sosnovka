@@ -1,5 +1,5 @@
 // Угольный Яр — офлайн-кэш. Меняй VERSION при обновлении игры.
-const VERSION = "yar-v1";
+const VERSION = "yar-v2";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
