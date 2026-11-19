@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 700, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 710, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -516,7 +516,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 5 карт · 8 режимов · онлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 0.70 · Android</div></div></div>
+  <div class="spV">версия 0.71 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><div id="armorW"><div id="armor"></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -559,7 +559,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.70</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.71</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -671,6 +671,7 @@
       <label class="ck"><input type="checkbox" id="sHold"> Прицел только пока зажата кнопка</label>
       <label class="ck"><input type="checkbox" id="sAssist"> Помощь в прицеливании на телефоне</label>
       <label class="ck"><input type="checkbox" id="sAdapt"> Боты подстраиваются под ваш уровень</label>
+      <label class="ck"><input type="checkbox" id="sShadow"> Тени от домов, машин и стволов (только на высокой графике)</label>
       <label class="ck"><input type="checkbox" id="sClip"> Записывать лучшие моменты (видео двойных и тройных убийств)</label>
       <label class="ck"><input type="checkbox" id="sGyro"> Гироскоп: поворот телефоном</label>
       <label class="ck"><input type="checkbox" id="sGyroInv"> Гироскоп: инверсия влево-вправо</label>
@@ -1181,7 +1182,7 @@ function buildPines(pines){
   for (const full of [false, true]){
     const LAYERS = full ? 4 : 3;
     for (let k=0;k<LAYERS;k++){
-      const m = inst(coneGeo, new THREE.MeshStandardMaterial({color:0xffffff, roughness:.95, flatShading:true, envMapIntensity:.3}), pines.length);
+      const m = inst(coneGeo, new THREE.MeshStandardMaterial({color:0xffffff, roughness:.95, flatShading:true, envMapIntensity:.3}), pines.length, false);
       pines.forEach((t,i) => { const R = t.H*.25*(full ? 1 : .42);
         dummy.position.set(t.x, t.y + t.H*(.2 + k*(full ? .17 : .24)), t.z); dummy.rotation.set(0, t.rot+k, 0);
         const rr = R*(1-k*.2); dummy.scale.set(rr, t.H*(full ? .36-k*.03 : .4), rr); dummy.updateMatrix(); m.setMatrixAt(i, dummy.matrix);
@@ -1198,7 +1199,7 @@ function buildPines(pines){
   }
   const brGeo = new THREE.PlaneGeometry(1, .62, 4, 2); brGeo.rotateX(-Math.PI/2); brGeo.translate(.5, 0, 0);
   { const bp = brGeo.attributes.position; for (let i=0;i<bp.count;i++){ const x = bp.getX(i), z = bp.getZ(i); bp.setY(i, -.2*x*x - .25*z*z); } brGeo.computeVertexNormals(); }
-  const br = inst(brGeo, addWind(cardMat(T.pineBr, .88), .0035), cards.length);
+  const br = inst(brGeo, addWind(cardMat(T.pineBr, .88), .0035), cards.length, false);
   dummy.rotation.order = 'YZX';
   cards.forEach((c,i) => { dummy.position.set(c[0], c[1], c[2]); dummy.rotation.set(0, c[3], c[4]); dummy.scale.set(c[5], 1, c[5]*.8); dummy.updateMatrix(); br.setMatrixAt(i, dummy.matrix);
     const sh = c[6]*mr(.85,1.08); col.setRGB(sh*.92, sh, sh*.88); if (MAPCFG && MAPCFG.snow && Math.random() < .55) col.lerp(new THREE.Color(1.6, 1.65, 1.7), .5); br.setColorAt(i, col); });
@@ -1211,11 +1212,11 @@ function buildBirches(birches, tint=[1,1,1]){
   const btr = inst(bt, new THREE.MeshStandardMaterial({map:T.birchB, normalMap:T.birchBN, roughness:.8, envMapIntensity:.4}), birches.length);
   const bc = []; birches.forEach(t => { for (let k=0;k<34;k++){ const u = mr(0,6.28), v = Math.acos(mr(-1,1)), r = Math.cbrt(R_());
     bc.push([t.x + Math.sin(v)*Math.cos(u)*1.9*t.s*r, t.y + t.H*.7 + Math.cos(v)*2.4*t.s*r, t.z + Math.sin(v)*Math.sin(u)*1.9*t.s*r, mr(0,6.28), mr(0,6.28), mr(0,6.28), mr(1.1,1.7)*t.s, t.shade]); } });
-  const cards = inst(new THREE.PlaneGeometry(1,1), addWind(cardMat(T.leaves, .8), .006), bc.length);
+  const cards = inst(new THREE.PlaneGeometry(1,1), addWind(cardMat(T.leaves, .8), .006), bc.length, false);
   bc.forEach((c,i) => { dummy.position.set(c[0],c[1],c[2]); dummy.rotation.set(c[3],c[4],c[5]); dummy.scale.setScalar(c[6]); dummy.updateMatrix(); cards.setMatrixAt(i, dummy.matrix);
     col.setRGB(c[7]*tint[0]*mr(.9,1.05), c[7]*tint[1]*mr(.95,1.08), c[7]*tint[2]*.85); cards.setColorAt(i, col); });
   cards.instanceColor.needsUpdate = true; cards.customDepthMaterial = depthMat(T.leaves);
-  const blobs = inst(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshStandardMaterial({color:0xffffff, roughness:.95, flatShading:true}), birches.length*4);
+  const blobs = inst(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshStandardMaterial({color:0xffffff, roughness:.95, flatShading:true}), birches.length*4, false);
   birches.forEach((t,i) => {
     dummy.position.set(t.x, t.y-.2, t.z); dummy.rotation.set(0, t.rot, 0); dummy.scale.set(t.s, t.H, t.s); dummy.updateMatrix(); btr.setMatrixAt(i, dummy.matrix);
     for (let k=0;k<4;k++){ dummy.position.set(t.x + Math.cos(t.rot+k*1.7)*.7*(k?1:0), t.y + t.H*(.62+k*.1), t.z + Math.sin(t.rot+k*1.7)*.7*(k?1:0));
@@ -1650,9 +1651,12 @@ function buildTrenchProps(bridges){
       const tc = -Math.sign(nx*mx + nz*mz) || 1, sx = mx + nx*tc*1.55, sz = mz + nz*tc*1.55;
       if (Math.abs(bx-ax) > Math.abs(bz-az)*.8 && trenchDist(sx, sz) > 1.4) for (let r=0;r<2;r++) for (let b=0;b<Math.round(L/n/.62);b++){ const o = -L/n/2 + .31 + b*.62;
         addBag(sx + (bx-ax)/L*o, terrainH(sx + (bx-ax)/L*o, sz + (bz-az)/L*o) + .07 + r*.14, sz + (bz-az)/L*o, yaw, false); } } }
-  for (const [x, z, len, alongZ] of bridges || []){ const y = Math.max(terrainH(x - (alongZ?0:len/2), z - (alongZ?len/2:0)), terrainH(x + (alongZ?0:len/2), z + (alongZ?len/2:0))) + .02;
+  for (let [x, z, len, alongZ] of bridges || []){
+    { const at = (o) => alongZ ? trenchCut(x, z + o) : trenchCut(x + o, z); let a = 0, b = 0; while (a > -8 && at(a - .1) > .04) a -= .1; while (b < 8 && at(b + .1) > .04) b += .1;
+      const mid = (a + b)/2; if (alongZ) z += mid; else x += mid; len = Math.max(len, b - a + 1.4); }
+    const y = Math.max(terrainH(x - (alongZ?0:len/2), z - (alongZ?len/2:0)), terrainH(x + (alongZ?0:len/2), z + (alongZ?len/2:0))) + .02;
     for (let k=0;k<Math.round(len/.3);k++){ const o = -len/2 + .15 + k*.3; duck.push({g:BX(alongZ ? 1.8 : .26, .08, alongZ ? .26 : 1.8), p:[x + (alongZ ? 0 : o), y+.04, z + (alongZ ? o : 0)], c:0x7a6448}); }
-    boxes.push({minX:x - (alongZ ? .9 : len/2), maxX:x + (alongZ ? .9 : len/2), minY:y-1.6, maxY:y+.08, minZ:z - (alongZ ? len/2 : .9), maxZ:z + (alongZ ? len/2 : .9), kind:'wood'}); }
+    boxes.push({plat:true, minX:x - (alongZ ? .9 : len/2), maxX:x + (alongZ ? .9 : len/2), minY:y-.2, maxY:y+.08, minZ:z - (alongZ ? len/2 : .9), maxZ:z + (alongZ ? len/2 : .9), kind:'wood'}); }
   for (const [list, mat] of [[rev, new THREE.MeshStandardMaterial({map:T.planks, normalMap:T.planksN, vertexColors:true, roughness:.9})], [duck, DECO_W]]) if (list.length){ const m = new THREE.Mesh(mergeGeo(list), mat); m.castShadow = m.receiveShadow = true; world.add(m); }
 }
 const zig = (x0, x1, step, z, amp, sgn=1) => { const p = []; let i = 0; for (let x = x0; x <= x1 + .01; x += step, i++) p.push([x, sgn*(z + (i%2 ? amp : 0))]); return p; };
@@ -2234,7 +2238,7 @@ MAPS.factory = BIG({name:'Завод', R:112, D:84, seed:6203, sky:[0x8a9aa8, 0x
 MAPS.factory.sp = MAPS.factory.spots();
 
 // ---------- puddles: wet reflective patches that slow you down a little ----------
-var PUDDLES = [], HOUSE_FP = [];
+var PUDDLES = [], HOUSE_FP = [], PLATS = [], platMap = '';
 function inHouse(x, z){ for (const f of HOUSE_FP) if (x > f[0] && x < f[1] && z > f[2] && z < f[3]) return true; return false; }
 const puddleMat = new THREE.MeshStandardMaterial({color:C(0x2a2722), roughness:.04, metalness:.55, envMapIntensity:1.4, transparent:true, opacity:.88, polygonOffset:true, polygonOffsetFactor:-2});
 function buildPuddles(){ if (!PUDDLES.length) return; const list = [];
@@ -2331,7 +2335,7 @@ function collide(p, r, feet, hgt){
     if (d < m){ if (d>1e-5){ p.x += dx/d*(m-d); p.z += dz/d*(m-d); } else p.x += m; }
   }
   for (const b of boxes){
-    if (feet >= b.maxY-0.05 || feet+hgt <= b.minY) continue;
+    if (feet >= b.maxY-0.05 || feet+hgt <= b.minY || (b.plat && feet < b.minY - .25)) continue;
     const cx = clamp(p.x,b.minX,b.maxX), cz = clamp(p.z,b.minZ,b.maxZ); const dx=p.x-cx, dz=p.z-cz, d2=dx*dx+dz*dz;
     if (d2 < r*r){
       if (d2 > 1e-8){ const d=Math.sqrt(d2); p.x += dx/d*(r-d); p.z += dz/d*(r-d); }
@@ -2560,7 +2564,7 @@ function buildSoldier(team, wtype, skin, gear, pal){
   if (gear === undefined) gear = (Math.random()*HAIRS.length)|0;
   const P = pal || TEAM_COL[team] || TEAM_COL[1], S = SKINS[skin], root = new THREE.Group(), body = new THREE.Group(); root.add(body); const team0 = team; team = pal ? team + pal.id : team;
   const parts = [];
-  const add = (parent, geo, x=0, y=0, z=0, head=false) => { const m = new THREE.Mesh(geo, SOLDIER_MAT); m.position.set(x,y,z); m.castShadow = true; m.userData.head = head; parent.add(m); parts.push(m); return m; };
+  const add = (parent, geo, x=0, y=0, z=0, head=false) => { const m = new THREE.Mesh(geo, SOLDIER_MAT); m.position.set(x,y,z); m.castShadow = false; m.userData.head = head; parent.add(m); parts.push(m); return m; };
   add(body, partGeo('pelvis'+team, () => pelvisList(P)));
   const gearS = (pal && pal.gear) || 'nvg-mask-1';
   add(body, partGeo('torso'+team+'_'+gearS.slice(-1), () => torsoList(P, gearS.slice(-1) !== '0')));
@@ -2891,7 +2895,7 @@ function optMods(key, slot, id){
 }
 const BASE = {
   rifle:  {key:'rifle', name:'АВТОМАТ', feed:'автомат', auto:true, rate:.1, mag:30, resMax:120, reload:2.1, dmg:30, pellets:1, spread:.014, adsMul:.3, kick:.012, adsFov:52, snd:[.45,2400,.16]},
-  sniper: {key:'sniper', name:'СНАЙПЕРСКАЯ ВИНТОВКА', feed:'винтовка', auto:false, rate:1.25, mag:5, resMax:25, reload:2.8, dmg:100, pellets:1, spread:.06, adsMul:0, kick:.045, adsFov:30, snd:[.7,1700,.35]},
+  sniper: {key:'sniper', name:'СНАЙПЕРСКАЯ ВИНТОВКА', feed:'винтовка', auto:false, rate:1.25, mag:5, resMax:25, reload:2.8, dmg:150, pellets:1, spread:.06, adsMul:0, kick:.045, adsFov:30, snd:[.7,1700,.35]},
   pistol: {key:'pistol', name:'ПИСТОЛЕТ', feed:'пистолет', auto:false, rate:.15, mag:12, resMax:Infinity, reload:1.3, dmg:34, pellets:1, spread:.008, adsMul:.45, kick:.02, adsFov:60, snd:[.35,3200,.11]},
   shotgun:{key:'shotgun', name:'ДРОБОВИК', feed:'дробовик', auto:false, rate:.85, mag:6, resMax:30, reload:2.6, dmg:17, pellets:9, spread:.075, adsMul:.7, kick:.05, adsFov:62, snd:[.75,1300,.32]},
   hpistol:{key:'hpistol', name:'ТЯЖЁЛЫЙ ПИСТОЛЕТ', feed:'тяж. пистолет', auto:false, rate:.32, mag:7, resMax:35, reload:1.6, dmg:52, pellets:1, spread:.009, adsMul:.4, kick:.045, adsFov:58, snd:[.6,1900,.2]},
@@ -3845,7 +3849,7 @@ function hitTick(head){
 }
 
 // =============== GAME STATE ===============
-const DEFAULTS = {vol:.8, enemyVol:1, hitSound:true, sens:1, ads:.8, invertY:false, aimHold:false, aimAssist:true, adapt:true, clips:false, btnScale:1, btnAlpha:.9, leftFire:true, fov:72, names:true, fps:false, layout:{}, gfx:null, time:'day', rain:false, flashlight:true, gyro:false, gyroSens:1, gyroInv:false, gyroInvY:false, music:.6, autoFire:false, vibrate:true, joySize:1, weather:'clear', autoQ:true, weak:false, lang:'ru'};
+const DEFAULTS = {vol:.8, enemyVol:1, hitSound:true, sens:1, ads:.8, invertY:false, aimHold:false, aimAssist:true, adapt:true, clips:false, shadows:true, btnScale:1, btnAlpha:.9, leftFire:true, fov:72, names:true, fps:false, layout:{}, gfx:null, time:'day', rain:false, flashlight:true, gyro:false, gyroSens:1, gyroInv:false, gyroInvY:false, music:.6, autoFire:false, vibrate:true, joySize:1, weather:'clear', autoQ:true, weak:false, lang:'ru'};
 const settings = JSON.parse(JSON.stringify(DEFAULTS));
 try { const sv = JSON.parse(localStorage.getItem('lr_settings') || 'null'); if (sv && typeof sv === 'object') for (const k in DEFAULTS) if (k in sv && typeof sv[k] === typeof DEFAULTS[k] || (k === 'gfx' && typeof sv[k] === 'string')) settings[k] = sv[k]; } catch(e){}
 if (!settings.layout || typeof settings.layout !== 'object') settings.layout = {};
@@ -3864,7 +3868,7 @@ function setGraphics(level){
   gfx = level;
   renderer.setPixelRatio(Math.max(.5, (level==='high' ? Math.min(devicePixelRatio||1, 1.75) : level==='mid' ? Math.min(devicePixelRatio||1, 1.35) : 1) * (typeof dynScale === 'number' ? dynScale : 1) * (settings.weak ? .8 : 1)));
   fitRenderer(true);
-  const sh = level === 'high';
+  const sh = level === 'high' && settings.shadows !== false;
   if (renderer.shadowMap.enabled !== sh){ renderer.shadowMap.enabled = sh; sun.castShadow = sh;
     scene.traverse(o => { if (o.material){ (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.needsUpdate = true); } }); }
   const lo = level === 'low', hi = level === 'high';
@@ -4103,7 +4107,7 @@ function damage(victim, dmg, attacker, head, wname){
     if (attacker && attacker.pos){ const ax = attacker.pos.x - victim.pos.x, az = attacker.pos.z - victim.pos.z, l = Math.hypot(ax, az) || 1; victim.hitFront = (Math.sin(victim.yaw)*ax + Math.cos(victim.yaw)*az)/l; victim.hitSide = (Math.cos(victim.yaw)*ax - Math.sin(victim.yaw)*az)/l; }
     if (attacker && !victim.target){ victim.lastKnown = attacker.pos.clone(); victim.lkT = 8; }
     if (victim.hp <= 0){
-      victim.alive = false; victim.deadT = 0; victim.respawnT = NO_RESPAWN() || victim.dummy ? 1e9 : 5; victim.fallSide = rand(-0.2,0.2) - (victim.hitSide || 0)*.35; victim.fallX = (victim.hitFront === undefined || victim.hitFront > -.2) ? 1 : -1; victim.fallFast = head ? 1.7 : 1; if (head && victim.isBot && !victim.zombie) try { helmetPop(victim, attacker && attacker.pos); } catch(e){}
+      victim.alive = false; victim.deadT = 0; victim.respawnT = NO_RESPAWN() || victim.dummy ? 1e9 : 5; victim.fallSide = rand(-0.25,0.25); victim.fallX = 1; victim.fallFast = 1; if (head && victim.isBot && !victim.zombie) try { helmetPop(victim, attacker && attacker.pos); } catch(e){}
       registerKill(attacker, victim, wname, head);
     }
   }
@@ -4378,7 +4382,7 @@ function updateBot(b, dt){
   b.aimPose += ((t && b.los ? 1 : 0) - b.aimPose) * Math.min(1, dt*6);
   let bp = 0; if (t && b.los){ const dy = chest(t, v2).y - (b.pos.y+1.3), hd = Math.hypot(t.pos.x-b.pos.x, t.pos.z-b.pos.z); bp = Math.atan2(dy, hd); }
   animateSoldier(b, b.moving ? Math.min(1, spd/3) : 0, b.phase, b.aimPose, false, bp); botAnimExtras(b, dt);
-  if (b.flinchT > 0){ b.flinchT -= dt; const k = Math.sin(Math.max(0, b.flinchT)/.28*Math.PI)*.5; b.body.rotation.x -= k*.35*(b.hitFront === undefined ? 1 : Math.sign(b.hitFront) || 1); b.body.rotation.z += k*.25*(b.hitSide || 0); b.head.rotation.x -= k*.4; }
+
   // shoot
   b.cd -= dt;
   if (t && b.los && b.cd <= 0 && !(b.reloadT > 0)){
@@ -4406,7 +4410,7 @@ function updatePlayer(dt){
     if (d > 8){ const k = Math.min(d,max)/max; mx = mv.dx/d*k; mz = -mv.dy/d*k; if (d > max*1.3 && mz > .6) wantSprint = true; } }
   const l = Math.hypot(mx, mz); if (l > 1){ mx /= l; mz /= l; }
   player.moving = l > .15;
-  sprinting = wantSprint && mz > .5 && !player.crouch && aimK < .3 && reloading <= 0;
+  sprinting = wantSprint && mz > .5 && !player.crouch && !aiming && aimK < .3 && reloading <= 0;
   if (sprinting && player.crouch) player.crouch = false;
   if (quadFrame(dt, mx, mz)){ camera.position.set(player.pos.x, player.pos.y + 1.5, player.pos.z); camera.rotation.set(player.pitch, player.yaw, 0); if (WEAPONS[cur]) WEAPONS[cur].model.g.visible = false; $('scope').style.display = 'none'; return; }
   let speed = (player.crouch ? 2.4 : sprinting ? (runFireT > 0 ? 6.0 : 7.0) : 4.5) * classSpeed(); speed *= (1 - aimK*.35) * (w.mob || 1);
@@ -4423,6 +4427,8 @@ function updatePlayer(dt){
   collide(player.pos, .38, player.pos.y, player.crouch ? 1.2 : 1.75);
   playerSteps(dt, Math.hypot(player.pos.x - ox, player.pos.z - oz));
   player.eyeH += ((player.crouch ? 1.12 : 1.65) - player.eyeH) * Math.min(1, dt*10);
+  if (curMap !== platMap){ platMap = curMap; PLATS = boxes.filter(b => b.plat); }
+  for (const b of PLATS) if (player.pos.x > b.minX - .3 && player.pos.x < b.maxX + .3 && player.pos.z > b.minZ - .3 && player.pos.z < b.maxZ + .3 && player.pos.y < b.minY - .25) player.eyeH = Math.min(player.eyeH, b.minY - player.pos.y - .12);   // duck under bridges
   camera.position.set(player.pos.x, player.pos.y + player.eyeH, player.pos.z);
   camera.rotation.set(player.pitch + viewPunch, player.yaw, 0); viewPunch = Math.max(0, viewPunch - dt*.04 - viewPunch*dt*12);
   // regen
@@ -4436,7 +4442,7 @@ function updatePlayer(dt){
   if (!wantFire) semiReady = true;
   if (wantFire && fireCd <= 0 && w.ammo > 0 && reloading <= 0 && switching <= 0 && (w.auto || semiReady)) playerFire();
   if (wantFire && w.ammo <= 0 && reloading <= 0 && semiReady) startReload();
-  const wantAim = aiming && reloading <= 0 && switching <= 0 && !sprinting;
+  const wantAim = aiming && reloading <= 0 && switching <= 0;
   aimK = clamp(aimK + (wantAim ? 1 : -1)*dt*7*(w.adsSpd || 1), 0, 1);
   const fov = lerp(settings.fov, w.adsFov, aimK*aimK);
   if (Math.abs(camera.fov - fov) > .01){ camera.fov = fov; camera.updateProjectionMatrix(); }
@@ -6050,7 +6056,7 @@ function applyLayout(){
 }
 addEventListener('resize', () => setTimeout(applyLayout, 50));
 const SL = [ ['sVol','vol',100,'%'], ['sEnemyVol','enemyVol',100,'%'], ['sSens','sens',100,'%'], ['sAds','ads',100,'%'], ['sBtn','btnScale',100,'%'], ['sAlpha','btnAlpha',100,'%'], ['sFov','fov',1,'°'], ['sGyroS','gyroSens',100,'%'], ['sMusic','music',100,'%'], ['sJoy','joySize',100,'%'] ];
-const CK = [ ['sHit','hitSound'], ['sInv','invertY'], ['sHold','aimHold'], ['sAssist','aimAssist'], ['sAdapt','adapt'], ['sClip','clips'], ['sLeft','leftFire'], ['sNames','names'], ['sFps','fps'], ['sFlash','flashlight'], ['sGyro','gyro'], ['sGyroInv','gyroInv'], ['sGyroInvY','gyroInvY'], ['sAuto','autoFire'], ['sVib','vibrate'], ['sAutoQ','autoQ'] ];
+const CK = [ ['sHit','hitSound'], ['sInv','invertY'], ['sHold','aimHold'], ['sAssist','aimAssist'], ['sAdapt','adapt'], ['sClip','clips'], ['sShadow','shadows'], ['sLeft','leftFire'], ['sNames','names'], ['sFps','fps'], ['sFlash','flashlight'], ['sGyro','gyro'], ['sGyroInv','gyroInv'], ['sGyroInvY','gyroInvY'], ['sAuto','autoFire'], ['sVib','vibrate'], ['sAutoQ','autoQ'] ];
 function fillSettings(){
   for (const [id,key,mul,u] of SL){ $(id).value = Math.round(settings[key]*mul); $('v'+id.slice(1)).textContent = Math.round(settings[key]*mul) + u; }
   for (const [id,key] of CK) $(id).checked = !!settings[key];
@@ -6482,6 +6488,7 @@ function staffProofOk(sp, nick, dev){ if (!sp || typeof sp !== 'object' || sp.d 
 async function verifyStaffRows(list){ for (const r of list) if (r.sp && STAFF[accKey(r.n)]) r.stf = await staffProofOk(r.sp, r.n, r.id); }
 
 
+$('sShadow').addEventListener('change', () => setGraphics(gfx));
 $('endClips').addEventListener('click', () => { $('end').classList.add('hidden'); $('clips').classList.remove('hidden'); renderClips(); });
 $('clipsClose').addEventListener('click', () => { $('clips').classList.add('hidden'); $('end').classList.remove('hidden'); });
 $('clipList').addEventListener('click', async e => { const b = e.target.closest('button[data-share]'); if (!b) return; const c = CLIPS[+b.dataset.share]; if (!c) return;
