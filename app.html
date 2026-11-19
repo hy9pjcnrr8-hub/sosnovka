@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 340, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 350, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -424,7 +424,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 5 карт · 8 режимов · онлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 0.34 · Android</div></div></div>
+  <div class="spV">версия 0.35 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><div id="armorW"><div id="armor"></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -461,7 +461,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.34</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.35</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -4583,10 +4583,10 @@ function onMotion(e){
   const D = Math.PI/180;
   // device-frame angular velocity (x right, y top, z out of the screen)
   const wx = (IOS ? r.alpha : r.beta)*D, wy = (IOS ? r.beta : r.gamma)*D, wz = (IOS ? r.gamma : r.alpha)*D;
-  const up = GQ.upD, o = (GQ.orient || 0)*D;
-  // the screen's "right" in device axes, made horizontal
-  GQ.rt.set(Math.cos(o), -Math.sin(o), 0); GQ.rt.addScaledVector(up, -GQ.rt.dot(up)); const L = GQ.rt.length(); if (L < .2) return; GQ.rt.divideScalar(L);
-  let yawRate = wx*up.x + wy*up.y + wz*up.z, pitchRate = wx*GQ.rt.x + wy*GQ.rt.y + wz*GQ.rt.z;
+  const o = (GQ.orient || 0)*D;
+  // turn = rotation about the screen's own vertical axis, look up/down = about its horizontal axis: both 1:1, same feel
+  const ux = Math.sin(o), uy = Math.cos(o), rx = Math.cos(o), ry = -Math.sin(o);
+  let yawRate = wx*ux + wy*uy, pitchRate = wx*rx + wy*ry;
   const dz = .03; if (Math.abs(yawRate) < dz) yawRate = 0; if (Math.abs(pitchRate) < dz) pitchRate = 0;
   GQ.dyaw += clamp(yawRate, -15, 15)*dt; GQ.dpitch += clamp(pitchRate, -15, 15)*dt;
 }
