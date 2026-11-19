@@ -432,6 +432,10 @@
   #strikeBtn{right:calc(env(safe-area-inset-right) + 262px);bottom:calc(env(safe-area-inset-bottom) + 150px)}
   #quadBtn{left:calc(50% - 120px)}
   #radioBtn{right:calc(env(safe-area-inset-right) + 349px);bottom:calc(env(safe-area-inset-bottom) + 167px)}
+  .stf{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:5px;padding:0;border-radius:50%;border:1.5px solid currentColor;background:rgba(0,0,0,.35);font-size:11px;line-height:1;vertical-align:middle;cursor:pointer;pointer-events:auto;font-family:inherit}
+  .stf.dev{color:#ffd24a;box-shadow:0 0 8px rgba(255,210,74,.55)}.stf.mod{color:#7ec8ff;box-shadow:0 0 8px rgba(126,200,255,.45)}
+  .pfId .stf{width:22px;height:22px;font-size:13px}
+  #stfTip{position:fixed;z-index:60;padding:7px 12px;background:rgba(10,16,12,.95);border:1px solid #c7ff48;border-radius:6px;color:#fff;font-size:13px;pointer-events:none;transform:translate(-50%,-100%);white-space:nowrap}#stfTip b{color:#c7ff48}
 </style>
 </head>
 <body>
@@ -477,7 +481,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.52</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.53</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -2805,6 +2809,7 @@ function sha256hex(str){
 function pwHash(salt, pw){ let h = sha256hex(salt + '|' + pw); for (let i = 0; i < 2000; i++) h = sha256hex(h + salt); return h; }
 const newSalt = () => Array.from({length:16}, () => Math.floor(Math.random()*256).toString(16).padStart(2, '0')).join('');
 const accKey = nick => nick.trim().toLowerCase();
+var STAFF = {'paralysax':['dev', 'Главный разработчик'], 'иксов':['mod', 'Тестер · модератор'], 'stepan2010_ok':['mod', 'Тестер · модератор']};
 const NICK_RE = /^[A-Za-zА-Яа-яЁё0-9_\-]{3,16}$/;
 function freshProg(){ return {money:0, weapons:{rifle:true}, att:{}, nade:{frag:1, flash:false, smoke:false}, primary:'rifle', secondary:null, missions:{}, team:0}; }
 // =============== PROGRESS: money, purchases, missions ===============
@@ -4160,7 +4165,7 @@ function enterAccount(remember){
   WEAPONS.forEach((w, i) => applyLoadout(i)); CARRY = carryList(); if (!CARRY.length) CARRY = [0];
   myName = cleanName(ACC.nick); $('nick').value = myName; $('nick').readOnly = true;
   ensureProgExtras(); renderRankUi(); applyOwnSleeve();
-  $('userChip').innerHTML = `<i class="av t${PROG.team}">${esc(ACC.nick.slice(0,1).toUpperCase())}</i>${esc(ACC.nick)}`; renderMoney(); updateMsBadge();
+  $('userChip').innerHTML = `<i class="av t${PROG.team}">${esc(ACC.nick.slice(0,1).toUpperCase())}</i>${esc(ACC.nick)}${staffBadge(ACC.nick, true)}`; renderMoney(); updateMsBadge();
   $('myteam').querySelectorAll('button').forEach(b => b.classList.toggle('sel', +b.dataset.team === PROG.team));
   $('auth').classList.add('hidden'); $('menu').classList.remove('hidden'); saveProg();
   if (typeof tryAutoAdmin === 'function') tryAutoAdmin();
@@ -4556,7 +4561,7 @@ function sendChat(text){
   const t = cleanMsg(text); if (!t) return;
   const mu = mutedUntil(DEVICE_ID); if (mu && !isAdmin){ chatSys('Вы в муте до ' + new Date(mu).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'})); return; }
   const tag = isAdmin ? '<b class="adm">[АДМИН]</b> ' : '';
-  chatAdd(`${tag}<b class="c${player.team}">${esc((PROG.clan ? '[' + PROG.clan + '] ' : '') + (myName || 'Вы'))}</b>: ${esc(t)}`);
+  chatAdd(`${tag}<b class="c${player.team}">${esc((PROG.clan ? '[' + PROG.clan + '] ' : '') + (myName || 'Вы'))}</b>${ACC ? staffBadge(ACC.nick, true) : ''}: ${esc(t)}`);
   if (mode === 'online' && room){ myChat.push([++chatSeq, t]); if (myChat.length > 3) myChat.shift(); sendPresence(); }
   else if (!sendChat.hinted){ sendChat.hinted = true; chatSys('Сообщения видят живые игроки только в онлайн-бою'); }
 }
@@ -4565,7 +4570,7 @@ function receiveChat(peer, pr, tr){
   const dv = typeof pr.dv === 'string' ? pr.dv : '', team = pr.t === 1 ? 1 : 0, cl = typeof pr.cl === 'string' && /^[A-ZА-ЯЁ0-9]{2,5}$/.test(pr.cl) ? '[' + pr.cl + '] ' : '', nm = cl + cleanName(pr.n), adm = adminPeers.get(peer) === true;
   for (const m of pr.cm.slice(-3)){ if (!Array.isArray(m)) continue; const id = num(m[0], -1); if (id < 0) continue;
     if (tr.cm !== undefined && id > tr.cm && (adm || (!mutedUntil(dv) && !banOf(dv, accKey(nm))))){ const t = cleanMsg(m[1]);
-      if (t) chatAdd(`${adm ? '<b class="adm">[АДМИН]</b> ' : ''}<b class="c${team}">${esc(nm)}</b>: ${esc(t)}`); }
+      if (t) chatAdd(`${adm ? '<b class="adm">[АДМИН]</b> ' : ''}<b class="c${team}">${esc(nm)}</b>${staffBadge(cleanName(pr.n), adm)}: ${esc(t)}`); }
     if (id > mx) mx = id; }
   tr.cm = mx;
 }
@@ -4863,7 +4868,7 @@ function renderProfile(){
   const tiles = [['Убийств', s.kills], ['Смертей', s.deaths], ['У/С', kd], ['Точность', acc + '%'], ['В голову', hs + '%'], ['Побед', s.wins], ['Матчей', s.matches], ['Побед, %', wr + '%'],
     ['Лучшая серия', s.bestStreak], ['Гранатой', s.nadeKills], ['Время в бою', fmtDur(s.playSec)], ['Любимое оружие', fav ? (BASE[fav[0]] ? BASE[fav[0]].name : fav[0]) : '—']];
   const nick = ACC ? ACC.nick : myName;
-  $('profBody').innerHTML = `<div class="pfTop"><i class="av t${PROG.team}">${esc(nick.slice(0,1).toUpperCase())}</i><div class="pfId"><b>${PROG.clan ? `<span class="clt">[${esc(PROG.clan)}]</span> ` : ''}${esc(nick)}</b>
+  $('profBody').innerHTML = `<div class="pfTop"><i class="av t${PROG.team}">${esc(nick.slice(0,1).toUpperCase())}</i><div class="pfId"><b>${PROG.clan ? `<span class="clt">[${esc(PROG.clan)}]</span> ` : ''}${esc(nick)}${staffBadge(nick, true)}</b>
       <span>${rankBadge(r, 26)} ${RANKS[r]} · уровень ${L}${L >= MAX_LVL ? ' (максимум)' : ''}</span>
       <div class="xpb"><i style="width:${Math.round(k*100)}%"></i></div><div id="accCloud" class="cloud ${ACC && ACC.cloud ? 'ok' : 'err'}">${ACC && ACC.cloud ? '☁ аккаунт на сервере — войти можно с любого устройства по нику и паролю' : '☁ аккаунт пока только на этом устройстве'}</div><div class="pfAcc"><button class="opt" id="pfCode">Код аккаунта</button><button class="opt" id="pfOut">Выйти из аккаунта</button></div><small>${L >= MAX_LVL ? 'Максимальный уровень' : `${(PROG.xp - a).toLocaleString('ru-RU')} / ${(b - a).toLocaleString('ru-RU')} опыта до уровня ${L + 1}`}</small></div>
       ${PROG.medals.length ? `<div class="medals">${PROG.medals.map(m => `<span title="${esc(m)}">🏅</span>`).join('')}</div>` : ''}</div>
@@ -5084,11 +5089,11 @@ function renderBoard(){
     const cl = Object.values(per).sort((a, b) => b.sxp - a.sxp).slice(0, 30);
     $('lbList').innerHTML = cl.length ? `<table class="admT lbT"><tr><th>#</th><th>Клан</th><th>Бойцов</th><th>Опыт за сезон</th><th>Убийств</th><th>Побед</th></tr>${cl.map((c, i) => `<tr class="${c.cl === PROG.clan ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td><span class="clt">[${esc(c.cl)}]</span></td><td>${c.n}</td><td>${Math.round(c.sxp).toLocaleString('ru-RU')}</td><td>${c.k}</td><td>${c.w}</td></tr>`).join('')}</table>` : '<p style="opacity:.6">Пока ни у кого нет клана. Задайте тег в профиле.</p>'; return; }
   if (lbTab === 'week'){ ensureWeek(); const wk = PROG.week.id, rows = lbData.filter(r => r.wk === wk && r.wx > 0); if (ACC && !rows.some(r => r.id === DEVICE_ID) && PROG.week.xp > 0) rows.push(Object.assign({id:DEVICE_ID}, lbEntry())); rows.sort((a, b) => b.wx - a.wx);
-    $('lbList').innerHTML = `<p style="margin:0 0 8px;font-size:12.5px;opacity:.8">Турнир идёт с понедельника по воскресенье. Награды в начале новой недели: 1 место — 1500 КР, 2–3 — 1000 КР, 4–10 — 500 КР.</p>` + (rows.length ? `<table class="admT lbT"><tr><th>#</th><th>Игрок</th><th>Звание</th><th>Опыт за неделю</th></tr>${rows.slice(0, 50).map((r, i) => `<tr class="${r.id === DEVICE_ID ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td>${r.cl ? `<span class="clt">[${esc(r.cl)}]</span> ` : ''}${esc(r.n)}</td><td>${rankBadge(r.rk, 18)} ${r.lvl}</td><td>${Math.round(r.wx).toLocaleString('ru-RU')}</td></tr>`).join('')}</table>` : '<p style="opacity:.6">На этой неделе ещё никто не играл — станьте первым.</p>'); return; }
+    $('lbList').innerHTML = `<p style="margin:0 0 8px;font-size:12.5px;opacity:.8">Турнир идёт с понедельника по воскресенье. Награды в начале новой недели: 1 место — 1500 КР, 2–3 — 1000 КР, 4–10 — 500 КР.</p>` + (rows.length ? `<table class="admT lbT"><tr><th>#</th><th>Игрок</th><th>Звание</th><th>Опыт за неделю</th></tr>${rows.slice(0, 50).map((r, i) => `<tr class="${r.id === DEVICE_ID ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td>${r.cl ? `<span class="clt">[${esc(r.cl)}]</span> ` : ''}${esc(r.n)}${staffBadge(r.n)}</td><td>${rankBadge(r.rk, 18)} ${r.lvl}</td><td>${Math.round(r.wx).toLocaleString('ru-RU')}</td></tr>`).join('')}</table>` : '<p style="opacity:.6">На этой неделе ещё никто не играл — станьте первым.</p>'); return; }
   const key = lbTab === 'season' ? 'sxp' : 'xp', rows = lbData.filter(r => r[key] > 0).sort((a, b) => b[key] - a[key]).slice(0, 50);
   if (!rows.some(r => r.id === DEVICE_ID) && ACC){ const me = Object.assign({id:DEVICE_ID}, lbEntry()); if (me[key] > 0){ rows.push(me); rows.sort((a, b) => b[key] - a[key]); } }
   $('lbList').innerHTML = rows.length ? `<table class="admT lbT"><tr><th>#</th><th>Игрок</th><th>Звание</th><th>${lbTab === 'season' ? 'Опыт за сезон' : 'Опыт'}</th><th>Убийств</th><th>Побед</th></tr>${rows.map((r, i) =>
-    `<tr class="${r.id === DEVICE_ID ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td>${r.cl ? `<span class="clt">[${esc(r.cl)}]</span> ` : ''}${esc(r.n)}</td><td>${rankBadge(r.rk, 18)} ${r.lvl}</td>
+    `<tr class="${r.id === DEVICE_ID ? 'me' : ''}"><td><b class="pl${i < 3 ? i + 1 : ''}">${i + 1}</b></td><td>${r.cl ? `<span class="clt">[${esc(r.cl)}]</span> ` : ''}${esc(r.n)}${staffBadge(r.n)}</td><td>${rankBadge(r.rk, 18)} ${r.lvl}</td>
       <td>${Math.round(r[key]).toLocaleString('ru-RU')}</td><td>${lbTab === 'season' ? r.sk : r.k}</td><td>${lbTab === 'season' ? r.sw : r.w}</td></tr>`).join('')}</table>`
     : '<p style="opacity:.6">Пока здесь пусто — сыграйте бой и станьте первым. Рейтинг виден, когда есть интернет.</p>';
 }
@@ -5364,7 +5369,7 @@ function showInvite(o){ const el = $('invite'); el.innerHTML = `<b>${esc(cleanNa
     let n = 0; const w = setInterval(() => { n++; if (room && room.connected()){ clearInterval(w); startOnline(); } else if (n > 40) clearInterval(w); }, 250); }; }
 function renderFriends(){ const F = PROG.friends || []; if (!F.length){ $('frList').innerHTML = `<p style="opacity:.6">${tr('Добавьте друга по нику — увидите, когда он в сети, и сможете позвать его в бой.')}</p>`; return; }
   $('frList').innerHTML = `<table class="admT">${F.map((f, i) => { const s = f.st, on = s && Date.now() - s.t < 150000;
-    return `<tr><td><b>${s && s.cl ? `<span class="clt">[${esc(s.cl)}]</span> ` : ''}${esc(f.n)}</b><small>${on ? (s.play ? '🟢 ' + tr('в бою') + ' · ' + esc((SERVERS.find(v => v.id === s.srv) || {name:s.srv || ''}).name) : '🟢 ' + tr('в сети')) : s ? '⚫ ' + tr('был') + ' ' + new Date(s.t).toLocaleString('ru-RU', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '⚫ ' + tr('нет данных')}</small></td>
+    return `<tr><td><b>${s && s.cl ? `<span class="clt">[${esc(s.cl)}]</span> ` : ''}${esc(f.n)}${staffBadge(f.n)}</b><small>${on ? (s.play ? '🟢 ' + tr('в бою') + ' · ' + esc((SERVERS.find(v => v.id === s.srv) || {name:s.srv || ''}).name) : '🟢 ' + tr('в сети')) : s ? '⚫ ' + tr('был') + ' ' + new Date(s.t).toLocaleString('ru-RU', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '⚫ ' + tr('нет данных')}</small></td>
       <td class="acts">${on && s.play && s.srv ? `<button class="opt sel" data-j="${i}">${tr('К нему')}</button>` : ''}<button class="opt" data-inv="${i}">${tr('Позвать')}</button><button class="opt" data-del="${i}">✕</button></td></tr>`; }).join('')}</table>`; }
 function refreshFriends(){ const F = PROG.friends || []; renderFriends(); if (!F.length) return;
   mqttAt(BROKERS[0], api => { for (const f of F) api.subscribe(ST_BASE + nickHash(f.n), s => { try { const o = JSON.parse(s); if (o && accKey(o.n || '') === accKey(f.n)) f.st = o; } catch(e){} }); setTimeout(() => { api.close(); renderFriends(); }, 2500); }); }
@@ -5913,6 +5918,18 @@ function lbRestore(){ if (!ACC || typeof WebSocket === 'undefined') return; ensu
       if (best.sxp > PROG.season.xp){ PROG.season.xp = best.sxp; fixed = true; }
       if (fixed){ saveProg(); renderRankUi(); toast('Уровень восстановлен: ' + levelOf(PROG.xp)); } }, 3500); }, () => {});
 }
+
+
+// staff stars: main developer and testers/moderators listed on the site
+function staffBadge(nick, verified){ const k = accKey(String(nick || '')), st = (STAFF || {})[k]; if (!st) return '';
+  if (st[0] === 'dev' && verified === false) return '';   // in online chat the developer star needs the signed admin proof
+  return `<button type="button" class="stf ${st[0]}" data-staff="${esc(k)}" data-nick="${esc(String(nick))}" aria-label="${esc(st[1])}">★</button>`; }
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.stf')){ e.preventDefault(); e.stopPropagation(); } }, true);
+document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('.stf'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  const st = STAFF[b.dataset.staff]; if (!st) return; let tip = $('stfTip'); if (!tip){ tip = document.createElement('div'); tip.id = 'stfTip'; document.body.appendChild(tip); }
+  const r = b.getBoundingClientRect(); tip.innerHTML = `<b>${esc(b.dataset.nick || b.dataset.staff)}</b> — ${esc(st[1])}`;
+  tip.style.left = Math.min(innerWidth - 90, Math.max(90, r.left + r.width/2)) + 'px'; const below = r.top < 60; tip.style.top = (below ? r.bottom + 8 : r.top - 6) + 'px'; tip.style.transform = below ? 'translate(-50%,0)' : ''; tip.style.display = 'block';
+  clearTimeout(tip.t); tip.t = setTimeout(() => tip.style.display = 'none', 2600); }, true);
 
 equip(0); WEAPONS[0].model.g.visible = false;
 if (settings.gfx) $('gfxs').querySelector(`[data-gfx="${settings.gfx}"]`)?.click();
