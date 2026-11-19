@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 400, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 410, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -433,6 +433,11 @@
   #modes .card{padding:5px 8px 5px 38px!important}
   @media (max-height:430px){ .mPlay{padding:9px 36px 9px 30px!important;font-size:14px!important} .mTopRow{margin-bottom:2px} }
 
+  /* overlays: centred when they fit, scroll from the top when they don't */
+  .ov{justify-content:flex-start!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;padding-top:calc(env(safe-area-inset-top) + 14px)!important;padding-bottom:calc(env(safe-area-inset-bottom) + 18px)!important}
+  .ov>:first-child{margin-top:auto}.ov>:last-child{margin-bottom:auto}
+  #menu>:first-child{margin-top:0}
+
   /* ---- Android app look ---- */
   body{font-family:Montserrat,"Arial Black",Arial,sans-serif}
   .ov{background:radial-gradient(120% 90% at 85% 10%,rgba(199,255,72,.07),transparent 55%),linear-gradient(180deg,rgba(8,11,13,.9),rgba(8,11,13,.82))}
@@ -462,7 +467,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 5 карт · 8 режимов · онлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 0.40 · Android</div></div></div>
+  <div class="spV">версия 0.41 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><div id="armorW"><div id="armor"></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -504,7 +509,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.40</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.41</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -4645,7 +4650,8 @@ function onMotion(e){
   const t = performance.now(), dt = GQ.last ? Math.min(.1, (t - GQ.last)/1000) : (e.interval > 0 ? Math.min(.1, e.interval > 1 ? e.interval/1000 : e.interval) : .016); GQ.last = t;
   const D = Math.PI/180;
   // device-frame angular velocity (x right, y top, z out of the screen)
-  const wx = (IOS ? r.alpha : r.beta)*D, wy = (IOS ? r.beta : r.gamma)*D, wz = (IOS ? r.gamma : r.alpha)*D;
+  // Browsers (Safari and Chrome alike) report alpha/beta/gamma of rotationRate around the phone's x/y/z axes
+  const wx = (r.alpha || 0)*D, wy = (r.beta || 0)*D, wz = (r.gamma || 0)*D;
   const o = (GQ.orient || 0)*D;
   // turn = rotation about the screen's own vertical axis, look up/down = about its horizontal axis: both 1:1, same feel
   const ux = Math.sin(o), uy = Math.cos(o), rx = Math.cos(o), ry = -Math.sin(o);
