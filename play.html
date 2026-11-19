@@ -449,6 +449,96 @@
   #replay{justify-content:flex-start;overflow-y:auto;padding-top:calc(env(safe-area-inset-top) + 12px)}
   .wsC{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px}.wsC input{width:54px;height:40px;border:none;background:none;padding:0}
   @media (max-height:500px){ #modes .card span{display:none!important} #modes .card{padding-top:7px!important;padding-bottom:7px!important} }
+  /* ===== 1.00: calm, airy main menu ===== */
+  #menu.v2{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:0;padding:calc(env(safe-area-inset-top) + 10px) calc(env(safe-area-inset-right) + 16px) 0 calc(env(safe-area-inset-left) + 16px)!important;overflow:hidden!important;
+    background:linear-gradient(90deg,rgba(6,10,8,.88) 0%,rgba(6,10,8,.62) 46%,rgba(6,10,8,.12) 78%,rgba(6,10,8,0) 100%),linear-gradient(0deg,rgba(6,10,8,.85),rgba(6,10,8,0) 30%)!important}
+  #menu.v2.hidden{display:none!important}
+  #menu.v2 .mDeco,#menu.v2 .m2Hide{display:none!important}
+  #menu.v2 .m2Top{display:flex;align-items:center;gap:10px;min-height:46px}
+  #menu.v2 .m2Top .sp{flex:1}
+  #menu.v2 .mHead{display:flex;align-items:center;gap:10px;margin:0!important}
+  #menu.v2 .mEmb{width:38px!important;height:38px!important}
+  #menu.v2 .mLogo{font-size:22px!important;letter-spacing:3px!important;margin:0!important;line-height:1}
+  #menu.v2 .mSub{font-size:9px!important;letter-spacing:4px!important;margin-top:3px!important;opacity:.7}
+  #menu.v2 #moneyMenu{font-size:13px;padding:7px 12px;border-radius:999px}
+  #menu.v2 #rankChip{font-size:12px;opacity:.9}
+  #menu.v2 .m2Acc{position:relative}
+  #menu.v2 #userChip{cursor:pointer;padding:5px 12px 5px 5px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);font-size:13px;display:flex;align-items:center;gap:8px}
+  #menu.v2 .m2Pop{position:absolute;right:0;top:calc(100% + 8px);z-index:30;display:flex;flex-direction:column;gap:6px;padding:10px;min-width:180px;background:rgba(14,20,16,.97);border:1px solid rgba(255,255,255,.14);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  #menu.v2 .m2Pop.hidden{display:none}
+  #menu.v2 .m2Pop .opt,#menu.v2 .m2Pop a{display:block;text-align:left;width:100%;padding:9px 12px;font-size:13px;border-radius:8px;margin:0}
+  #menu.v2 .m2Icon{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#e8eee5;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+  #menu.v2 .m2Icon svg{width:22px;height:22px}
+  #menu.v2 #openSettings svg{width:24px!important;height:24px!important;color:#fff;stroke:#fff}
+  #menu.v2 #openSettings{width:42px!important;height:42px!important;padding:0!important;border-radius:12px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.16)!important;color:#eef3ea!important;display:flex!important;align-items:center;justify-content:center;flex:0 0 42px}
+  #menu.v2 .m2Main{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;width:min(460px,58vw);padding:6px 0 8px;overflow-y:auto;scrollbar-width:none}
+  #menu.v2 .m2Main::-webkit-scrollbar{display:none}
+  #menu.v2 .tabs{display:flex;gap:4px;padding:4px;background:rgba(255,255,255,.06);border-radius:12px;align-self:center;margin:0 0 0 18px!important}
+  #menu.v2 .tab{clip-path:none!important;border-radius:9px!important;padding:7px 20px!important;font-size:13px!important;letter-spacing:1px!important;background:transparent!important;color:#cfd8cb!important;border:none!important;transform:none!important}
+  #menu.v2 .tab.sel{background:#c7ff48!important;color:#0d1410!important}
+  #menu.v2 #secOff{align-items:stretch!important;width:100%!important;max-width:none!important;padding:0!important;display:flex!important;flex-direction:column!important;gap:10px!important;grid-template-columns:none!important;margin:0!important}
+  #menu.v2 #secOff.hidden,#menu.v2 #secOn.hidden{display:none!important}
+  #menu.v2 .m2Pick{display:flex;flex-direction:column;gap:8px;width:100%;align-self:stretch}
+  #menu.v2 .m2Top,#menu.v2 #err{flex:0 0 auto}
+  #menu.v2 .m2Tile{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;border-radius:14px;background:rgba(18,26,21,.72);border:1px solid rgba(255,255,255,.1);color:#eef3ea;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:border-color .2s,background .2s;font:inherit}
+  #menu.v2 .m2Tile:active{transform:scale(.99)}
+  #menu.v2 .m2Tile:hover{border-color:rgba(199,255,72,.45)}
+  #menu.v2 .m2TI{flex:0 0 44px;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(199,255,72,.12);color:#c7ff48;overflow:hidden}
+  #menu.v2 .m2TI svg{width:26px;height:26px;position:static!important;margin:0!important}
+  #menu.v2 .m2TI canvas{width:44px;height:44px;border-radius:50%}
+  #menu.v2 .m2TT{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+  #menu.v2 .m2TT small{font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:#9fb08f}
+  #menu.v2 .m2TT b{font-size:15.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #menu.v2 .m2TT em{font-style:normal;font-size:12px;color:#b9c4b2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #menu.v2 .m2Ch{width:18px;height:18px;opacity:.5;flex:0 0 18px}
+  #menu.v2 .mActs{width:100%!important;align-self:stretch!important;display:flex!important;flex-direction:row!important;gap:10px!important;justify-content:flex-start!important;margin:2px 0 0!important;grid-row:auto!important;grid-column:auto!important}
+  #menu.v2 .mActs .mPlay{flex:1;margin:0!important;clip-path:none!important;border-radius:14px!important;padding:14px 18px!important;font-size:17px!important;letter-spacing:4px!important;box-shadow:0 8px 24px rgba(199,255,72,.25)}
+  #menu.v2 .mActs .mCampB{margin:0!important;clip-path:none!important;border-radius:14px!important;padding:12px 16px!important;font-size:12.5px!important;letter-spacing:1.5px!important}
+  #menu.v2 #secOn{background:rgba(18,26,21,.72);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 12px;margin:0!important;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  #menu.v2 #secOn .row{flex-wrap:wrap;justify-content:flex-start;margin:6px 0!important;gap:6px}
+  #menu.v2 #secOn .lbl{width:auto;min-width:76px;text-align:left;font-size:11px;letter-spacing:1.2px}
+  #menu.v2 #secOn .help{font-size:11.5px;opacity:.7;text-align:left}
+  #menu.v2 #err{font-size:13px;margin:0 0 4px;text-align:left}
+  #menu.v2 .mTip{position:absolute;right:calc(env(safe-area-inset-right) + 16px);bottom:calc(env(safe-area-inset-bottom) + 72px);max-width:min(360px,36vw);margin:0!important;font-size:12px;text-align:right;opacity:.85}
+  #menu.v2 .m2Nav{width:calc(100% + 32px + env(safe-area-inset-left) + env(safe-area-inset-right));flex:0 0 auto!important;min-height:52px;display:flex;justify-content:center;gap:4px;padding:6px 8px calc(env(safe-area-inset-bottom) + 6px);margin:0 calc(-16px - env(safe-area-inset-right)) 0 calc(-16px - env(safe-area-inset-left));background:rgba(8,12,10,.82);border-top:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  #menu.v2 .m2NB{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:68px;padding:6px 8px;border-radius:10px;background:none;border:none;color:#cfd8cb;font:inherit;font-size:11px;font-weight:600;cursor:pointer}
+  #menu.v2 .m2NB:hover,#menu.v2 .m2NB:active{background:rgba(255,255,255,.07);color:#fff}
+  #menu.v2 .m2NB svg{width:22px;height:22px}
+  #menu.v2 .m2NB #msBadge{position:absolute;top:2px;right:14px}
+  .m2Sheet{position:fixed;inset:0;z-index:35;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0);transition:background .18s;padding:12px}
+  .m2Sheet.hidden{display:none}
+  .m2Sheet.on{background:rgba(0,0,0,.55)}
+  .m2Panel{width:min(780px,96vw);max-height:calc(100vh - 24px);display:flex;flex-direction:column;background:rgba(14,20,16,.97);border:1px solid rgba(255,255,255,.12);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.6);transform:translateY(16px) scale(.98);opacity:0;transition:transform .18s,opacity .18s}
+  .m2Sheet.on .m2Panel{transform:none;opacity:1}
+  .m2PH{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08)}.m2PH b{font-size:16px;letter-spacing:1px}
+  .m2Close{width:34px;height:34px;border-radius:10px;border:none;background:rgba(255,255,255,.08);color:#fff;font-size:15px;cursor:pointer}
+  .m2PB{overflow-y:auto;padding:12px 16px 16px;-webkit-overflow-scrolling:touch}
+  .m2PB #modes{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))!important;gap:8px!important;margin:0!important;animation:none!important}
+  .m2PB #modes .card{width:auto!important;min-height:64px;padding:10px 12px 10px 52px!important;border-radius:12px!important;clip-path:none!important}
+  .m2PB #modes .card b{font-size:14px!important;white-space:normal!important}
+  .m2PB #modes .card span{display:block!important;font-size:11.5px!important;white-space:normal!important;opacity:.75}
+  .m2PB #modes .card .ic{left:12px!important;width:28px!important;height:28px!important;margin-top:-14px!important}
+  .m2PB .row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px!important;justify-content:flex-start!important;animation:none!important}
+  .m2PB .row .lbl{width:100%!important;text-align:left!important;font-size:11px;letter-spacing:1.5px;color:#9fb08f;margin-bottom:2px}
+  .m2PB .row .opt{padding:9px 14px!important;font-size:13.5px!important;border-radius:10px!important}
+  .m2Maps{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .m2MapC{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#eef3ea;font:inherit;cursor:pointer}
+  .m2MapC.sel{border-color:#c7ff48;background:rgba(199,255,72,.08);box-shadow:inset 0 0 0 1px #c7ff48}
+  .m2MapC .m2MT canvas{width:84px;height:84px;display:block}
+  .m2MapC b{font-size:13.5px}.m2MapC small{font-size:11px;opacity:.65}
+  @media (max-height:430px){ #menu.v2 .m2Top{min-height:40px} #menu.v2 .mEmb{width:30px!important;height:30px!important} #menu.v2 .mLogo{font-size:18px!important} #menu.v2 .mSub{display:none}
+    #menu.v2 .m2Tile{padding:7px 10px} #menu.v2 .m2TI{flex-basis:38px;width:38px;height:38px} #menu.v2 .m2TI canvas{width:38px;height:38px} #menu.v2 .m2TT b{font-size:14px} #menu.v2 .m2Pick{gap:6px} #menu.v2 .m2TT small{display:none} #menu.v2 .tab{padding:6px 14px!important}
+    #menu.v2 .mActs .mPlay{padding:11px 16px!important;font-size:15px!important} #menu.v2 .mActs .mCampB{padding:10px 12px!important}
+    #menu.v2 .m2NB{padding:4px 6px;min-width:58px;font-size:10px} #menu.v2 .m2NB svg{width:20px;height:20px} #menu.v2 .mTip{bottom:calc(env(safe-area-inset-bottom) + 60px)} }
+  @media (max-width:640px){ #menu.v2 .m2Main{width:100%} #menu.v2 .mTip{display:none} #menu.v2 .m2NB span{display:none} #menu.v2 .m2NB{min-width:44px} }
+  /* softer overlays */
+  .ov .opt,#armory .opt,#hud #editBar .opt{border-radius:10px!important}
+  .ov .big:not(.mPlay):not(.mCampB){border-radius:12px!important;clip-path:none!important}
+  .ov h1{letter-spacing:3px}
+  .ov .sbox,.ms,.ach,.wch,.clip,.admT{border-radius:12px!important}
+  .ov .nick,.ov select{border-radius:10px!important}
+  .ov .ck input[type=checkbox]{width:20px!important;height:20px!important;flex:0 0 20px;accent-color:#c7ff48;margin:0 10px 0 0!important}
+  .ov .ck{display:flex!important;align-items:center;line-height:1.3}
 </style>
 </head>
 <body>
@@ -495,7 +585,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v0.90</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v1.00</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -6696,6 +6786,94 @@ $('profBody').addEventListener('click', e => { const b = e.target.closest('butto
   PROG.money -= n; PROG.clanDon = (PROG.clanDon || 0) + n; saveProg(); lbDirty(); toast(`Вы внесли ${n} КР в казну клана [${PROG.clan}]`); renderProfile(); });
 ensurePassSkins(); wsApply();
 if (ACC && ACC.loadout) for (let i = 0; i < WEAPON_KEYS.length; i++){ const k = WEAPON_KEYS[i]; if (ACC.loadout[k] && ACC.loadout[k].finish === 'custom' && ownsOpt(k, 'finish', 'custom')){ LOADOUT[k].finish = 'custom'; try { applyLoadout(i); } catch(e){} } }
+
+// =============================== 1.00: new main menu ===============================
+(function buildMenuV2(){
+  const menu = $('menu'); if (!menu || menu.classList.contains('v2')) return; menu.classList.add('v2');
+  const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; };
+  const I = {
+    arm:'<path d="M3 15h17l3-3h6v4h-5l-2 2H9l-2 4H4l1-4H3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+    ms:'<rect x="6" y="5" width="20" height="23" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 12l2 2 4-4M11 20l2 2 4-4M20 12h3M20 20h3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>',
+    pass:'<path d="M5 9h22v5a3 3 0 0 0 0 6v5H5v-5a3 3 0 0 0 0-6z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 12l1.5 3 3.3.5-2.4 2.3.6 3.2L16 19.5 13 21l.6-3.2-2.4-2.3 3.3-.5z" fill="currentColor"/>',
+    board:'<path d="M10 5h12v6a6 6 0 0 1-12 0z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 7H6c0 4 2 6 4 6M22 7h4c0 4-2 6-4 6M16 17v5M11 27h10l-1-5h-8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+    fr:'<circle cx="11" cy="11" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="22" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 26c1-5 4-7 8-7s7 2 8 7M19 19c4 0 7 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    prof:'<circle cx="16" cy="11" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 27c1-6 5-9 10-9s9 3 10 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    info:'<circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 14v8M16 10v.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>',
+    gear:'<circle cx="16" cy="16" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M6.8 25.2l2.8-2.8M22.4 9.6l2.8-2.8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+    map:'<path d="M4 8l7-3 10 3 7-3v19l-7 3-10-3-7 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M11 5v19M21 8v19" stroke="currentColor" stroke-width="2"/>',
+    opts:'<path d="M5 9h14M23 9h4M5 16h4M13 16h14M5 23h10M19 23h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="21" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11" cy="16" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="23" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/>',
+    chev:'<path d="M12 8l8 8-8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>' };
+  const svg = (k, c) => `<svg class="${c || 'i'}" viewBox="0 0 32 32" aria-hidden="true">${I[k]}</svg>`;
+
+  // ---- top bar: logo, money, rank, account ----
+  const old = menu.querySelector('.topbar'), head = menu.querySelector('.mHead'), tabs = menu.querySelector('.mTopRow .tabs');
+  const NAVB = {}; for (const id of ['openArmory', 'openMissions', 'openPass', 'openBoard', 'openFriends', 'openProfile', 'openAbout']) NAVB[id] = $(id);
+  const top = el('div', 'm2Top'); const brand = el('div', 'm2Brand'); if (head) brand.appendChild(head); top.appendChild(brand); top.appendChild(el('span', 'sp'));
+  for (const id of ['rankChip', 'moneyMenu']) if ($(id)) top.appendChild($(id));
+  const uChip = $('userChip'), acc = el('div', 'm2Acc'); acc.appendChild(uChip); const pop = el('div', 'm2Pop hidden');
+  for (const id of ['accCodeBtn', 'openAdmin', 'logout']) if ($(id)) pop.appendChild($(id));
+  const site = old && old.querySelector('a.opt[href]'); if (site){ site.textContent = 'Сайт игры'; pop.appendChild(site); }
+  acc.appendChild(pop); top.appendChild(acc);
+  const gearB = $('openSettings'); gearB.className = 'm2Icon'; gearB.innerHTML = svg('gear'); gearB.title = 'Настройки'; top.appendChild(gearB);
+  uChip.addEventListener('click', e => { e.stopPropagation(); pop.classList.toggle('hidden'); });
+  document.addEventListener('click', e => { if (!acc.contains(e.target)) pop.classList.add('hidden'); });
+  top.insertBefore(tabs, top.children[1]);
+  menu.insertBefore(top, menu.firstChild.nextSibling);
+  if (old) old.remove(); const tr0 = menu.querySelector('.mTopRow'); if (tr0) tr0.remove();
+
+  // ---- main column ----
+  const main = el('div', 'm2Main'), secOff = $('secOff'), secOn = $('secOn'); main.appendChild(secOff); main.appendChild(secOn);
+  menu.insertBefore(main, top.nextSibling);
+  const pick = el('div', 'm2Pick');
+  const tile = (id, icon, cap) => { const b = el('button', 'm2Tile'); b.id = id; b.innerHTML = `<span class="m2TI">${icon}</span><span class="m2TT"><small>${cap}</small><b></b><em></em></span>${svg('chev', 'm2Ch')}`; pick.appendChild(b); return b; };
+  const tMode = tile('m2Mode', '', 'Режим'), tMap = tile('m2Map', '<canvas width="64" height="64"></canvas>', 'Карта'), tOpt = tile('m2Opt', svg('opts', 'i'), 'Параметры боя');
+  secOff.insertBefore(pick, secOff.firstChild);
+
+  // ---- sheets ----
+  const sheet = (id, title, nodes) => { const sh = el('div', 'm2Sheet hidden'); sh.id = id; const pn = el('div', 'm2Panel'); pn.appendChild(el('div', 'm2PH', `<b>${title}</b><button class="m2Close" aria-label="Закрыть">✕</button>`));
+    const body = el('div', 'm2PB'); for (const n of nodes) if (n) body.appendChild(n); pn.appendChild(body); sh.appendChild(pn); document.body.appendChild(sh);
+    sh.addEventListener('click', e => { if (e.target === sh || e.target.closest('.m2Close')) closeSheet(sh); }); return sh; };
+  const openSheet = sh => { sh.classList.remove('hidden'); requestAnimationFrame(() => sh.classList.add('on')); };
+  const closeSheet = sh => { sh.classList.remove('on'); setTimeout(() => sh.classList.add('hidden'), 180); refresh(); };
+  const modesEl = $('modes'), optEls = ['conds', 'clsRow', 'myteam', 'diffs', 'gfxs'].map(id => $(id));
+  const shMode = sheet('m2ShMode', 'Выберите режим', [modesEl]);
+  const mapGrid = el('div', 'm2Maps'); const shMap = sheet('m2ShMap', 'Выберите карту', [mapGrid]);
+  const shOpt = sheet('m2ShOpt', 'Параметры боя', optEls);
+  tMode.onclick = () => openSheet(shMode); tMap.onclick = () => openSheet(shMap); tOpt.onclick = () => openSheet(shOpt);
+  $('modes').addEventListener('click', e => { if (e.target.closest('button[data-mode]')) setTimeout(() => closeSheet(shMode), 120); });
+
+  // map cards with a little painted preview of each map
+  const oldMaps = $('maps'); oldMaps.classList.add('hidden');
+  const thumb = (id, S) => { const cv = document.createElement('canvas'); cv.width = cv.height = S; const g = cv.getContext('2d'), M = MAPS[id], c = new THREE.Color(), N = Math.min(S, 48), cell = S/N, R = M.R;
+    const keepR = MAP_R; MAP_R = R; try { for (let j = 0; j < N; j++) for (let i = 0; i < N; i++){ const x = -R + (i + .5)*2*R/N, z = -R + (j + .5)*2*R/N; let h = 0; try { h = M.height(x, z); } catch(e){} try { M.color(x, z, h, c); } catch(e){ c.set(0x4a5a36); }
+      g.fillStyle = '#' + c.getHexString(); g.fillRect(i*cell, j*cell, cell + 1, cell + 1); } } finally { MAP_R = keepR; }
+    g.globalCompositeOperation = 'destination-in'; g.beginPath(); g.arc(S/2, S/2, S/2 - 1, 0, 6.29); g.fill(); g.globalCompositeOperation = 'source-over'; return cv; };
+  const thumbs = {};
+  for (const b of oldMaps.querySelectorAll('button[data-map]')){ const id = b.dataset.map, M = MAPS[id]; if (!M) continue;
+    const card = el('button', 'm2MapC'); card.dataset.map = id; card.innerHTML = `<span class="m2MT"></span><b>${esc(M.name)}</b><small>Ø ${Math.round(M.R*2)} м${M.R >= 100 ? ' · большая' : ''}${M.snow ? ' · снег' : ''}</small>`;
+    try { thumbs[id] = thumb(id, 96); card.querySelector('.m2MT').appendChild(thumbs[id]); } catch(e){}
+    card.onclick = () => { b.click(); setTimeout(() => closeSheet(shMap), 120); }; mapGrid.appendChild(card); }
+
+  // ---- bottom navigation ----
+  const nav = el('div', 'm2Nav');
+  for (const [id, k, label] of [['openArmory', 'arm', 'Арсенал'], ['openMissions', 'ms', 'Миссии'], ['openPass', 'pass', 'Пропуск'], ['openBoard', 'board', 'Рейтинг'], ['openFriends', 'fr', 'Друзья'], ['openProfile', 'prof', 'Профиль'], ['openAbout', 'info', 'Об игре']]){
+    const b = NAVB[id]; if (!b) continue; const badge = b.querySelector('i'); b.className = 'm2NB'; b.innerHTML = svg(k) + `<span>${label}</span>`; if (badge) b.appendChild(badge); nav.appendChild(b); }
+  menu.appendChild(nav);
+  const help = menu.querySelector(':scope > .help'); if (help) help.classList.add('m2Hide');
+
+  // ---- keep the tiles in sync with the current choices ----
+  function refresh(){
+    const mc = $('modes').querySelector('.card.sel') || $('modes').querySelector('.card'); if (mc){ const ic = mc.querySelector('svg'); tMode.querySelector('.m2TI').innerHTML = ic ? ic.outerHTML : ''; tMode.querySelector('b').textContent = mc.querySelector('b').textContent; tMode.querySelector('em').textContent = (mc.querySelector('span') || {}).textContent || ''; }
+    const M = MAPS[selMap] || MAPS.forest; tMap.querySelector('b').textContent = M.name; tMap.querySelector('em').textContent = `Ø ${Math.round(M.R*2)} м${M.R >= 100 ? ' · большая карта' : ''}`;
+    const cv = tMap.querySelector('canvas'), th = thumbs[selMap]; if (cv && th){ const g = cv.getContext('2d'); g.clearRect(0, 0, 64, 64); g.drawImage(th, 0, 0, 64, 64); }
+    for (const c of mapGrid.children) c.classList.toggle('sel', c.dataset.map === selMap);
+    const sel = (rid, attr) => { const r = $(rid); const b = r && r.querySelector('button.sel' + (attr ? `[data-${attr}]` : '')); return b ? b.textContent.trim() : ''; };
+    const t = { day:'День', evening:'Вечер', night:'Ночь' }[settings.time] || 'День', wx = settings.rain ? 'дождь' : settings.weather === 'fog' ? 'туман' : settings.weather === 'blizzard' ? 'метель' : 'ясно';
+    tOpt.querySelector('b').textContent = `${t} · ${wx}`; tOpt.querySelector('em').textContent = [sel('clsRow', 'cls'), sel('myteam', 'team'), sel('diffs', 'diff')].filter(Boolean).join(' · ') || 'класс, команда, сложность';
+  }
+  menu.addEventListener('click', () => setTimeout(refresh, 30)); document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.m2Sheet')) setTimeout(refresh, 30); });
+  refresh(); window.__m2refresh = refresh;
+})();
 
 equip(0); WEAPONS[0].model.g.visible = false;
 if (settings.gfx) $('gfxs').querySelector(`[data-gfx="${settings.gfx}"]`)?.click();
