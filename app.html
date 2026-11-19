@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 520, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 521, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -639,6 +639,7 @@
   <div class="sgrid" style="max-width:900px">
     <div class="sbox"><h3>paralysax</h3><p style="margin:0;font-size:14px;line-height:1.5">Главный разработчик. Идея игры, режимы и карты, модель тяжёлого пистолета, модели бойцов, движок погоды и времени суток.</p></div>
     <div class="sbox"><h3>иксов</h3><p style="margin:0;font-size:14px;line-height:1.5">Тестер и модератор. Проверяет новые версии, ищет ошибки, следит за порядком в онлайне.</p></div>
+    <div class="sbox"><h3>Stepan2010_ok</h3><p style="margin:0;font-size:14px;line-height:1.5">Тестер и модератор. Проверяет новые версии, ищет ошибки, следит за порядком в онлайне.</p></div>
   </div>
   <button class="big" id="aboutClose">Закрыть</button>
 </div>
