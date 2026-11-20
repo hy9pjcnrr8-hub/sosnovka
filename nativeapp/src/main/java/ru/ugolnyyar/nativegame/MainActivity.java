@@ -59,6 +59,19 @@ public class MainActivity extends Activity {
     private Thread gameThread;
     /** Скрытый режим для автотеста: игра сама выбирает варианты. */
     volatile boolean autoplay = false;
+    /** Скрытый тест: старт сразу в Части III. */
+    volatile boolean a3test = false;
+    void setupA3Test() {
+        act = 3; step = 13; deadline = -1; goal = 1000000; month = 1; year = 1; day = 2100;
+        pop = 760000; budget = 5_000_000_000.0; trust = 95; housing = 900000; jobs = 700000;
+        factories = 60; blocks = 20; micro = 30; schools = 55; hospitals = 20; parks = 10; malls = 10; capBonus = 6;
+        heat = "coal"; road = 2; roadSet = true; light = "trafo"; mine = "alive"; mineOpen = true; water = "deep"; comm = "tower"; shops = "own";
+        lift = "winch"; ratrak = true; hotel = true; housingChoice = "people"; matvey = true;
+        rail = "electric"; airport = "full"; uni = true; med = true; tram = true; cup = true; energy = "hydro"; museum = true; north = "dev";
+        income.put("Заводы", 120_000_000L);
+        done.add("free");
+        chapter = "ГОРОД";
+    }
 
     // ───────────────────────── интерфейс ─────────────────────────
 
@@ -137,6 +150,7 @@ public class MainActivity extends Activity {
         setContentView(root);
 
         autoplay = getIntent() != null && getIntent().getBooleanExtra("autoplay", false);
+        a3test = getIntent() != null && getIntent().getBooleanExtra("a3test", false);
         gameThread = new Thread(this::gameLoop, "game");
         gameThread.start();
     }
@@ -375,7 +389,7 @@ public class MainActivity extends Activity {
             LinearLayout.LayoutParams svlp = new LinearLayout.LayoutParams(-1, -2);
             ctl.addView(sv, svlp);
             LinearLayout gridRow = null; int inRow = 0;
-            Button pinned = null;
+            java.util.List<Button> pinnedList = new java.util.ArrayList<>();
             for (Opt o : opts) {
                 boolean afford = o.cost <= 0 || budgetNow >= o.cost;
                 String costLine = null;
@@ -390,7 +404,7 @@ public class MainActivity extends Activity {
                 }
                 Button b = makeButton(o.text, o.sub, costLine, costColor, afford, o.style);
                 b.setOnClickListener(v -> { ctl.removeAllViews(); answers.offer(o); });
-                if (o.key.equals("end")) { pinned = b; continue; }
+                if (o.key.startsWith("end")) { pinnedList.add(b); continue; }
                 if (grid) {
                     b.setTextSize(13.5f);
                     b.setPadding(dp(10), dp(8), dp(10), dp(8));
@@ -402,10 +416,19 @@ public class MainActivity extends Activity {
                 } else list.addView(b);
             }
             if (grid && inRow == 1) { View sp = new View(this); LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, 1, 1f); lp.leftMargin = dp(6); gridRow.addView(sp, lp); }
-            if (pinned != null) {
+            if (!pinnedList.isEmpty()) {
+                LinearLayout prow = new LinearLayout(this);
+                prow.setOrientation(LinearLayout.HORIZONTAL);
+                for (int pi = 0; pi < pinnedList.size(); pi++) {
+                    Button pb = pinnedList.get(pi);
+                    if (pinnedList.size() > 1) { pb.setTextSize(14); pb.setPadding(dp(8), dp(10), dp(8), dp(10)); }
+                    LinearLayout.LayoutParams blp2 = new LinearLayout.LayoutParams(0, -2, 1f);
+                    if (pi > 0) blp2.leftMargin = dp(7);
+                    prow.addView(pb, blp2);
+                }
                 LinearLayout.LayoutParams plp = new LinearLayout.LayoutParams(-1, -2);
                 plp.topMargin = dp(6); plp.bottomMargin = 0;
-                ctl.addView(pinned, plp);
+                ctl.addView(prow, plp);
             }
             final int maxH = (int) (getResources().getDisplayMetrics().heightPixels * 0.34f);
             sv.post(() -> {
@@ -472,6 +495,7 @@ public class MainActivity extends Activity {
         rail = energy = airport = mineFate = north = null;
         uni = med = tram = museum = demolished = cup = filters = false;
         done.clear(); lastEv.clear();
+        a3metro = a3bridge = a3tower = a3games = a3matvey = null; a3vsm = false; a3gamesDay = 0; a3boost = 0;
         post(() -> city.reset());
     }
 
@@ -934,7 +958,7 @@ public class MainActivity extends Activity {
         double rate = Math.max(.08, Math.min(.8, .2 + 1.2 * quality() + .1 * ads)) * serviceFactor() * smogF * days / 30.0;
         if (cap > pop) {
             long gain = (long) Math.floor((cap - pop) * rate);
-            if (act >= 2) gain = Math.min(gain, (long) Math.floor((pop * .03 + 2000) * (1 + .3 * ads) * serviceFactor() * smogF * days / 30.0));
+            if (act >= 2) gain = Math.min(gain, (long) Math.floor((pop * .03 + 2000) * (1 + .3 * ads + a3boost) * serviceFactor() * smogF * days / 30.0));
             addPop(gain, "переехали в город");
         } else if (cap < pop) addPop(-(long) Math.floor((pop - cap) * .25 * days / 30.0), housing < support() ? "негде жить" : "нет работы");
         ads = 0;
@@ -989,6 +1013,7 @@ public class MainActivity extends Activity {
         }
         o.add(new Opt("📣 Реклама", "быстрее переезжают", a2 ? 1_200_000 : AD_COST, "ad"));
         o.add(new Opt("Завершить месяц →", 0, "end", 2));
+        if (deadline < 0) o.add(new Opt("⏩ 3 месяца", 0, "end3", 2));
         return o.toArray(new Opt[0]);
     }
 
@@ -1014,6 +1039,7 @@ public class MainActivity extends Activity {
     static final long[][] MS_BONUS = {{10000, 4_000_000}, {25000, 6_000_000}, {75000, 10_000_000}, {100000, 15_000_000}, {150000, 20_000_000},
             {250000, 30_000_000}, {500000, 50_000_000}, {1000000, 100_000_000}};
 
+    boolean skip3 = false;
     void monthTurn() {
         save();
         hud();
@@ -1026,10 +1052,11 @@ public class MainActivity extends Activity {
         }
         while (true) {
             String k = choose("Что строим?", buildMenu(), capsArr(), true);
-            if (k.equals("end")) break;
+            if (k.equals("end") || k.equals("end3")) { skip3 = k.equals("end3"); break; }
             doBuild(k);
         }
-        int days = Math.min(30, daysLeft());
+        int days = skip3 ? 90 : Math.min(30, daysLeft());
+        if (skip3) { month += 2; skip3 = false; }
         advance(days);
         growthTick(days);
         if (act >= 2 && smog > 40) trust = Math.max(0, trust - 2);
@@ -1043,7 +1070,7 @@ public class MainActivity extends Activity {
             }
         }
         freezeEvent();
-        if (deadline < 0 && month % 12 == 0) year++;
+        if (deadline < 0) year = month / 12 + 1;
         sleep(500);
         clear();
     }
@@ -1363,27 +1390,184 @@ public class MainActivity extends Activity {
         return !k.equals("new");
     }
 
+    // ═══════════════════ ЧАСТЬ III · «МИЛЛИОННИК» ═══════════════════
+    volatile String a3metro, a3bridge, a3tower, a3games, a3matvey;
+    volatile boolean a3vsm;
+    volatile int a3gamesDay;
+    double a3boost;
+
+    long P(double mult, long base) { return Math.round(Math.max(base, monthly() * mult) / 1_000_000.0) * 1_000_000L; }
+    static final Opt LATER = new Opt("⏳ Отложить — вернёмся через 3 месяца", 0, "later");
+
+    static final String[] A3_IDS = {"metro", "bridge", "tower", "games", "vsm", "matvey"};
+    static final int[] A3_POP = {180000, 240000, 300000, 400000, 550000, 750000};
+
+    boolean act3Story() {
+        for (int i = 0; i < A3_IDS.length; i++) {
+            String id = A3_IDS[i];
+            if (done.contains("a3_" + id) || pop < A3_POP[i]) continue;
+            Integer w = lastEv.get("a3wait_" + id);
+            if (w != null && w > month) continue;
+            done.add("a3_" + id);
+            clear();
+            String r;
+            switch (id) {
+                case "metro": r = a3Metro(); break;
+                case "bridge": r = a3Bridge(); break;
+                case "tower": r = a3Tower(); break;
+                case "games": r = a3Games(); break;
+                case "vsm": r = a3Vsm(); break;
+                default: r = a3Matvey(); break;
+            }
+            if ("later".equals(r)) { done.remove("a3_" + id); lastEv.put("a3wait_" + id, month + 3); say("Хорошо. Вернёмся к этому через три месяца — копите бюджет.", DIMK); }
+            pause(); chapter = "ГОРОД"; save();
+            return true;
+        }
+        return false;
+    }
+
+    String a3Metro() {
+        chapter = "III·1 МЕТРО"; focus("metro");
+        say("Часть III · Метро", H);
+        say("Утром проспект Шахтёров стоит в пробке от копра до вокзала. Трамваи битком, автобусы не справляются.");
+        say("Метростроевцы из Новосибирска готовы зайти: грунт плотный, а у города есть то, чего нет ни у кого, — шахтёры.");
+        say("6 СТАНЦИЙ", BIG);
+        String k = choose("Транспорт для большого города:",
+                new Opt("🚇 Метро: первая линия, 6 станций — копали шахтёры", P(2.5, 120_000_000L), "full"),
+                new Opt("🚊 Скоростной трамвай по выделенке (ЛРТ)", P(1, 40_000_000L), "lrt"),
+                new Opt("🚌 Ещё автобусов", 8_000_000L, "bus"), LATER);
+        if (k.equals("later")) return k;
+        a3metro = k;
+        if (k.equals("full")) { advance(60); a3boost += .2; capBonus += 3; jobs += 8000; addTrust(10);
+            say("Станция «Шахтёрская» украшена старыми касками и лампами. Первый поезд ведёт сын деда Матвея.");
+            if (matvey) say("Под землёй опять наши. Только теперь — с поездами.", QUOTE); }
+        else if (k.equals("lrt")) { advance(35); a3boost += .15; capBonus += 1; jobs += 3000; say("Синие вагоны идут по выделенке — 12 минут от вокзала до горы."); }
+        else { advance(10); addTrust(-6); say("Автобусов стало больше. Пробок — тоже."); }
+        return k;
+    }
+
+    String a3Bridge() {
+        chapter = "III·2 ЛЕВЫЙ БЕРЕГ"; focus("river");
+        say("Левый берег", H);
+        say("Город упёрся в реку. На правом берегу места больше нет, а левый — пустой: сосны, песок, старые дачи.");
+        say("Мост откроет место для целого нового района.");
+        say("1 200 М", BIG);
+        String k = choose("Как перейти реку?",
+                new Opt("🌉 Вантовый мост с пилоном 180 м — символ города", P(3, 150_000_000L), "cable"),
+                new Opt("⛴ Наплавной мост и паром", P(.7, 25_000_000L), "pont"),
+                new Opt("Пока строим вверх, а не вширь", 0, "none"), LATER);
+        if (k.equals("later")) return k;
+        if (!k.equals("none")) {
+            a3bridge = k; advance(k.equals("cable") ? 75 : 30);
+            housing += k.equals("cable") ? 80000 : 20000; a3boost += k.equals("cable") ? .12 : .04;
+            say(k.equals("cable") ? "Пилон светится над рекой, ванты как струны. На открытии — 40 тысяч человек и салют." : "Понтоны покачиваются, летом ходит паром. Левый берег заселяется.");
+            addPop(k.equals("cable") ? 15000 : 4000, "переехали на левый берег");
+        } else { say("Цены на квартиры ползут вверх."); addTrust(-4); }
+        return k;
+    }
+
+    String a3Tower() {
+        chapter = "III·3 ТЕЛЕБАШНЯ"; focus("tvtower");
+        say("Башня над Яром", H);
+        say("Старая вышка связи не тянет: 5G, телевидение, аварийная связь для шахт.");
+        say("Архитекторы предлагают башню с вращающимся рестораном — чтобы с неё был виден весь город, гора и река.");
+        String k = choose("Какую башню ставим?",
+                new Opt("🗼 Телебашня 330 м с рестораном и смотровой", P(1.5, 90_000_000L), "full"),
+                new Opt("📡 Простая вышка 5G", 20_000_000L, "5g"), LATER);
+        if (k.equals("later")) return k;
+        a3tower = k; advance(k.equals("full") ? 50 : 15);
+        if (k.equals("full")) { income.put("Телебашня", Math.round(Math.max(3_000_000, monthly() * .03))); addTrust(8);
+            say("Ресторан делает оборот за 40 минут. В ясную ночь видно огни посёлков за 80 км."); }
+        else { jobs += 1500; say("Связь отличная. Туристы фотографируют гору, а не вышку."); }
+        return k;
+    }
+
+    String a3Games() {
+        chapter = "III·4 УНИВЕРСИАДА"; focus("stadium");
+        say("Универсиада", H);
+        say("Министерство спорта ищет город для зимней Универсиады. Нужны стадион, трассы, аэропорт и гостиницы.");
+        double chance = Math.min(.95, (cup ? .25 : 0) + ("full".equals(airport) ? .25 : airport != null ? .1 : 0) + ("full".equals(a3metro) ? .15 : 0) + .25);
+        say("Шансы заявки: <b>" + Math.round(chance * 100) + "%</b> (кубок мира, аэропорт и метро помогают).", DIMK);
+        String k = choose("Участвуем?",
+                new Opt("🏟 Подать заявку: стадион на 40 000 и деревня спортсменов", P(3, 250_000_000L), "bid"),
+                new Opt("🏅 Провести всероссийские игры — надёжно", P(1, 60_000_000L), "nat"),
+                new Opt("Не участвуем", 0, "none"),
+                new Opt("⏳ Отложить — следующий отбор через 3 месяца", 0, "later"));
+        if (k.equals("later")) return k;
+        if (k.equals("none")) { say("Универсиаду проводят в Красноярске."); return k; }
+        advance(k.equals("bid") ? 60 : 30);
+        a3gamesDay = day; a3games = "built";
+        if (k.equals("bid")) {
+            say("Москва. Голосование. Конверт открывают медленно…");
+            if (Math.random() < chance) {
+                a3games = "won"; say("УГОЛЬНЫЙ ЯР", STAMP);
+                say("Яр принимает Универсиаду! Спонсоры, телевидение, 60 стран.");
+                budget += P(3, 120_000_000L); a3boost += .15; income.put("Универсиада и туризм", Math.round(monthly() * .05));
+                addPop(30000, "переехали работать на Универсиаду");
+            } else { say("Проиграли Казани в два голоса. Стадион остаётся городу.", REDK); addTrust(-5); a3boost += .05; }
+        } else { a3boost += .08; say("Всероссийские игры прошли без единой накладки. Стадион полон каждые выходные."); addPop(6000, "болельщики остались жить"); }
+        return k;
+    }
+
+    String a3Vsm() {
+        chapter = "III·5 МАГИСТРАЛЬ"; focus("vsm");
+        say("Скоростная магистраль", H);
+        say("РЖД проектирует высокоскоростную магистраль на восток. Трасса может пройти через Яр — или в 200 км южнее.");
+        say("2 ЧАСА ДО НОВОСИБИРСКА", BIG);
+        String k = choose("Бьёмся за магистраль?",
+                new Opt("🚄 Да: доля города в строительстве и вокзал ВСМ", P(3, 300_000_000L), "yes"),
+                new Opt("Пусть идёт южнее", 0, "no"),
+                new Opt("⏳ Отложить — РЖД ждёт ответа 3 месяца", 0, "later"));
+        if (k.equals("later")) return k;
+        if (k.equals("yes")) {
+            a3vsm = true; if (rail == null) rail = "electric";
+            advance(90); a3boost += .2; income.put("ВСМ", Math.round(monthly() * .04)); capBonus += 3;
+            say("Белый поезд проходит мост за 9 секунд. Утром — в Новосибирске, вечером — дома.");
+            addPop(20000, "приехали по ВСМ");
+        } else say("Магистраль ушла южнее. Яр остался в стороне от главного пути.");
+        return k;
+    }
+
+    String a3Matvey() {
+        chapter = "III·6 ДЕВЯНОСТО"; post(() -> city.focus("monument", 7000));
+        say("Девяносто лет", H);
+        if (matvey) {
+            say("Деду Матвею — девяносто. Он всё так же каждое утро спускается в шахтёрский музей — проверить насосы, «на всякий случай».");
+            say("Когда я двенадцать лет один качал воду, думал: дурак старый. А оно вон как вышло.", QUOTE);
+        } else say("Старейшему шахтёру Яра — девяносто. Говорят, он двенадцать лет в одиночку держал насосы в закрытой шахте.");
+        say("Горожане собрали подписи: хотят отметить его так, чтобы помнили дети.");
+        String k = choose("Как отметим?",
+                new Opt("🗿 Памятник «Шахтёр, который не ушёл» перед ДК", 30_000_000L, "monument"),
+                new Opt("🪧 Назвать главную площадь его именем", 0, "square"));
+        a3matvey = k; addTrust(12);
+        advance(k.equals("monument") ? 30 : 5);
+        say(k.equals("monument") ? "Бронзовый шахтёр поднимает лампу над площадью. Лампа горит всегда." : "На табличке: «Площадь Матвея». Он ворчит, что не заслужил, — и приходит туда каждый вечер.");
+        return k;
+    }
+
     boolean act3() {
         if (!done.contains("free")) {
             done.add("free"); act = 3; deadline = -1; year = 1; month = 0;
             goal = pop < 250000 ? 250000 : pop < 500000 ? 500000 : 1000000;
             clear();
             say("Свободная игра", H);
-            say("Срока больше нет. Цели: 250 000 → 500 000 → миллион. За каждую — награда области.");
+            say("Срока больше нет. Цели: 250 000 → 500 000 → миллион и дальше. За каждую — награда области.");
+            say("Впереди — Часть III: метро, мост на левый берег, телебашня, Универсиада, скоростная магистраль. Главы откроются, когда город вырастет.", GOLDK);
             say("Игра сохраняется сама каждый месяц.", DIMK);
             pause("Строить →");
         }
         while (true) {
             month++;
             chapter = "ГОРОД";
-            randomEvent();
+            if (!act3Story()) randomEvent();
             monthTurn();
             if (pop >= goal) {
                 clear();
-                say(goal >= 1000000 ? "Миллионник" : goal >= 500000 ? "Большой город" : "Крупный город", H);
+                say(goal >= 2000000 ? "Новая высота" : goal >= 1000000 ? "Миллионник" : goal >= 500000 ? "Большой город" : "Крупный город", H);
                 say(fmt(goal), BIG);
                 say(goal >= 1000000 ? "ГОРОД-МИЛЛИОННИК" : "ЦЕЛЬ ДОСТИГНУТА", STAMP);
-                if (goal >= 1000000) { say("Миллион. Двенадцать лет назад здесь горело 312 окон."); if (matvey) say("Я ж говорил — вернутся.", QUOTE); goal = 2000000; }
+                if (goal >= 2000000) { say("Агломерация растёт: Яр — один из крупнейших городов Сибири."); goal += 1000000; }
+                else if (goal >= 1000000) { say("Миллион. Двенадцать лет назад здесь горело 312 окон."); if (matvey) say("Я ж говорил — вернутся.", QUOTE); goal = 2000000; }
                 else goal = goal == 250000 ? 500000 : 1000000;
                 say("Следующая цель: " + fmt(goal) + ".");
                 pause();
@@ -1401,6 +1585,9 @@ public class MainActivity extends Activity {
             o.put("act", act); o.put("goal", goal); o.put("deadline", deadline); o.put("step", step); o.put("month", month); o.put("year", year);
             o.put("schools", schools); o.put("hospitals", hospitals); o.put("parks", parks); o.put("malls", malls); o.put("micro", micro);
             o.put("smog", smog); o.put("capBonus", capBonus);
+            o.put("a3boost", a3boost); o.put("a3gamesDay", a3gamesDay); o.put("a3vsm", a3vsm);
+            if (a3metro != null) o.put("a3metro", a3metro); if (a3bridge != null) o.put("a3bridge", a3bridge); if (a3tower != null) o.put("a3tower", a3tower);
+            if (a3games != null) o.put("a3games", a3games); if (a3matvey != null) o.put("a3matvey", a3matvey);
             String[] sk = {"chapter", "heat", "light", "water", "comm", "shops", "lift", "housingChoice", "mine", "rail", "energy", "airport", "mineFate", "north"};
             String[] sv = {chapter, heat, light, water, comm, shops, lift, housingChoice, mine, rail, energy, airport, mineFate, north};
             for (int i = 0; i < sk.length; i++) if (sv[i] != null) o.put(sk[i], sv[i]);
@@ -1424,6 +1611,9 @@ public class MainActivity extends Activity {
             act = o.getInt("act"); goal = o.getInt("goal"); deadline = o.getInt("deadline"); step = o.getInt("step"); month = o.getInt("month"); year = o.getInt("year");
             schools = o.getInt("schools"); hospitals = o.getInt("hospitals"); parks = o.getInt("parks"); malls = o.getInt("malls"); micro = o.getInt("micro");
             smog = o.getDouble("smog"); capBonus = o.getInt("capBonus");
+            a3boost = o.optDouble("a3boost", 0); a3gamesDay = o.optInt("a3gamesDay", 0); a3vsm = o.optBoolean("a3vsm");
+            a3metro = o.optString("a3metro", null); a3bridge = o.optString("a3bridge", null); a3tower = o.optString("a3tower", null);
+            a3games = o.optString("a3games", null); a3matvey = o.optString("a3matvey", null);
             chapter = o.optString("chapter", "ПРОЛОГ"); heat = o.optString("heat", null); light = o.optString("light", null); water = o.optString("water", null);
             comm = o.optString("comm", null); shops = o.optString("shops", null); lift = o.optString("lift", "none"); housingChoice = o.optString("housingChoice", null);
             mine = o.optString("mine", null); rail = o.optString("rail", null); energy = o.optString("energy", null); airport = o.optString("airport", null);
@@ -1476,6 +1666,7 @@ public class MainActivity extends Activity {
                     clear();
                     if (k.equals("new")) { clearSave(); newGame(); }
                 } else newGame();
+                if (a3test) { a3test = false; setupA3Test(); }
                 try {
                     while (step <= 13) {
                         save();

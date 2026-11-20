@@ -4,7 +4,7 @@ APK=nativeapp/build/outputs/apk/release/nativeapp-release.apk
 mkdir -p ci-shots
 adb install -r $APK
 adb logcat -c
-adb shell am start -n ru.ugolnyyar.nativegame/.MainActivity --ez autoplay true
+adb shell am start -n ru.ugolnyyar.nativegame/.MainActivity --ez autoplay true --ez a3test true
 shot() {
   timeout 60 adb shell screencap -p /sdcard/s.png && timeout 60 adb pull /sdcard/s.png ci-shots/$1.png >/dev/null && echo "shot $1 ok" || echo "shot $1 FAILED"
 }

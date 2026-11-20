@@ -182,6 +182,8 @@ public class CityView extends View {
         k.put("cup", g.cup ? "on" : "off"); k.put("filters", g.filters ? "on" : "off");
         for (int i = 0; i < 24; i++) k.put("mic" + i, i < g.micro ? "on" : "off");
         for (int i = 0; i < 12; i++) { k.put("sch" + i, i < g.schools ? "on" : "off"); k.put("hos" + i, i < g.hospitals ? "on" : "off"); k.put("par" + i, i < g.parks ? "on" : "off"); k.put("mal" + i, i < g.malls ? "on" : "off"); }
+        k.put("metro", g.a3metro != null && !"bus".equals(g.a3metro) ? g.a3metro : "off"); k.put("bridge", g.a3bridge == null ? "off" : g.a3bridge);
+        k.put("tvtower", g.a3tower == null ? "off" : g.a3tower); k.put("stadium", g.a3games == null ? "off" : "on"); k.put("vsm", g.a3vsm ? "on" : "off"); k.put("monument", g.a3matvey == null ? "off" : g.a3matvey);
         k.put("sky", g.pop >= 200000 ? String.valueOf(Math.min(9, (g.pop - 200000) / 100000 + 1)) : "off");
         return k;
     }
@@ -199,6 +201,8 @@ public class CityView extends View {
         SPOTS.put("energy", new float[]{-400, 240, .8f, 1.2f}); SPOTS.put("hydro", new float[]{-280, 290, .7f, 1.4f}); SPOTS.put("wind", new float[]{200, 200, .35f, 1.0f});
         SPOTS.put("airport", new float[]{-80, 190, .5f, 1.1f}); SPOTS.put("uni", new float[]{1210, 280, 1, 1.5f}); SPOTS.put("med", new float[]{1060, 290, 1, 1.7f});
         SPOTS.put("north", new float[]{1450, 220, .9f, 1.0f}); SPOTS.put("tram", new float[]{500, 330, 1, 1.4f}); SPOTS.put("museum", new float[]{95, 230, 1, 1.5f});
+        SPOTS.put("metro", new float[]{380, 320, 1, 1.7f}); SPOTS.put("river", new float[]{820, 380, 1, .9f}); SPOTS.put("bridge", new float[]{820, 330, 1, .85f});
+        SPOTS.put("tvtower", new float[]{-150, 150, .62f, .8f}); SPOTS.put("stadium", new float[]{-640, 260, .8f, 1.15f}); SPOTS.put("vsm", new float[]{-150, 370, 1, 1.1f}); SPOTS.put("monument", new float[]{658, 320, 1, 2.6f});
         SPOTS.put("mineFate", new float[]{95, 260, 1, 1.6f}); SPOTS.put("cup", new float[]{770, 200, .55f, 1.3f}); SPOTS.put("filters", new float[]{400, 220, .78f, 1.0f});
         SPOTS.put("sky", new float[]{1400, 200, .84f, .9f});
     }
@@ -687,7 +691,7 @@ public class CityView extends View {
 
 
     // ════════════════ ЧАСТЬ II: новые районы ════════════════
-    float[] bounds() { return g.act >= 2 ? new float[]{-820, 1900} : new float[]{0, 1000}; }
+    float[] bounds() { return g.act >= 3 && (g.a3games != null || g.a3tower != null) ? new float[]{-1200, 2050} : g.act >= 2 ? new float[]{-820, 1900} : new float[]{0, 1000}; }
     float LITF = .5f;
     static final float[] SCH = {1400, 975, 1815, 1500, 1060, 1745, 1340, 1880, 1190, 1630, 1270, 1560};
     static final float[] HOS = {1300, 1885, 1045, 1660, 1480, 1220, 1770, 1100, 1590, 1370, 1700, 1150};
@@ -950,12 +954,160 @@ public class CityView extends View {
                 q.vy += 60 * dt;
                 ga = 1 - k; circ(q.x, q.y, q.r, "#fff3c0");
                 glow(q.x, q.y, 8, WARM, (1 - k) * .8f, q.p);
+            } else if (q.type == 3) {
+                q.vy += 28 * dt; q.vx *= .985f; q.vy *= .985f;
+                ga = 1 - k; circ(q.x, q.y, q.r, q.col);
+                if ((q.hashCode() & 3) == 0) glow(q.x, q.y, 10, q.col | 0xFF000000, (1 - k) * .9f, q.p);
             } else {
                 ga = (1 - k) * .35f; circ(q.x, q.y, q.r * (1 + k), "#c9cfdc");
             }
         }
         ga = 1;
         while (parts.size() > 500) parts.remove(0);
+    }
+
+    // ═════════ ЧАСТЬ III: река, мост, метро, памятник, телебашня, стадион, ВСМ ═════════
+    void drawAct3() {
+        if (g.act < 3) return;
+        layer(1);
+        float ry = GROUND + 70, rh = 60;
+        if (snowy) {
+            R(-1300, ry, 3400, rh, "#aebfd6");
+            ga = .55f;
+            for (int i = 0; i < 60; i++) { float x = -1250 + i * 57 + hash(i * 7) * 20; poly("#e6eef8", x, ry + 6 + hash(i) * 30, x + 30, ry + 4 + hash(i * 3) * 30, x + 46, ry + 14 + hash(i * 5) * 30, x + 8, ry + 18 + hash(i * 9) * 30); }
+            ga = 1;
+        } else {
+            p.setShader(new LinearGradient(0, ry, 0, ry + rh, C(summer ? "#2a2a4e" : "#141c38"), C("#070b1d"), Shader.TileMode.CLAMP));
+            p.setStyle(Paint.Style.FILL); p.setColor(Color.BLACK); cv.drawRect(-1300, ry, 2100, ry + rh, p); p.setShader(null);
+            p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.ADD));
+            for (int x = -1180; x < 2000; x += 46) {
+                float a = .10f + .08f * (float) Math.sin(T * 2 + x * .07f);
+                for (int k = 0; k < 7; k++) {
+                    float wob = (float) Math.sin(T * 3 + k * 1.3f + x) * 3;
+                    ga = a * (1 - k / 7f); R(x + wob, ry + 4 + k * 7, 10 - k, 2.2f, hash(x) > .5f ? "#ffcf72" : "#9ad8ff");
+                }
+            }
+            ga = 1; p.setXfermode(null);
+        }
+        R(-1300, ry - 4, 3400, 5, snowy ? "#d9e2ef" : "#3a4158");
+        for (int x = -1200; x < 2000; x += 60) { line(x, ry - 4, x, ry - 16, 1, "#59607e"); circ(x, ry - 17, 1.6f, "#fff2c8"); glow(x, ry - 17, 16, WARM, .55f, 1); }
+
+        if (g.a3bridge != null) {
+            float pr = prog("bridge", 3), cx = 820, top = GROUND - 170, bse = ry + rh;
+            poly("#2a2f45", cx - 70, GROUND + 36, cx + 70, GROUND + 36, cx + 120 * pr + 30, bse, cx - 120 * pr - 30, bse);
+            for (int k = 0; k < 6; k++) { float t = k / 6f, y = GROUND + 36 + (bse - GROUND - 36) * t, w = 70 + 80 * t; R(cx - 2, y, 4, 4, "#f4c84a"); glow(cx - w, y, 12, WARM, .7f * pr, 1); glow(cx + w, y, 12, WARM, .7f * pr, 1); }
+            if ("cable".equals(g.a3bridge)) {
+                float tp = GROUND + 36 - (GROUND + 36 - top) * pr;
+                line(cx - 26, bse, cx, tp, 6, "#d7dde9"); line(cx + 26, bse, cx, tp, 6, "#d7dde9");
+                line(cx - 14, GROUND + 10, cx + 14, GROUND + 10, 3, "#d7dde9");
+                if (pr > .6f) { ga = .7f; for (int k = 1; k <= 9; k++) { float t = k / 10f, y = GROUND + 36 + (bse - GROUND - 36) * t, w = 70 + 80 * t; line(cx, tp + 10 + k * 3, cx - w, y, .7f, "#e8eef7"); line(cx, tp + 10 + k * 3, cx + w, y, .7f, "#e8eef7"); } ga = 1; }
+                glow(cx, tp, 26, REDL, (T % 1.4f) < .7f ? 1 : .2f, 1);
+                glow(cx, tp + 40, 60, COLD, .25f * pr, 1);
+            }
+        }
+
+        if ("full".equals(g.a3metro) || "lrt".equals(g.a3metro)) {
+            float pr = prog("metro", 1.8f); boolean full = "full".equals(g.a3metro);
+            for (float x : new float[]{-560, -120, 380, 980, 1450, 1760}) {
+                ga = pr;
+                R(x - 12, GROUND - 4, 24, 14, "#3a4a6a"); R(x - 10, GROUND - 2, 20, 10, "#9ad8ff");
+                R(x - 4, GROUND - 22, 8, 18, "#59607e");
+                circ(x, GROUND - 26, 7, full ? "#e3342f" : "#2c7be5");
+                text(full ? "М" : "Л", x, GROUND - 25.6f, 8, "#ffffff");
+                ga = 1;
+                glow(x, GROUND - 26, 26, full ? REDL : COLD, .8f * pr, 1);
+                glow(x, GROUND + 3, 20, COLD, .4f * pr, 1);
+            }
+        }
+
+        if (g.a3matvey != null) {
+            float pr = prog("monument", 2.2f), x = 658, b = GROUND + 9;
+            if ("monument".equals(g.a3matvey)) {
+                R(x - 12, b - 18, 24, 18, "#3c3f4f"); R(x - 15, b - 4, 30, 4, "#2c2f3d");
+                cv.save(); cv.clipRect(x - 20, b - 70, x + 20, b - 18);
+                float yy = b - 18 + (1 - pr) * 50;
+                R(x - 6, yy - 24, 12, 22, "#b08a4a"); circ(x, yy - 29, 5, "#c79b58"); R(x - 5, yy - 27, 10, 5, "#d8b070");
+                poly("#c79b58", x - 7, yy - 31, x, yy - 37, x + 7, yy - 31);
+                line(x + 6, yy - 20, x + 13, yy - 30, 3, "#b08a4a");
+                cv.restore();
+                if (pr >= 1) { glow(x + 13, b - 48, 18, WARM, .9f + .1f * (float) Math.sin(T * 3), 1); glow(x, b - 40, 50, WARM, .25f, 1); }
+            } else {
+                R(x - 26, GROUND - 92, 52, 9, "#2a3150"); text("ПЛОЩАДЬ МАТВЕЯ", x, GROUND - 87.5f, 3.6f, "#f4c84a");
+                glow(x, GROUND - 88, 30, WARM, .5f * pr, 1);
+            }
+        }
+    }
+
+    void drawTVTower() {
+        if (g.a3tower == null) return;
+        layer(.62f);
+        float pr = prog("tvtower", 3), x = -150, b = GROUND - 30;
+        if ("full".equals(g.a3tower)) {
+            float h = 330 * pr, top = b - h;
+            poly("#cfd6e6", x - 16, b, x - 5, top + 40, x + 5, top + 40, x + 16, b);
+            if (pr > .7f) {
+                float py = top + 70;
+                p.setStyle(Paint.Style.FILL); p.setColor(C("#3f6aa6")); rf.set(x - 26, py - 9, x + 26, py + 9); cv.drawOval(rf, p);
+                for (int k = 0; k < 12; k++) { double a = T * .6f + k * .52f; float lx = x + (float) Math.cos(a) * 24, ly = py + (float) Math.sin(a) * 4; if (Math.sin(a) > -0.2) { R(lx - 1.5f, ly - 2, 3, 3, "#ffe3a8"); glow(lx, ly, 8, WARM, .6f, .62f); } }
+                p.setColor(C("#2b4a7a")); rf.set(x - 18, py + 16, x + 18, py + 28); cv.drawOval(rf, p);
+                line(x, top + 40, x, top - 20, 2, "#e8eef7");
+                glow(x, top - 20, 22, REDL, (T % 1.2f) < .6f ? 1 : .15f, .62f);
+                glow(x, py, 70, COLD, .25f, .62f);
+                text("ЯР", x, py + 22, 6, "#f4c84a");
+            }
+        } else {
+            float h = 160 * pr, top = b - h;
+            line(x - 10, b, x, top, 1.6f, "#9aa4bd"); line(x + 10, b, x, top, 1.6f, "#9aa4bd");
+            for (float y = 0; y < h - 10; y += 14) line(x - 10 * (1 - y / 160), b - y, x + 10 * (1 - y / 160), b - y - 12, .6f, "#9aa4bd");
+            glow(x, top, 14, REDL, (T % 1.2f) < .6f ? 1 : .2f, .62f);
+        }
+    }
+
+    void drawStadium() {
+        if (g.a3games == null) return;
+        layer(.8f);
+        float pr = prog("stadium", 2.6f), x = -640, b = GROUND - 30;
+        ga = pr;
+        p.setStyle(Paint.Style.FILL); p.setColor(A(C("#2c3352")));
+        rf.set(x - 120, b - 54, x + 120, b + 14); cv.drawArc(rf, 180, 180, true, p); cv.drawRect(x - 120, b - 20, x + 120, b, p);
+        p.setColor(A(C("#1d2340"))); rf.set(x - 100, b - 46, x + 100, b - 2); cv.drawArc(rf, 180, 180, true, p);
+        for (int k = 0; k < 18; k++) R(x - 100 + k * 11.5f, b - 16, 6, 4, hash(k * 3 + (int) Math.floor(T * 2)) > .5f ? "#ffe3a8" : "#d6452f");
+        text("won".equals(g.a3games) ? "УНИВЕРСИАДА" : "СТАДИОН «ЯР»", x, b - 6, 6, "#f4c84a");
+        ga = 1;
+        for (float mx : new float[]{x - 130, x - 60, x + 60, x + 130}) {
+            line(mx, b, mx, b - 90 * pr, 2, "#8a93a8"); R(mx - 7, b - 92 * pr, 14, 6, "#cfd6e6");
+            if (pr >= 1) { glow(mx, b - 89, 30, WHITE, .9f, .8f); p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.ADD)); ga = .08f; poly("#fff6dd", mx - 6, b - 88, mx + 6, b - 88, x + 40, b - 20, x - 40, b - 20); ga = 1; p.setXfermode(null); }
+        }
+        boolean party = "won".equals(g.a3games) && g.day < g.a3gamesDay + 120;
+        if (party && pr >= 1 && every("fw", .9f)) {
+            int seed = (int) Math.floor(T);
+            float fx = x + (hash(seed) - .5f) * 300, fy = b - 160 - hash(seed + 3) * 90;
+            int[] cols = {Color.rgb(255, 90, 79), Color.rgb(244, 200, 74), Color.rgb(108, 198, 255), Color.rgb(110, 255, 170), Color.rgb(255, 140, 220)};
+            int col = cols[(int) (hash(seed + 9) * cols.length) % cols.length];
+            for (int i = 0; i < 40; i++) {
+                double a = i / 40.0 * 6.283; float s = 40 + hash(i + seed) * 25;
+                Part q = new Part(); q.type = 3; q.x = fx; q.y = fy; q.p = .8f; q.vx = (float) Math.cos(a) * s; q.vy = (float) Math.sin(a) * s; q.life = 1.6f; q.r = 1.3f; q.col = col; parts.add(q);
+            }
+        }
+    }
+
+    void drawVSM() {
+        if (!g.a3vsm) return;
+        layer(1);
+        float[] bb = bounds(); float LB = bb[0], RB = bb[1], y = GROUND + 50, pr = prog("vsm", 2.4f);
+        float end = LB - 100 + (RB - LB + 200) * pr;
+        R(LB - 100, y + 2, end - LB + 100, 3, "#8a93a8");
+        for (float x = LB - 100; x < end; x += 40) line(x, y, x, y - 22, .8f, "#59607e");
+        line(LB - 100, y - 20, end, y - 20, .5f, "#9aa4bd");
+        if (pr < 1) return;
+        float per = 5.5f, t = (T % per) / per, span = RB - LB + 900, tx = RB + 400 - t * span;
+        for (int c = 0; c < 6; c++) {
+            float cx = tx + c * 46;
+            if (c == 0) { poly("#f2f5fa", cx - 26, y, cx - 10, y - 13, cx + 22, y - 13, cx + 22, y); R(cx - 12, y - 6, 34, 2.4f, "#2c7be5"); R(cx - 14, y - 11, 8, 4, "#1a2240"); }
+            else { R(cx - 22, y - 13, 44, 13, "#f2f5fa"); R(cx - 22, y - 6, 44, 2.4f, "#2c7be5"); for (int k = 0; k < 6; k++) R(cx - 19 + k * 7, y - 11, 5, 3.5f, "#ffe7a8"); }
+        }
+        glow(tx - 26, y - 5, 22, WHITE, .9f, 1);
+        text("ВСМ", tx + 70, y - 3.8f, 3.4f, "#2c7be5");
     }
 
     void drawGlows() {
@@ -1055,12 +1207,12 @@ public class CityView extends View {
         flash = Math.max(0, flash - dt * 1.8f);
 
         float[] bd = bounds();
-        if (T > until) { tz = 1; ty = 260; float vw0 = cw / (base * camZ); tx = (bd[0] + bd[1]) / 2 + (float) Math.sin(T * (g.act >= 2 ? .025f : .045f)) * Math.max(0, (bd[1] - bd[0]) / 2 - vw0 / 2 + 40) * .95f; }
+        if (T > until) { tz = 1; ty = g.act >= 3 ? 285 : 260; float vw0 = cw / (base * camZ); tx = (bd[0] + bd[1]) / 2 + (float) Math.sin(T * (g.act >= 2 ? .025f : .045f)) * Math.max(0, (bd[1] - bd[0]) / 2 - vw0 / 2 + 40) * .95f; }
         float e = 1 - (float) Math.exp(-dt * 2.2f);
         camX += (tx - camX) * e; camY += (ty - camY) * e; camZ += (tz - camZ) * e;
         float viewW = cw / (base * camZ), viewH = ch / (base * camZ);
         camX = Math.max(bd[0] + viewW / 2 - 40, Math.min(bd[1] + 40 - viewW / 2, camX));
-        float maxY = GROUND + 78 - viewH / 2, minY = viewH / 2 + 30;
+        float maxY = GROUND + (g.act >= 3 ? 122 : 78) - viewH / 2, minY = viewH / 2 + 30;
         camY = minY > maxY ? maxY : Math.max(minY, Math.min(maxY, camY));
         if (viewW > bd[1] - bd[0] + 80) camX = (bd[0] + bd[1]) / 2;
 
@@ -1075,6 +1227,8 @@ public class CityView extends View {
         drawAirport();
         drawMountain();
         drawHydro();
+        drawTVTower();
+        drawStadium();
         drawFactories();
         drawTEC();
         drawSkyscrapers();
@@ -1086,6 +1240,8 @@ public class CityView extends View {
         drawStreet();
         drawTram();
         drawRail();
+        drawVSM();
+        drawAct3();
         drawParts(dt);
         drawGlows();
         drawSmog();
