@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 1200, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 1210, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -82,7 +82,7 @@
   #hit:before,#hit:after{content:"";position:absolute;background:#fff}
   #hit:before{left:8px;top:0;width:2px;height:18px}#hit:after{top:8px;left:0;height:2px;width:18px}
   #hit.head:before,#hit.head:after{background:#ff3b3b}
-  #dmg{position:absolute;inset:0;background:radial-gradient(transparent 50%,rgba(170,0,0,.55));opacity:0;transition:opacity .3s}
+  #dmg{position:absolute;inset:0;background:radial-gradient(transparent 62%,rgba(170,0,0,.45));opacity:0;transition:opacity .3s}
   #dirw{position:absolute;left:50%;top:50%;width:230px;height:230px;margin:-115px 0 0 -115px;opacity:0;transition:opacity .5s}
   #dirw div{position:absolute;inset:0;border-radius:50%;border-top:6px solid rgba(255,40,30,.85);
     -webkit-mask:linear-gradient(90deg,transparent 30%,#000 45%,#000 55%,transparent 70%);mask:linear-gradient(90deg,transparent 30%,#000 45%,#000 55%,transparent 70%)}
@@ -226,9 +226,7 @@
   .offer{display:flex;gap:8px;align-items:center;padding:7px 10px;background:linear-gradient(135deg,rgba(255,210,122,.16),rgba(0,0,0,.3));border:1px solid rgba(255,210,122,.45);border-radius:6px;color:#fff;font:inherit;font-size:12px;cursor:pointer}
   .offer i{font-style:normal;background:#e0392b;padding:1px 5px;border-radius:3px;font-weight:800;font-size:11px}.offer em{font-style:normal;color:#c7ff48;font-weight:800}.offer.got{opacity:.5}
   #knifeBtn{width:46px;height:46px;right:calc(env(safe-area-inset-right) + 252px);bottom:calc(env(safe-area-inset-bottom) + 126px)}
-  #vign{position:fixed;inset:0;pointer-events:none;z-index:3;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.38) 100%);transition:opacity .35s}
-  body.sprint #vign{background:radial-gradient(ellipse at center,rgba(0,0,0,0) 38%,rgba(0,0,0,.55) 100%)}
-  body.sprint canvas{filter:blur(.4px)}
+  #vign{display:none}
   .cBrief{font-size:12px;opacity:.75;max-width:600px;margin:0 0 10px}
   #missions{justify-content:flex-start;overflow-y:auto;padding-top:calc(env(safe-area-inset-top) + 18px)}
   .msHead{display:flex;gap:14px;align-items:center}
@@ -610,7 +608,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 5 карт · 8 режимов · онлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 1.20 · Android</div></div></div>
+  <div class="spV">версия 1.21 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><div id="armorW"><div id="armor"></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -654,7 +652,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v1.20</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v1.21</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -1081,6 +1079,75 @@ T.planksN = normalFromCanvas(T.planks.image, 3, [2,1]);
 T.crate2N = normalFromCanvas(T.crate2.image, 4);
 T.burlapN = normalFromCanvas(T.burlap.image, 3);
 T.barrelN = normalFromCanvas(T.barrel.image, 2);
+// ---- 1.21: more natural procedural textures (tileable value noise) ----
+const NZ = (() => {
+  const hash = (i, j, s) => { let h = (i*374761393 + j*668265263 + s*982451653) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0)/4294967295; };
+  const vn = (x, y, px, py, s) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf*xf*(3 - 2*xf), v = yf*yf*(3 - 2*yf);
+    const X0 = ((xi % px) + px) % px, X1 = (X0 + 1) % px, Y0 = ((yi % py) + py) % py, Y1 = (Y0 + 1) % py;
+    const a = hash(X0, Y0, s), b = hash(X1, Y0, s), c = hash(X0, Y1, s), d = hash(X1, Y1, s); return a + (b - a)*u + (c - a)*v + (a - b - c + d)*u*v; };
+  const fbm = (x, y, px, py, oct, s) => { let f = 0, amp = .5, n = 0; for (let o = 0; o < oct; o++){ f += vn(x, y, px, py, s + o*17)*amp; n += amp; x *= 2; y *= 2; px *= 2; py *= 2; amp *= .5; } return f/n; };
+  return {vn, fbm};
+})();
+function pixTex(w, h, fn){ const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'), img = g.createImageData(w, h), d = img.data, out = [0, 0, 0];
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){ fn(x/w, y/h, out); const i = (y*w + x)*4; d[i] = out[0]; d[i + 1] = out[1]; d[i + 2] = out[2]; d[i + 3] = 255; }
+  g.putImageData(img, 0, 0); return c; }
+function canvasTex(c, rep){ const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.wrapS = t.wrapT = THREE.RepeatWrapping; if (rep) t.repeat.set(rep[0], rep[1]); t.anisotropy = 4; return t; }
+const mixc = (a, b, k, o) => { o[0] = a[0] + (b[0] - a[0])*k; o[1] = a[1] + (b[1] - a[1])*k; o[2] = a[2] + (b[2] - a[2])*k; return o; };
+const sstep = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a)/(b - a))); return t*t*(3 - 2*t); };
+// pine bark: long irregular plates split by deep winding fissures, reddish under-bark, faint lichen
+{ const plate = [96, 72, 56], plate2 = [132, 98, 74], red = [150, 88, 58], deep = [26, 18, 13], lich = [128, 134, 112], tmp = [0, 0, 0];
+  const c = pixTex(128, 512, (u, v, o) => {
+    const n = NZ.fbm(u*6, v*3, 6, 3, 4, 3), crack = sstep(.006, .032, Math.abs(n - .5)), crack2 = sstep(.004, .02, Math.abs(NZ.fbm(u*11 + 3, v*3, 11, 3, 3, 7) - .5));
+    const tone = NZ.fbm(u*3, v*12, 3, 12, 3, 11), str = NZ.vn(u*48, v*3, 48, 3, 5);
+    mixc(plate, plate2, tone, o); if (tone > .62) mixc(o, red, (tone - .62)*1.6, o);
+    const k = .78 + str*.32; o[0] *= k; o[1] *= k; o[2] *= k;
+    const lc = NZ.fbm(u*6 + 9, v*6, 6, 6, 3, 21); if (lc > .64) mixc(o, lich, Math.min(.55, (lc - .64)*3), o);
+    const cr = Math.min(crack, .35 + crack2*.65); mixc(deep, o, cr, tmp); o[0] = tmp[0]; o[1] = tmp[1]; o[2] = tmp[2]; });
+  T.barkP = canvasTex(c, [2, 3]); }
+// forest floor: soft patches of moss, earth and dry needles under the existing litter detail
+{ const old = T.groundD.image, w = old.width, h = old.height, base = pixTex(256, 256, (u, v, o) => {
+    const a = NZ.fbm(u*4, v*4, 4, 4, 5, 31), b = NZ.fbm(u*9 + 5, v*9, 9, 9, 3, 41), dry = sstep(.48, .7, a), moss = sstep(.55, .75, b);
+    const L = 205 - a*40 + b*16; o[0] = L*(1 + dry*.05 - moss*.07); o[1] = L*(1 - dry*.04 + moss*.04); o[2] = L*(.94 - dry*.1 - moss*.06); });
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.imageSmoothingEnabled = true; g.drawImage(base, 0, 0, w, h);
+  g.globalCompositeOperation = 'multiply'; g.drawImage(old, 0, 0); g.globalCompositeOperation = 'source-over';
+  g.lineCap = 'round';
+  for (let i = 0; i < 2600; i++){ const x = rand(0, w), y = rand(0, h), a = rand(0, 6.28), l = rand(5, 11); g.strokeStyle = pick(['rgba(150,110,60,.55)', 'rgba(120,85,45,.5)', 'rgba(170,135,80,.45)']); g.lineWidth = rand(.6, 1.1);
+    W9(w, h, x, y, 14, (X, Y) => { g.beginPath(); g.moveTo(X, Y); g.lineTo(X + Math.cos(a)*l, Y + Math.sin(a)*l); g.stroke(); }); }
+  for (let i = 0; i < 1400; i++){ const x = rand(0, w), y = rand(0, h); W9(w, h, x, y, 6, (X, Y) => { for (let k = 0; k < 4; k++){ g.strokeStyle = pick(['rgba(95,125,55,.6)', 'rgba(120,150,70,.55)', 'rgba(80,105,45,.6)']); g.lineWidth = .9; g.beginPath(); g.moveTo(X, Y); g.lineTo(X + rand(-3, 3), Y - rand(3, 7)); g.stroke(); } }); }
+  T.groundD = canvasTex(c, [40, 40]); T.groundN = normalFromCanvas(c, 3.2, [40, 40]); }
+// planks: separate boards with wavy grain, knots the grain flows around, worn edges and nail heads
+function woodBoards(g, w, h, rows, cols, nails){
+  const bh = h/rows;
+  for (let r = 0; r < rows; r++){ const y0 = r*bh, base = pick([[128, 89, 58], [138, 99, 66], [118, 81, 47], [145, 106, 70]]), sh = rand(.9, 1.08);
+    const img = g.createImageData(w, Math.ceil(bh)), d = img.data, kx = rand(.15, .85)*w, ky = rand(.3, .7)*bh, kr = rand(4, 8), seed = r*13 + 5;
+    for (let y = 0; y < img.height; y++) for (let x = 0; x < w; x++){
+      const dx = x - kx, dy = y - ky, dk = Math.sqrt(dx*dx*.25 + dy*dy), bend = kr*kr*3/(dk*dk + kr*kr*2)*Math.sign(dy || 1)*6;
+      const gy = y + bend + NZ.vn(x/w*3, y/bh, 3, 1, seed)*6, ring = Math.sin(gy*1.25 + NZ.vn(x/w*6, gy/bh*2, 6, 2, seed + 3)*7), fine = NZ.vn(x/w*60, y*.5, 60, 99, seed + 7);
+      let k = sh*(.84 + ring*.12 + fine*.16 + (ring > .85 ? -.12 : 0)); if (dk < kr){ const t = dk/kr; k *= .55 + .4*t; }
+      const edge = Math.min(y, img.height - 1 - y); if (edge < 2) k *= .55 + edge*.18;
+      const i = (y*w + x)*4; d[i] = base[0]*k; d[i + 1] = base[1]*k; d[i + 2] = base[2]*k; d[i + 3] = 255; }
+    g.putImageData(img, 0, Math.round(y0));
+    for (let c = 1; c < cols; c++){ const x = c*w/cols + rand(-10, 10); g.fillStyle = 'rgba(20,12,6,.75)'; g.fillRect(x, y0, 1.5, bh); }
+    if (nails) for (const x of [7, w - 9]){ g.fillStyle = '#3a3a38'; g.beginPath(); g.arc(x, y0 + bh/2, 2.2, 0, 6.29); g.fill(); g.fillStyle = 'rgba(120,70,40,.35)'; g.beginPath(); g.ellipse(x, y0 + bh/2 + 4, 2, 5, 0, 0, 6.29); g.fill(); } }
+}
+{ const c = document.createElement('canvas'); c.width = 256; c.height = 256; woodBoards(c.getContext('2d'), 256, 256, 8, 2, true); T.planks = canvasTex(c, [2, 1]); T.planksN = normalFromCanvas(c, 3, [2, 1]); }
+{ const c = document.createElement('canvas'); c.width = 256; c.height = 256; const g = c.getContext('2d'); woodBoards(g, 256, 256, 5, 1, false);
+  g.save(); g.globalAlpha = .96; const fr = document.createElement('canvas'); fr.width = 256; fr.height = 256; woodBoards(fr.getContext('2d'), 256, 256, 1, 1, false);
+  g.drawImage(fr, 0, 0, 256, 28, 0, 0, 256, 28); g.drawImage(fr, 0, 40, 256, 28, 0, 228, 256, 28);
+  g.save(); g.translate(28, 0); g.rotate(Math.PI/2); g.drawImage(fr, 0, 80, 256, 28, 0, 0, 256, 28); g.restore(); g.save(); g.translate(256, 0); g.rotate(Math.PI/2); g.drawImage(fr, 0, 120, 256, 28, 0, 0, 256, 28); g.restore();
+  g.save(); g.translate(128, 128); g.rotate(Math.PI/4); g.drawImage(fr, 0, 160, 256, 28, -170, -14, 340, 28); g.restore(); g.restore();
+  g.strokeStyle = 'rgba(20,12,4,.8)'; g.lineWidth = 2; g.strokeRect(28, 28, 200, 200); g.strokeRect(1, 1, 254, 254);
+  g.fillStyle = '#2b2b2b'; for (const [x, y] of [[14, 14], [242, 14], [14, 242], [242, 242], [14, 128], [242, 128], [128, 14], [128, 242]]){ g.beginPath(); g.arc(x, y, 3, 0, 6.29); g.fill(); }
+  g.fillStyle = 'rgba(30,24,16,.55)'; g.font = 'bold 22px monospace'; g.save(); g.translate(60, 92); g.rotate(-.02); g.fillText('7.62 × 39', 0, 0); g.restore();
+  T.crate2 = canvasTex(c); T.crate2N = normalFromCanvas(c, 4); }
+// a large soft noise used to break up visible tiling on the ground
+T.macro = (() => { const t = new THREE.CanvasTexture(pixTex(128, 128, (u, v, o) => { const n = NZ.fbm(u*4, v*4, 4, 4, 4, 77)*255; o[0] = o[1] = o[2] = n; })); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; })();
+T.barkPN = normalFromCanvas(T.barkP.image, 6, [2, 3]);
+function groundMacro(mat){ mat.onBeforeCompile = sh => { sh.uniforms.uMacro = {value:T.macro};
+    sh.vertexShader = 'varying vec2 vGW;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  vGW = (modelMatrix * vec4(position, 1.0)).xz;');
+    sh.fragmentShader = 'uniform sampler2D uMacro;\nvarying vec2 vGW;\n' + sh.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n  { float mA = texture2D(uMacro, vGW/37.0).r, mB = texture2D(uMacro, vGW/113.0 + 0.31).r; diffuseColor.rgb *= mix(0.8, 1.16, mA*0.55 + mB*0.45); }'); };
+  mat.customProgramCacheKey = () => 'gmacro'; return mat; }
+
 function mergeGeo(list){
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), pv = new THREE.Vector3(), sv = new THREE.Vector3(), cc = new THREE.Color();
   const pos = [], nor = [], uv = [], col = [];
@@ -1441,7 +1508,7 @@ function buildGround(colorFn, map, nrm, rough=.97){
   const p = geo.attributes.position, cols = new Float32Array(p.count*3), tmp = new THREE.Color();
   for (let i=0;i<p.count;i++){ const x = p.getX(i), z = p.getZ(i), h = terrainH(x,z); p.setY(i, h); colorFn(x, z, h, tmp); cols[i*3] = tmp.r; cols[i*3+1] = tmp.g; cols[i*3+2] = tmp.b; }
   geo.setAttribute('color', new THREE.BufferAttribute(cols,3)); geo.computeVertexNormals();
-  groundRef = wm(geo, new THREE.MeshStandardMaterial({map, normalMap:nrm, normalScale:new THREE.Vector2(.9,.9), vertexColors:true, roughness:rough, envMapIntensity:.5}));
+  groundRef = wm(geo, groundMacro(new THREE.MeshStandardMaterial({map, normalMap:nrm, normalScale:new THREE.Vector2(.9,.9), vertexColors:true, roughness:rough, envMapIntensity:.5})));
   groundRef.castShadow = false;
 }
 function groundAO(trees, litterHex){
@@ -2391,7 +2458,7 @@ function helmetPop(v, from){ if (!v.mk || !v.parts) return; const g0 = v.mk.gear
     if (o.position.y < gy + .07){ o.position.y = gy + .07; vel.y = -vel.y*.3; vel.x *= .6; vel.z *= .6; spin.multiplyScalar(.5); } if (k > .9) o.material.opacity = (1 - k)*10, o.material.transparent = true; }); }
 function restoreHelmet(b){ if (b.headGeo0){ const hp = b.parts.find(p => p.userData.head); if (hp) hp.geometry = b.headGeo0; b.headGeo0 = null; } }
 const MAG_GEO = BX(.035, .13, .07), MAG_MAT = SM(0x26282a, .5, .6);
-function magDrop(w){ if (!w || w.pellets > 1 || w.key === 'xbow' || w.key === 'revolver' || gfx === 'low') return; const m = new THREE.Mesh(w.key === 'lmg' ? BX(.12, .1, .14) : MAG_GEO, MAG_MAT); m.castShadow = true;
+function magDrop(w){ if (!w || w.pellets > 1 || w.key === 'xbow' || w.key === 'revolver' || (gfx === 'low' && settings.weak)) return; const m = new THREE.Mesh(w.key === 'lmg' ? BX(.12, .1, .14) : MAG_GEO, MAG_MAT); m.castShadow = true;
   camera.updateMatrixWorld(); m.position.set(.16, -.3, -.42).applyMatrix4(camera.matrixWorld); m.quaternion.copy(camera.quaternion); scene.add(m);
   const vel = new THREE.Vector3(Math.cos(player.yaw)*.6, -.5, -Math.sin(player.yaw)*.6), spin = rand(-6, 6);
   exAdd(m, 8, (o, k, dt) => { const gy = groundAt(o.position.x, o.position.z, o.position.y + .2); if (o.position.y > gy + .04){ vel.y -= 12*dt; o.position.addScaledVector(vel, dt); o.rotation.z += spin*dt; } else { o.position.y = gy + .04; if (!o.userData.hit){ o.userData.hit = true; o.rotation.set(Math.PI/2, 0, rand(0, 6)); const pd = 0; noiseHit(.05*settings.vol, 'highpass', 2800, 2, .05); } } }); }
@@ -2469,14 +2536,14 @@ function sniperPerch(b){ if (b.perch) return b.perch; const side = Math.sign(BAS
 
 // ---------- living battlefield: shell casings, muzzle light at night, changing weather ----------
 const CASE_GEO = CG(.007, .007, .05, 6), CASE_MAT = SM(0xb08a3a, .35, .9); let casings = 0;
-function ejectCase(w){ if (!w || gfx === 'low' || w.key === 'xbow' || casings > 40) return; const m = new THREE.Mesh(w.pellets > 1 ? CG(.012, .012, .06, 8) : CASE_GEO, w.pellets > 1 ? SM(0x8a2a22, .6, .2) : CASE_MAT);
+function ejectCase(w){ if (!w || (gfx === 'low' && (settings.weak || casings > 16)) || w.key === 'xbow' || casings > 40) return; const m = new THREE.Mesh(w.pellets > 1 ? CG(.012, .012, .06, 8) : CASE_GEO, w.pellets > 1 ? SM(0x8a2a22, .6, .2) : CASE_MAT);
   camera.updateMatrixWorld(); m.position.set(.2, -.14, -.42).applyMatrix4(camera.matrixWorld); scene.add(m); casings++;
   const r = new THREE.Vector3(Math.cos(player.yaw), 0, -Math.sin(player.yaw)), vel = r.multiplyScalar(rand(1.8, 2.6)).add(new THREE.Vector3(0, rand(1.8, 2.6), 0)), spin = rand(10, 25);
   exAdd(m, 5, (o, k, dt) => { const gy = groundAt(o.position.x, o.position.z, o.position.y + .2) + .01; if (o.position.y > gy){ vel.y -= 11*dt; o.position.addScaledVector(vel, dt); o.rotation.x += spin*dt; o.rotation.z += spin*.7*dt; }
     else if (!o.userData.d){ o.userData.d = true; o.position.y = gy; o.rotation.set(Math.PI/2, 0, rand(0, 6)); const pd = o.position.distanceTo(player.pos); if (pd < 4) tone(3200 + Math.random()*900, .04, .012, 'triangle'); }
     if (k >= .99){ casings--; } }); }
 const nightFlash = new THREE.PointLight(0xffc070, 0, 14, 2); scene.add(nightFlash); let nightFlashT = 0;
-function muzzleLight(p){ if (ATMO.time === 'day' || gfx === 'low') return; nightFlash.position.copy(p); nightFlash.intensity = ATMO.time === 'night' ? 3 : 1.6; nightFlashT = .05; }
+function muzzleLight(p){ if (ATMO.time === 'day' || (gfx === 'low' && settings.weak)) return; nightFlash.position.copy(p); nightFlash.intensity = ATMO.time === 'night' ? 3 : 1.6; nightFlashT = .05; }
 let wxT = 0, wxRain = null;
 function weatherFrame(dt){ nightFlashT -= dt; if (nightFlashT <= 0 && nightFlash.intensity) nightFlash.intensity = 0;
   if (mode === 'online' || mode === 'tut' || mode === 'range' || CAMP) return; if (wxT === 0) wxT = rand(80, 140); wxT -= dt; if (wxT > 0) return;
@@ -6527,10 +6594,9 @@ $('offers').addEventListener('click', e => { const b = e.target.closest('button[
 const glare = new THREE.Sprite(new THREE.SpriteMaterial({map:fireTex, color:0xfff2d0, transparent:true, opacity:0, depthWrite:false, depthTest:false, blending:THREE.AdditiveBlending, toneMapped:false, fog:false}));
 glare.scale.setScalar(26); glare.renderOrder = 5; scene.add(glare);
 function postFrame(){
-  if (gfx === 'low' || ATMO.time === 'night' || ATMO.rain || settings.weather !== 'clear'){ glare.material.opacity = 0; }
+  if ((gfx === 'low' && settings.weak) || ATMO.time === 'night' || ATMO.rain || settings.weather !== 'clear'){ glare.material.opacity = 0; }
   else { const sd = _nd.set(SUN_OFF.x, SUN_OFF.y, SUN_OFF.z).normalize(); glare.position.copy(camera.position).addScaledVector(sd, 140);
     camera.getWorldDirection(v3tmp); const k = Math.max(0, v3tmp.dot(sd)); glare.material.opacity = Math.pow(k, 8)*.55; }
-  const sp = running && sprinting && player.moving; document.body.classList.toggle('sprint', !!sp);
 }
 const v3tmp = new THREE.Vector3();
 
@@ -6594,7 +6660,7 @@ function boom3d(vol, lp, dur, x, z, dist){
 const birds = [], BIRD_GEO = new THREE.PlaneGeometry(.34, .09), BIRD_MAT = new THREE.MeshBasicMaterial({color:0x15130f, side:THREE.DoubleSide, fog:true});
 let birdCd = 0;
 function spawnBirds(x, z){
-  if (birdCd > 0 || gfx === 'low' || ATMO.time === 'night') return; let trees = 0, tx = 0, tz = 0;
+  if (birdCd > 0 || (gfx === 'low' && settings.weak) || ATMO.time === 'night') return; let trees = 0, tx = 0, tz = 0;
   for (const c of circles){ if (c.kind !== 'wood' || c.top - c.base < 4) continue; if (Math.abs(c.x - x) < 14 && Math.abs(c.z - z) < 14){ trees++; tx = c.x; tz = c.z; if (trees > 3) break; } }
   if (trees < 3) return; birdCd = 9;
   const n = 5 + (Math.random()*5|0), dir = Math.random()*6.28, y0 = terrainH(tx, tz) + 7;
@@ -6840,7 +6906,7 @@ function ensurePassSkins(){ const sid = seasonId().replace('-', ''); for (const 
 
 // ---------- livelier soldiers: looking around, blood marks ----------
 const BLOOD_MAT = new THREE.MeshBasicMaterial({color:0x4a0808, transparent:true, opacity:.9, polygonOffset:true, polygonOffsetFactor:-4, depthWrite:false}), BLOOD_GEO = new THREE.CircleGeometry(.045, 8);
-function bloodMark(b, h){ if (!b || !h || !h.face || gfx === 'low') return; const o = h.object; if (!b.blood) b.blood = []; if (b.blood.length >= 8){ const old = b.blood.shift(); if (old.parent) old.parent.remove(old); }
+function bloodMark(b, h){ if (!b || !h || !h.face || (gfx === 'low' && settings.weak)) return; const o = h.object; if (!b.blood) b.blood = []; if (b.blood.length >= 8){ const old = b.blood.shift(); if (old.parent) old.parent.remove(old); }
   const m = new THREE.Mesh(BLOOD_GEO, BLOOD_MAT), lp = o.worldToLocal(h.point.clone()), n = h.face.normal.clone().normalize(); m.position.copy(lp).addScaledVector(n, .006); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), n); m.scale.setScalar(.7 + Math.random()*.8); o.add(m); b.blood.push(m); }
 function clearBlood(b){ if (b.blood){ for (const m of b.blood) if (m.parent) m.parent.remove(m); b.blood = []; } }
 function botLook(b){ if (!b.head || !b.alive) return; const tgt = b.target && b.los; b.head.rotation.y = tgt ? b.head.rotation.y*.8 : Math.sin(now()*.7 + b.phase*.37)*.45*(b.moving ? .5 : 1); }
@@ -7412,6 +7478,60 @@ function remoteVehicle(rp, pr){
   const _rb = reviveBot;
   reviveBot = function(b){ if (!b.peer) return _rb(b); if (b._rvT && now() - b._rvT < 3) return; b._rvT = now(); myRv = [b.peer, ++rvSeq];
     addMoney(30, 'помощь союзнику'); addXp(100, 'помощь'); tone(660, .15, .05, 'triangle'); showMsg('Вы подняли: ' + b.name); sendPresence(); };
+}
+// ---- 1.21: low graphics keeps the real trees, ferns and a little grass (no shadows, lower resolution, sparse grass) ----
+{ const _sg = setGraphics;
+  setGraphics = function(level){ _sg(level);
+    if (level === 'low' && !settings.weak){ VEG.core.forEach(m => m.visible = true); VEG.cards.forEach(m => m.visible = true); VEG.full.forEach(m => m.visible = false); VEG.blobs.forEach(m => m.visible = false);
+      VEG.ferns.forEach(m => m.visible = true); for (const g of VEG.grass){ g.mesh.count = Math.round(g.max*.15); g.mesh.visible = true; } } };
+}
+// ---- 1.21: pick a team when entering a server (and switch it from the pause menu) ----
+{ const st = document.createElement('style');
+  st.textContent = `#teamPick{z-index:40;background:rgba(6,10,8,.9);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  #teamPick h1{font-size:26px;margin-bottom:4px} #teamPick .tpSub{color:#9aa39a;font-size:13px;letter-spacing:1px;margin-bottom:18px}
+  #teamPick .tpRow{display:flex;gap:16px;width:min(720px,100%);justify-content:center}
+  #teamPick .tpCard{flex:1;min-width:0;max-width:340px;padding:18px 18px 16px;border:2px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:#fff;cursor:pointer;text-align:left;border-radius:14px;font:inherit;transition:transform .15s,border-color .15s,background .15s;position:relative}
+  #teamPick .tpCard:hover,#teamPick .tpCard:focus-visible{transform:translateY(-3px);outline:none}
+  #teamPick .tpCard.b{border-color:rgba(90,140,255,.55);background:linear-gradient(160deg,rgba(60,110,255,.22),rgba(60,110,255,.05))} #teamPick .tpCard.b:hover{border-color:#6c9bff}
+  #teamPick .tpCard.r{border-color:rgba(255,100,85,.55);background:linear-gradient(160deg,rgba(255,80,60,.22),rgba(255,80,60,.05))} #teamPick .tpCard.r:hover{border-color:#ff7466}
+  #teamPick .tpCard b{display:block;font-size:22px;letter-spacing:2px;font-weight:900} #teamPick .tpCard.b b{color:#8fb4ff} #teamPick .tpCard.r b{color:#ff8f82}
+  #teamPick .tpN{font-size:14px;color:#dfe3df;margin:4px 0 8px;font-variant-numeric:tabular-nums} #teamPick .tpList{font-size:12.5px;color:#a8aea8;line-height:1.55;min-height:58px;word-break:break-word}
+  #teamPick .tpRec{position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 7px;border-radius:6px;background:#c7ff48;color:#111}
+  #teamPick .tpCur{position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,.18);color:#fff}
+  #teamPick .tpBtns{display:flex;gap:10px;margin-top:16px} #teamPick .tpBtns button{min-width:130px}
+  @media (max-height:430px){ #teamPick h1{font-size:20px} #teamPick .tpSub{margin-bottom:10px} #teamPick .tpCard{padding:12px 14px} #teamPick .tpList{min-height:36px} #teamPick .tpBtns{margin-top:10px} }`;
+  (document.head || document.body).appendChild(st);
+  const ov = document.createElement('div'); ov.id = 'teamPick'; ov.className = 'ov hidden'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'tpTitle');
+  ov.innerHTML = '<h1 id="tpTitle">ВЫБЕРИТЕ КОМАНДУ</h1><div class="tpSub" id="tpSub"></div><div class="tpRow"><button class="tpCard b" data-t="0"></button><button class="tpCard r" data-t="1"></button></div>'
+    + '<div class="tpBtns"><button class="big alt" id="tpAuto">Авто</button><button class="big alt" id="tpCancel">Отмена</button></div>';
+  document.body.appendChild(ov);
+  let cb = null, cur = -1, iv = 0;
+  const counts = () => { const c = [[], []]; for (const p of arenaPeers()) c[p.presence.t === 1 ? 1 : 0].push(cleanName(p.presence.n)); return c; };
+  const plural = n => n % 10 === 1 && n % 100 !== 11 ? 'игрок' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'игрока' : 'игроков';
+  function render(){ const c = counts(), rec = c[0].length === c[1].length ? -1 : c[0].length < c[1].length ? 0 : 1;
+    ov.querySelectorAll('.tpCard').forEach(b => { const t = +b.dataset.t, l = c[t];
+      b.innerHTML = `<b>${t ? 'КРАСНЫЕ' : 'СИНИЕ'}</b><div class="tpN">${l.length} ${plural(l.length)}</div><div class="tpList">${l.length ? l.slice(0, 6).map(esc).join(', ') + (l.length > 6 ? ' и ещё ' + (l.length - 6) : '') : 'пока никого'}</div>`
+        + (t === cur ? '<span class="tpCur">ВЫ ЗДЕСЬ</span>' : t === rec ? '<span class="tpRec">МЕНЬШЕ ИГРОКОВ</span>' : ''); });
+    $('tpSub').textContent = (MAPS[selMap] ? MAPS[selMap].name || '' : '') + (ROOM_RULES && ROOM_RULES.w && ROOM_RULES.w !== 'a' ? ' · ' + RULE_W[ROOM_RULES.w] : '') + ' · на сервере ' + (c[0].length + c[1].length) + ' ' + plural(c[0].length + c[1].length); }
+  function close(){ ov.classList.add('hidden'); clearInterval(iv); cb = null; }
+  window.showTeamPick = function(fn, current = -1){ cb = fn; cur = current; render(); ov.classList.remove('hidden'); clearInterval(iv); iv = setInterval(render, 1000); setTimeout(() => ov.querySelector(current === 0 ? '.tpCard.r' : '.tpCard.b').focus(), 30); };
+  const choose = t => { const f = cb; close(); if (f) f(t); };
+  ov.querySelectorAll('.tpCard').forEach(b => b.addEventListener('click', () => choose(+b.dataset.t)));
+  $('tpAuto').addEventListener('click', () => choose('auto')); $('tpCancel').addEventListener('click', close);
+  ov.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Escape') close(); else if (e.key === '1') choose(0); else if (e.key === '2') choose(1); });
+  const syncLobby = v => { const g = $('teams'); if (g) g.querySelectorAll('[data-team]').forEach(b => b.classList.toggle('sel', b.dataset.team === String(v))); };
+  const _so = startOnline;
+  startOnline = function(){ if (!room) return; if (specPending) return _so();
+    showTeamPick(t => { teamChoice = String(t); syncLobby(teamChoice); _so(); }); };
+  // switching team in the middle of an online match
+  const pb = document.createElement('button'); pb.className = 'big alt hidden'; pb.id = 'pTeam'; pb.textContent = 'Сменить команду'; $('toMenu').before(pb);
+  pb.addEventListener('click', () => showTeamPick(t => { const nt = t === 'auto' ? autoTeam() : t; if (nt === player.team){ togglePause(false); return; }
+    player.team = nt; teamChoice = String(nt); syncLobby(teamChoice); VM.sleeve.color.copy(C(TEAM_COL[nt].uni));
+    for (const rp of remotes.values()){ if (rp.tag){ rp.root.remove(rp.tag); rp.tag = null; } rp.name = ''; }
+    if (player.vehicle){ player.vehicle.rider = null; player.vehicle = null; } player.downedT = 0; player.alive = false; respawnPlayer(); sendPresence(); togglePause(false);
+    showMsg('Вы за ' + (nt ? 'красных' : 'синих')); }, player.team));
+  const _tp = togglePause;
+  togglePause = function(on){ const r = _tp.apply(this, arguments); pb.classList.toggle('hidden', !(mode === 'online' && room && !specOnly)); return r; };
 }
 // rebuild every weapon model with the new shapes and materials
 for (let i = 0; i < WEAPONS.length; i++) try { applyLoadout(i); } catch(e){}
