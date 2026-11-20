@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 1110, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 1200, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -610,7 +610,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 5 карт · 8 режимов · онлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 1.11 · Android</div></div></div>
+  <div class="spV">версия 1.20 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><div id="armorW"><div id="armor"></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -654,7 +654,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v1.11</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v1.20</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -4973,7 +4973,7 @@ function sendPresence(){
   room.presence({ g:GAME_ID, on:!specOnly, m:curMap, n:myName, t:player.team,
     x:+player.pos.x.toFixed(2), y:+player.pos.y.toFixed(2), z:+player.pos.z.toFixed(2), yw:+player.yaw.toFixed(3), pt:+player.pitch.toFixed(3),
     cr:player.crouch ? 1 : 0, w:cur, hp:Math.max(0, Math.round(player.hp)), al:player.alive ? 1 : 0,
-    k:player.kills, d:player.deaths, ds:deathSeq, kb:killerPeer, kw:killerW, sh:shotSeq, fx:lastShotEnd, hits:myHits, gn:myNades, rk:rankOf(levelOf(PROG.xp || 0)), cl:PROG.clan || '', sk:PROG.skin || 'std', gr:PROG.gear || 'nvg-mask-1', mn:myMines, mb:blownMines, db:destBroken, em:myEmote || undefined, vh:player.vehicle ? [+player.vehicle.yaw.toFixed(2)] : undefined, dv:DEVICE_ID, cm:myChat, adm:sanForPresence(), ap:(isAdmin || isMod) ? adminProof : undefined, pg:myPing || undefined }).catch(() => {});
+    k:player.kills, d:player.deaths, ds:deathSeq, kb:killerPeer, kw:killerW, sh:shotSeq, fx:lastShotEnd, hits:myHits, gn:myNades, rk:rankOf(levelOf(PROG.xp || 0)), cl:PROG.clan || '', sk:PROG.skin || 'std', gr:PROG.gear || 'nvg-mask-1', mn:myMines, mb:blownMines, db:destBroken, em:myEmote || undefined, vh:player.vehicle ? [+player.vehicle.yaw.toFixed(2), player.vehicle.kind === 'truck' ? 2 : player.vehicle.kind === 'car' ? 1 : 0, QUADS.indexOf(player.vehicle), +player.vehicle.speed.toFixed(1)] : undefined, dn:player.downedT > 0 && player.alive ? 1 : undefined, rv:myRv || undefined, dv:DEVICE_ID, cm:myChat, adm:sanForPresence(), ap:(isAdmin || isMod) ? adminProof : undefined, pg:myPing || undefined }).catch(() => {});
 }
 function addRemote(peer, team, w, sk, gr){
   const s = buildSoldier(team, W3P[WEAPON_KEYS[w]] || 'rifle', undefined, undefined, skinPalette(team, sk, gr));
@@ -4991,9 +4991,10 @@ function onlineHurt(dmg, rp, wi, head){
   const dw = $('dirw'); dw.style.transform = `rotate(${Math.atan2(rx, f)}rad)`; dw.style.transition = 'none'; dw.style.opacity = 1;
   requestAnimationFrame(() => { dw.style.transition = 'opacity 1.2s'; dw.style.opacity = 0; });
   rp.spotted = 2;
+  if (player.hp <= 0 && onlineDown(rp, wi)) return;
   if (player.hp <= 0){
     player.hp = 0; player.alive = false; player.respawnT = 5; aiming = false; touchFire = false; $('aim').classList.remove('on');
-    player.deaths++; statDeath(); onPlayerDeath(); startKillcam(rp, wi === 96 ? 'нож' : wi >= 0 && wi < WEAPONS.length ? WEAPONS[wi].feed : 'взрыв'); deathSeq++; killerPeer = rp.peer; killerW = wi; player.killer = rp.name;
+    player.deaths++; statDeath(); onPlayerDeath(); startKillcam(rp, wi === 96 ? 'нож' : wi === 95 ? 'машина' : wi >= 0 && wi < WEAPONS.length ? WEAPONS[wi].feed : 'взрыв'); deathSeq++; killerPeer = rp.peer; killerW = wi; player.killer = rp.name;
     feed({team:rp.team, name:rp.name}, {team:player.team, name:myName}, WNAME(wi), head);
     sendPresence();
   }
@@ -5019,7 +5020,7 @@ function onlineTick(dt){
     if (nm !== rp.name){ rp.name = nm; if (rp.tag) rp.root.remove(rp.tag); rp.tag = team === player.team ? makeTag(nm) : null; if (rp.tag){ rp.tag.visible = settings.names; rp.root.add(rp.tag); } }
     rp.kills = Math.max(0, Math.round(num(pr.k))); rp.deaths = Math.max(0, Math.round(num(pr.d)));
     // movement
-    const tx = clamp(num(pr.x), -90, 90), ty = clamp(num(pr.y), -10, 40), tz = clamp(num(pr.z), -90, 90);
+    const tx = clamp(num(pr.x), -210, 210), ty = clamp(num(pr.y), -10, 60), tz = clamp(num(pr.z), -210, 210);
     const ox = rp.pos.x, oz = rp.pos.z;
     if (!rp.init || Math.hypot(tx-rp.pos.x, tz-rp.pos.z) > 6){ rp.pos.set(tx, ty, tz); rp.init = true; }
     else { const k = Math.min(1, dt*12); rp.pos.x = lerp(rp.pos.x, tx, k); rp.pos.y = lerp(rp.pos.y, ty, k); rp.pos.z = lerp(rp.pos.z, tz, k); }
@@ -5029,11 +5030,12 @@ function onlineTick(dt){
     const wasAlive = rp.alive; rp.alive = pr.al !== 0;
     if (!rp.alive){ if (wasAlive){ rp.deadT = 0; rp.fallSide = rand(-.25,.25); } rp.deadT += dt; const k = Math.min(1, rp.deadT*2.6);
       rp.body.rotation.x = -k*Math.PI/2*.97; rp.body.rotation.z = rp.fallSide*k; rp.body.position.y = k*.12; }
-    else { rp.body.rotation.set(0,0,0); rp.phase += dt*spd*2.3;
+    else if (pr.dn === 1){ rp.downed = true; rp.phase += dt*spd*2.3; animateSoldier(rp, spd > .2 ? .5 : 0, rp.phase, 0, false, 0); rp.body.rotation.set(-Math.PI/2*.88, 0, .15); rp.body.position.y = .14; }
+    else { rp.downed = false; rp.body.rotation.set(0,0,0); rp.phase += dt*spd*2.3;
       animateSoldier(rp, spd > .4 ? Math.min(1, spd/3) : 0, rp.phase, 1, rp.crouch, clamp(num(pr.pt), -1.4, 1.4)); }
     rp.spotted -= dt;
     receiveMines(rp, pr, tr); receiveDest(rp, pr); remoteEmote(rp, pr, tr); remotePing(rp, pr, tr); remoteEmoteAnim(rp, dt);
-    if (Array.isArray(pr.vh)){ if (!rp.quad){ rp.quad = quadMesh(rp.team === 0 ? 0x2c3a52 : 0x52302c); rp.root.add(rp.quad); rp.quad.rotation.y = Math.PI; } rp.quad.visible = true; } else if (rp.quad) rp.quad.visible = false;
+    remoteVehicle(rp, pr); remoteRevive(rp, pr, tr);
     // shots
     const sh = num(pr.sh, -1);
     if (tr.sh !== undefined && sh !== tr.sh && rp.alive){
@@ -5063,8 +5065,8 @@ function onlineTick(dt){
     if (tr.ds !== undefined && ds > tr.ds){
       const kb = typeof pr.kb === 'string' ? pr.kb : '', kw = clamp(Math.round(num(pr.kw)),0,WEAPONS.length-1);
       const killer = kb && kb === myPeer ? {team:player.team, name:myName} : remotes.get(kb) ? {team:remotes.get(kb).team, name:remotes.get(kb).name} : {team:1-team, name:'?'};
-      feed(killer, {team, name:rp.name}, WNAME(num(pr.kw) === 99 || num(pr.kw) === 96 ? num(pr.kw) : kw), false);
-      if (kb && kb === myPeer){ player.kills++; const wn = WNAME(num(pr.kw) === 99 || num(pr.kw) === 96 ? num(pr.kw) : kw); showKill(`${esc(rp.name)} <span style="color:#c7ff48">+${25+(wn==='граната'?10:0)} КР</span>`); rewardKill(null, wn, false, true); }
+      feed(killer, {team, name:rp.name}, WNAME(num(pr.kw) === 99 || num(pr.kw) === 96 || num(pr.kw) === 95 ? num(pr.kw) : kw), false);
+      if (kb && kb === myPeer){ player.kills++; const wn = WNAME(num(pr.kw) === 99 || num(pr.kw) === 96 || num(pr.kw) === 95 ? num(pr.kw) : kw); showKill(`${esc(rp.name)} <span style="color:#c7ff48">+${25+(wn==='граната'?10:0)} КР</span>`); rewardKill(null, wn, false, true); }
     }
     tr.ds = ds;
   }
@@ -5572,7 +5574,7 @@ function streakFrame(dt){
 const MODE_INFO = {
   tdm:{name:'Командный бой'}, dom:{name:'Захват точки'}, surv:{name:'Выживание'}, koth:{name:'Король горы'}, snipe:{name:'Снайперская дуэль'},
   ffa:{name:'Последний выживший'}, bomb:{name:'Подрыв'}, tut:{name:'Обучение'}, ctf:{name:'Захват флага'}, zomb:{name:'Зомби'}, range:{name:'Полигон'}, escort:{name:'Эскорт'}, br:{name:'Королевская битва'} };
-const WNAME = wi => wi === 99 ? 'граната' : wi === 96 ? 'нож' : (WEAPONS[wi] || WEAPONS[0]).feed;
+const WNAME = wi => wi === 99 ? 'граната' : wi === 96 ? 'нож' : wi === 95 ? 'машина' : (WEAPONS[wi] || WEAPONS[0]).feed;
 const TDM_LIKE = () => mode === 'tdm' || mode === 'snipe';
 const DOM_LIKE = () => mode === 'dom' || mode === 'koth';
 const NO_RESPAWN = () => mode === 'ffa' || mode === 'bomb';
@@ -6730,6 +6732,7 @@ function downPlayer(attacker, wname){
 function downFrame(dt){
   if (player.downedT > 0 && player.alive){ player.downedT -= dt; $('dmg').style.opacity = .35 + .25*Math.sin(performance.now()*.006); fireCd = Math.max(fireCd, .2);
     const h = downHelper; if (h && h.alive && Math.hypot(h.pos.x - player.pos.x, h.pos.z - player.pos.z) < 1.8){ reviveHold += dt; if (reviveHold > 1.6){ player.downedT = 0; player.hp = 40; $('dmg').style.opacity = 0; showMsg('Вас подняли!'); botSay(h, 'Поднимайся, работаем!'); downHelper = null; } }
+    if (player.downedT <= 0 && player.hp <= 1 && player.alive && player.downBy && player.downBy.peer){ const r = player.downBy; player.downBy = null; player.hp = .5; onlineHurtForce(r, player.downWi); }
     if (player.downedT <= 0 && player.hp <= 1 && player.alive){ player.noDown = true; player.hp = 0; damage(player, 50, player.downBy && player.downBy.alive !== undefined ? player.downBy : null, false, player.downW || 'ранение'); player.noDown = false; $('dmg').style.opacity = 0; } }
   for (const b of bots) if (!b.alive && b.downable > 0){ b.downable -= dt; if (b.downable <= 0) b.respawnT = b.deadT + 4; } }
 function nearDowned(){ if (!player.alive || player.downedT > 0) return null; for (const b of bots) if (!b.alive && b.downable > 0 && b.team === player.team && Math.hypot(b.pos.x - player.pos.x, b.pos.z - player.pos.z) < 1.9) return b; return null; }
@@ -7035,6 +7038,381 @@ function rifleStockWood(g, M){
   prof(g, [[.44, .02], [.44, -.112], [.452, -.112], [.452, .02]], .046, M.metal2, 0, 0, 0, .002);
   mk(g, new THREE.TorusGeometry(.007, .0015, 6, 14), M.metal2, .022, -.07, .33, 0, Math.PI/2); }
 
+// =============================== 1.20: detailed models for every weapon ===============================
+// shared parts: pistol grips with finger grooves, trigger guards, curved magazines, octagonal handguards
+function gripP(g, m, zf, yt, H, w, grooves = true){
+  const s = H*.38, pts = [[zf, yt], [zf + .044, yt], [zf + .044 + s, yt - H*.95], [zf + .04 + s, yt - H], [zf + .004 + s, yt - H]];
+  if (grooves) pts.push([zf - .001 + s*.86, yt - H*.8], [zf + .003 + s*.7, yt - H*.64], [zf - .002 + s*.5, yt - H*.48], [zf + .002 + s*.32, yt - H*.32], [zf - .002 + s*.14, yt - H*.15]);
+  else pts.push([zf + s*.5, yt - H*.5]);
+  const mm = prof(g, pts, w, m, 0, 0, 0, .004);
+  P.box(g, w + .002, .006, .05, m, 0, yt - H + .003, zf + s + .022); return mm; }
+function tguard(g, m, z0, z1, y, d = .026, r = .0028){
+  tubeAlong(g, [[0, y, z1], [0, y - d*.9, z1 - .004], [0, y - d, (z0 + z1)/2], [0, y - d*.8, z0 + .006], [0, y, z0]], r, m, 20);
+  tubeAlong(g, [[0, y, (z0 + z1)/2 + .008], [0, y - d*.5, (z0 + z1)/2 + .004], [0, y - d*.75, (z0 + z1)/2 + .012]], r*.9, m, 8); }
+function curveMag(g, m, rib, zc, yt, len, dz, bend, w, x = 0){
+  const fr = [], bk = [];
+  for (let i = 0; i <= 10; i++){ const t = i/10, y = yt - t*len, sh = -t*t*bend; fr.push([zc - dz/2 + sh, y]); bk.push([zc + dz/2 + sh*.6, y]); }
+  prof(g, [...fr, ...bk.reverse()], w, m, x, 0, 0, .003);
+  for (let i = 1; i < 4; i++){ const t = i/4.2, y = yt - t*len, sh = -t*t*bend*.8; P.box(g, w + .002, .003, dz*.8, rib, x, y, zc + sh, -t*bend*2.2); }
+  const sh = -bend*.8; P.box(g, w + .006, .01, dz + .01, rib, x, yt - len - .003, zc + sh, -bend*1.8); }
+function octTube(g, r, len, m, x, y, z){ const mm = mk(g, new THREE.CylinderGeometry(r, r, len, 8, 1), m, x, y, z, Math.PI/2, Math.PI/8, 0); mm.castShadow = true; return mm; }
+function halfTube(g, r, len, m, x, y, z, sy = 1){ const mm = mk(g, new THREE.CylinderGeometry(r, r, len, 24, 1, false, 0, Math.PI), m, x, y, z, 0, Math.PI/2, Math.PI/2); mm.scale.set(1, 1, sy); mm.castShadow = true; return mm; }
+function sideSlots(g, m, x, y, z0, step, n, h = .008, l = .022){ for (let k = 0; k < n; k++) for (const sd of [-1, 1]) P.box(g, .003, h, l, m, sd*x, y, z0 - k*step); }
+function pistolSlide(g, M, zb, zf, y0, h, w){
+  const sl = new THREE.Group(); g.add(sl);
+  prof(sl, [[zb, y0 + h], [zb, y0], [zf, y0], [zf, y0 + h*.75], [zf + .012, y0 + h]], w, M.metal, 0, 0, 0, .003);
+  for (let i = 0; i < 6; i++) for (const sd of [-1, 1]) P.box(sl, .0015, h*.7, .0025, M.dark, sd*(w/2 + .0004), y0 + h*.5, zb - .012 - i*.007);
+  P.box(sl, .0015, h*.42, .04, M.dark, w/2 + .0004, y0 + h*.62, (zb + zf)/2 + .02);
+  return sl; }
+
+BUILDERS.pistol = function(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  const sl = pistolSlide(g, M, .05, -.13, .003, .034, .031); out.mover = sl; out.amp = .035;
+  prof(g, [[.042, .004], [.042, -.017], [-.02, -.017], [-.045, -.021], [-.128, -.021], [-.128, .004]], .029, M.poly, 0, 0, 0, .003);
+  for (let k = 0; k < 3; k++) P.box(g, .03, .002, .006, M.dark, 0, -.02, -.07 - k*.014);
+  gripP(g, M.poly, .018, -.017, .1, .03); tguard(g, M.poly, -.03, .02, -.017, .028, .0035);
+  P.box(g, .004, .006, .012, M.metal2, -.016, -.006, .012); P.box(g, .004, .008, .022, M.metal2, -.016, .0, -.018);
+  if (att.optic === 'iron'){ P.box(sl, .006, .009, .008, M.metal, 0, .041, -.12); P.box(sl, .022, .009, .008, M.metal, 0, .041, .04); out.ads = new THREE.Vector3(0,-.045,-.32); }
+  else { P.box(sl, .006, .009, .008, M.metal, 0, .041, -.12); const r = OPTICS.mini(sl, M, [0,.037,.005]); out.ads = new THREE.Vector3(0, -(.037 + r.sightY), -.31); }
+  P.zc(g, .007, .007, .014, M.dark, 0, .02, -.131, 16);
+  const tip = MUZZLES[att.muzzle](g, M, [0,.02,-.14]); const mz = new THREE.Object3D(); mz.position.set(0,.02,tip-.01); g.add(mz); out.muzzle = mz;
+  if (att.under === 'laser') out.beam = laserModule(g, M, 0, -.03, -.085);
+  if (att.mag === 'std') P.box(g, .033, .01, .05, M.metal, 0, -.122, .06, -.25);
+  else { P.box(g, .031, .04, .046, M.poly, 0, -.135, .065, -.25); P.box(g, .034, .01, .05, M.metal, 0, -.157, .072, -.25); }
+  if (hands_) hands(g, [0,-.06,.05], [-.022,-.07,.06], 'pistol');
+  out.pos = new THREE.Vector3(.15,-.17,-.36); return out; };
+
+BUILDERS.mp = function(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  const sl = pistolSlide(g, M, .05, -.17, .003, .034, .031); out.mover = sl; out.amp = .03;
+  prof(g, [[.042, .004], [.042, -.018], [-.02, -.018], [-.05, -.024], [-.19, -.024], [-.19, .004]], .029, M.poly, 0, 0, 0, .003);
+  for (let k = 0; k < 4; k++) P.box(g, .03, .002, .006, M.dark, 0, -.023, -.08 - k*.014);
+  gripP(g, M.poly, .018, -.018, .1, .03); tguard(g, M.poly, -.03, .02, -.018, .028, .0035);
+  prof(g, [[-.13, -.024], [-.13, -.06], [-.145, -.07], [-.18, -.065], [-.19, -.04], [-.19, -.024]], .028, M.poly, 0, 0, 0, .004);
+  P.box(g, .008, .012, .02, M.metal2, -.017, -.002, .02);
+  if (att.optic === 'iron'){ P.box(sl, .006, .009, .008, M.metal, 0, .041, -.165); P.box(sl, .022, .009, .008, M.metal, 0, .041, .04); out.ads = new THREE.Vector3(0,-.045,-.32); }
+  else { P.box(sl, .006, .009, .008, M.metal, 0, .041, -.165); const r = OPTICS.mini(sl, M, [0,.037,.0]); out.ads = new THREE.Vector3(0, -(.037 + r.sightY), -.31); }
+  P.zc(g, .007, .007, .014, M.dark, 0, .02, -.171, 16);
+  const tip = MUZZLES[att.muzzle](g, M, [0,.02,-.185]); const mz = new THREE.Object3D(); mz.position.set(0,.02,tip-.01); g.add(mz); out.muzzle = mz;
+  if (att.under === 'laser') out.beam = laserModule(g, M, 0, -.04, -.12);
+  if (att.mag === 'ext'){ P.box(g, .028, .12, .038, M.metal2, 0, -.17, .07, -.2); P.box(g, .032, .01, .042, M.metal, 0, -.232, .083, -.2); }
+  else { P.box(g, .028, .05, .038, M.metal2, 0, -.135, .063, -.2); P.box(g, .032, .01, .042, M.metal, 0, -.16, .068, -.2); }
+  if (att.stock === 'fold'){ for (const y of [-.03, -.09]) P.zc(g, .006, .006, .2, M.metal2, 0, y, .17, 12); tubeAlong(g, [[0, -.03, .27], [0, -.06, .275], [0, -.09, .27]], .006, M.metal2, 8); P.box(g, .03, .09, .014, M.rubber, 0, -.06, .28); }
+  if (hands_) hands(g, [0,-.06,.05], [-.022,-.07,.06], 'pistol');
+  out.pos = new THREE.Vector3(.15,-.17,-.36); return out; };
+
+BUILDERS.revolver = function(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  prof(g, [[.05, .03], [.05, -.018], [.03, -.03], [-.045, -.03], [-.045, .03], [-.03, .036], [.03, .036]], .028, M.metal, 0, 0, 0, .003);
+  const cyl = P.zc(g, .024, .024, .046, M.metal2, 0, .004, -.012, 24);
+  for (let k = 0; k < 6; k++){ const a = k/6*6.283 + .52; P.box(g, .005, .005, .036, M.dark, Math.cos(a)*.0225, .004 + Math.sin(a)*.0225, -.012, 0, 0, a); }
+  P.zc(g, .006, .006, .05, M.metal, 0, .004, -.012, 12);
+  prof(g, [[-.045, .029], [-.045, -.01], [-.19, -.01], [-.198, -.002], [-.198, .024], [-.19, .03]], .022, M.metal, 0, 0, 0, .003);
+  P.box(g, .006, .004, .14, M.dark, 0, .031, -.12); P.zc(g, .006, .006, .004, M.dark, 0, .012, -.199, 14);
+  prof(g, [[-.18, .03], [-.198, .03], [-.198, .042], [-.186, .042]], .004, SM(0xd04020, .5), 0, 0, 0, .0006);
+  prof(g, [[.04, .03], [.075, .035], [.08, .05], [.068, .052], [.05, .04], [.035, .036]], .008, M.metal2, 0, 0, 0, .0012);
+  P.box(g, .018, .006, .01, M.metal, 0, .038, .042);
+  prof(g, [[.03, -.02], [.06, -.02], [.09, -.068], [.097, -.11], [.075, -.124], [.05, -.116], [.034, -.07]], .032, M.wood, 0, 0, 0, .005);
+  for (const sd of [-1, 1]) P.zc(g, .006, .006, .002, M.metal2, sd*.017, -.07, .068, 14).rotation.set(0, 0, Math.PI/2);
+  tguard(g, M.metal2, -.002, .035, -.03, .024, .0026);
+  out.ads = new THREE.Vector3(0,-.036,-.33);
+  const mz = new THREE.Object3D(); mz.position.set(0,.012,-.205); g.add(mz); out.muzzle = mz;
+  if (att.under === 'laser') out.beam = laserModule(g, M, 0, -.022, -.1);
+  if (hands_) hands(g, [0,-.06,.055], [-.022,-.07,.065], 'pistol');
+  out.pos = new THREE.Vector3(.15,-.17,-.36); return out; };
+
+BUILDERS.carbine = function(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  prof(g, [[.13, .03], [.13, -.024], [-.13, -.024], [-.13, .03]], .05, M.metal, 0, 0, 0, .003);
+  P.box(g, .002, .016, .05, M.dark, .0258, .004, -.005); P.box(g, .003, .003, .05, M.metal2, .027, -.006, -.005);
+  P.zc(g, .007, .0085, .03, M.metal2, .029, .012, .065, 14).rotation.set(Math.PI/2, .3, 0); P.box(g, .008, .02, .014, M.metal, .029, .012, .035);
+  P.box(g, .028, .008, .022, M.metal2, 0, .03, .14); P.box(g, .044, .006, .008, M.metal2, 0, .03, .148);
+  rail(g, M, .26, 0, .03, -.02);
+  prof(g, [[.13, -.024], [.13, -.05], [.105, -.062], [.03, -.062], [.01, -.07], [-.1, -.07], [-.115, -.056], [-.13, -.024]], .046, M.metal2, 0, 0, 0, .003);
+  prof(g, [[-.022, -.058], [-.022, -.078], [-.1, -.078], [-.1, -.058]], .042, M.metal2, 0, 0, 0, .003);
+  tguard(g, M.metal2, -.012, .06, -.062, .024, .0028);
+  P.box(g, .004, .008, .018, M.metal, .025, -.045, .062); P.box(g, .004, .014, .01, M.metal, -.025, -.04, -.01);
+  gripP(g, M.poly, .045, -.06, .1, .032);
+  octTube(g, .03, .23, M.metal2, 0, -.002, -.245);
+  sideSlots(g, M.dark, .0283, -.003, -.17, .04, 5);
+  for (let k = 0; k < 5; k++) P.box(g, .012, .003, .022, M.dark, 0, -.032, -.17 - k*.04);
+  rail(g, M, .2, 0, .027, -.24);
+  P.zc(g, .011, .011, .2, M.metal, 0, .0, -.44, 18); P.zc(g, .031, .031, .006, M.metal, 0, -.002, -.362, 16);
+  if (att.optic === 'iron'){ prof(g, [[-.32, .03], [-.345, .03], [-.34, .058], [-.325, .058]], .012, M.metal, 0, 0, 0, .0015); P.box(g, .004, .012, .004, M.metal, 0, .062, -.333);
+    prof(g, [[.088, .03], [.112, .03], [.112, .06], [.088, .052]], .024, M.metal, 0, 0, 0, .0015); P.ring(g, .005, .0018, M.metal2, 0, .062, .1).rotation.set(0, 0, 0);
+    out.ads = new THREE.Vector3(0,-.069,-.29); }
+  else { const r = OPTICS[att.optic](g, M, [0,.0405,0]); out.ads = new THREE.Vector3(0, -(.0405 + r.sightY), r.scope ? -.24 : -.28); }
+  const tip = MUZZLES[att.muzzle](g, M, [0,0,-.54]); const mz = new THREE.Object3D(); mz.position.set(0,0,tip-.01); g.add(mz); out.muzzle = mz;
+  const [L, pose] = underFor(g, M, att, [0,-.031,-.27], [0,-.04,-.27], out);
+  if (att.mag === 'ext') curveMag(g, M.metal2, M.metal, -.06, -.066, .2, .066, .025, .03);
+  else if (att.mag === 'dual'){ for (const sx of [-.018, .018]) curveMag(g, M.metal2, M.metal, -.06, -.066, .135, .066, .02, .03, sx); P.box(g, .07, .014, .075, M.poly, 0, -.14, -.068); }
+  else curveMag(g, M.metal2, M.metal, -.06, -.066, .135, .066, .02, .03);
+  stockFor(g, M, att, .13);
+  if (hands_) hands(g, [0,-.11,.085], L, pose);
+  out.pos = new THREE.Vector3(.19,-.19,-.37); return out; };
+
+BUILDERS.battle = function(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  prof(g, [[.17, .04], [.17, -.03], [.13, -.042], [-.17, -.042], [-.17, .04]], .058, M.metal, 0, 0, 0, .003);
+  halfTube(g, .027, .3, M.metal2, 0, .04, .005, .8);
+  for (const z of [-.1, -.05, 0, .05, .1]) mk(g, new THREE.TorusGeometry(.0272, .0016, 6, 18, Math.PI), M.metal2, 0, .04, z, 0, 0, 0).scale.set(1, .8, 1);
+  P.box(g, .002, .022, .07, M.dark, .0295, .012, -.02); P.box(g, .022, .01, .012, M.metal, -.038, .02, -.12); P.zc(g, .005, .005, .014, M.metal, -.05, .02, -.12, 10).rotation.set(0, 0, Math.PI/2);
+  prof(g, [[.17, -.042], [.17, -.056], [.06, -.058], [-.02, -.058], [-.02, -.042]], .05, M.metal2, 0, 0, 0, .002);
+  tguard(g, M.metal2, .02, .1, -.056, .026, .003);
+  gripP(g, M.wood, .085, -.05, .1, .034);
+  const lw = [[-.17, .03], [-.17, -.034], [-.2, -.04], [-.24, -.04], [-.255, -.035], [-.27, -.04], [-.31, -.04], [-.325, -.035], [-.34, -.04], [-.43, -.036], [-.445, -.02], [-.445, .03]];
+  prof(g, lw, .064, M.wood, 0, 0, 0, .007);
+  halfTube(g, .022, .26, M.wood, 0, .044, -.31, 1);
+  for (let k = 0; k < 4; k++) P.box(g, .03, .004, .02, M.dark, 0, .064, -.22 - k*.06);
+  P.zc(g, .012, .012, .5, M.metal, 0, .01, -.45, 18); P.zc(g, .0105, .0105, .24, M.metal2, 0, .045, -.33, 14);
+  prof(g, [[-.445, .012], [-.49, .012], [-.49, .062], [-.475, .07], [-.455, .062]], .03, M.metal, 0, 0, 0, .002);
+  P.zc(g, .033, .033, .006, M.metal2, 0, .0, -.447, 18);
+  if (att.optic === 'iron'){ prof(g, [[-.6, .02], [-.64, .02], [-.636, .068], [-.624, .072], [-.61, .06]], .016, M.metal, 0, 0, 0, .0015); P.ring(g, .014, .003, M.metal, 0, .06, -.62);
+    prof(g, [[.1, .04], [.14, .04], [.14, .078], [.125, .082], [.1, .062]], .03, M.metal, 0, 0, 0, .002); P.ring(g, .006, .0025, M.metal, 0, .077, .12);
+    out.ads = new THREE.Vector3(0,-.076,-.31); }
+  else { rail(g, M, .24, 0, .065, -.02); const r = OPTICS[att.optic](g, M, [0,.0755,-.02]); out.ads = new THREE.Vector3(0, -(.0755 + r.sightY), r.scope ? -.22 : -.28); }
+  const tip = MUZZLES[att.muzzle](g, M, [0,.01,-.7]); const mz = new THREE.Object3D(); mz.position.set(0,.01,tip-.01); g.add(mz); out.muzzle = mz;
+  const [L, pose] = underFor(g, M, att, [0,-.038,-.33], [0,-.045,-.3], out);
+  if (att.mag === 'ext') curveMag(g, M.metal2, M.metal, -.05, -.042, .17, .075, .015, .042);
+  else curveMag(g, M.metal2, M.metal, -.05, -.042, .12, .075, .01, .042);
+  if (att.stock === 'tact') stockFor(g, M, att, .17);
+  else { prof(g, [[.17, .035], [.17, -.04], [.22, -.056], [.34, -.086], [.475, -.106], [.475, .03], [.34, .022], [.22, .03]], .046, M.wood, 0, 0, 0, .007);
+    prof(g, [[.475, .032], [.475, -.108], [.492, -.108], [.492, .032]], .05, M.rubber, 0, 0, 0, .003);
+    mk(g, new THREE.TorusGeometry(.008, .0016, 6, 14), M.metal2, .024, -.07, .36, 0, Math.PI/2); }
+  mk(g, new THREE.TorusGeometry(.008, .0016, 6, 14), M.metal2, .03, -.02, -.4, 0, Math.PI/2);
+  if (hands_) hands(g, [0,-.115,.13], L, pose);
+  out.pos = new THREE.Vector3(.2,-.2,-.38); return out; };
+
+BUILDERS.smg = function(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  P.zc(g, .025, .025, .24, M.metal, 0, .01, 0, 24);
+  prof(g, [[.12, .008], [.12, -.035], [-.12, -.035], [-.12, .008]], .046, M.metal, 0, 0, 0, .003);
+  for (const sd of [-1, 1]) P.box(g, .002, .004, .23, M.metal2, sd*.0235, -.006, 0);
+  P.box(g, .002, .016, .05, M.dark, .0236, .008, .0); P.box(g, .016, .01, .04, M.metal2, .026, .02, .07);
+  P.zc(g, .009, .009, .14, M.metal2, 0, .036, -.17, 14); P.box(g, .022, .008, .01, M.metal, -.016, .036, -.2); P.zc(g, .005, .005, .016, M.poly, -.03, .036, -.2, 10).rotation.set(0, 0, Math.PI/2);
+  P.zc(g, .023, .021, .13, M.poly, 0, -.002, -.185, 24);
+  for (let k = 0; k < 4; k++) mk(g, new THREE.TorusGeometry(.0222 - k*.0005, .0018, 6, 22), M.dark, 0, -.002, -.14 - k*.03);
+  P.zc(g, .009, .009, .09, M.metal, 0, .004, -.29, 14);
+  prof(g, [[.1, -.035], [.1, -.05], [.03, -.05], [.015, -.035]], .03, M.poly, 0, 0, 0, .003);
+  tguard(g, M.poly, .01, .06, -.04, .024, .0035);
+  gripP(g, M.poly, .045, -.045, .085, .03);
+  P.box(g, .004, .008, .02, M.metal2, -.024, -.024, .06);
+  if (att.optic === 'iron'){ P.ring(g, .013, .003, M.metal, 0, .045, -.24); P.box(g, .004, .016, .004, M.metal, 0, .043, -.24); P.box(g, .012, .016, .016, M.metal2, 0, .036, -.24);
+    P.zc(g, .012, .012, .02, M.metal, 0, .046, .08, 18); P.ring(g, .005, .002, M.dark, 0, .046, .07); out.ads = new THREE.Vector3(0,-.055,-.29); }
+  else { rail(g, M, .16, 0, .035, -.02); const r = OPTICS[att.optic](g, M, [0,.0455,-.01]); out.ads = new THREE.Vector3(0, -(.0455 + r.sightY), -.28); }
+  const tip = MUZZLES[att.muzzle](g, M, [0,.004,-.335]); const mz = new THREE.Object3D(); mz.position.set(0,.004,tip-.01); g.add(mz); out.muzzle = mz;
+  const [L, pose] = underFor(g, M, att, [0,-.035,-.15], [0,-.05,-.16], out);
+  if (att.mag === 'ext') curveMag(g, M.metal2, M.metal, -.06, -.035, .21, .038, .05, .026);
+  else curveMag(g, M.metal2, M.metal, -.06, -.035, .15, .038, .035, .026);
+  stockFor(g, M, att, .12);
+  if (hands_) hands(g, [0,-.09,.075], L, pose);
+  out.pos = new THREE.Vector3(.18,-.19,-.36); return out; };
+
+BUILDERS.sniper = function(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  P.zc(g, .024, .024, .3, M.metal, 0, .008, -.02, 28); P.zc(g, .02, .016, .05, M.metal2, 0, .008, .155, 22);
+  P.box(g, .002, .016, .07, M.dark, .0242, .014, -.02);
+  P.zc(g, .007, .007, .05, M.metal2, .03, .016, .09, 12).rotation.set(0, 0, Math.PI/2 - .3); mk(g, new THREE.SphereGeometry(.013, 16, 12), M.metal2, .06, .006, .095);
+  P.zc(g, .013, .0115, .7, M.metal, 0, .01, -.52, 22); for (let k = 0; k < 6; k++) P.box(g, .002, .003, .12, M.dark, Math.cos(k*1.047)*.0125, .01 + Math.sin(k*1.047)*.0125, -.4, 0, 0, k*1.047);
+  rail(g, M, .3, 0, .035, -.02);
+  const r = OPTICS[att.optic](g, M, [0,.045,-.01]); out.ads = new THREE.Vector3(0, -(.045 + r.sightY), r.scope ? -.2 : -.27);
+  const tip = MUZZLES[att.muzzle](g, M, [0,.01,-.87]); const mz = new THREE.Object3D(); mz.position.set(0,.01,tip-.01); g.add(mz); out.muzzle = mz;
+  if (att.under === 'bipod') bipod(g, M, 0, -.003, -.42);
+  if (att.under === 'laser') out.beam = laserModule(g, M, .034, -.02, -.16);
+  tguard(g, M.metal2, .02, .09, -.052, .026, .003);
+  const stockPts = [[-.34, -.012], [-.34, -.048], [-.3, -.06], [-.12, -.062], [-.06, -.056], [.02, -.056], [.02, -.052], [.09, -.052], [.095, -.07], [.1, -.13], [.135, -.138], [.15, -.11], [.165, -.075], [.24, -.08], [.48, -.112], [.5, -.112], [.5, .036], [.44, .042], [.26, .036], [.2, .012], [.17, -.012], [.15, -.016], [-.17, -.016], [-.2, -.012]];
+  if (att.stock === 'poly' || att.stock === 'swood'){ const sm = att.stock === 'poly' ? M.poly : M.wood;
+    prof(g, stockPts, .05, sm, 0, 0, 0, .006);
+    prof(g, [[.5, .04], [.5, -.116], [.52, -.116], [.52, .04]], .054, M.rubber, 0, 0, 0, .003);
+    mk(g, new THREE.TorusGeometry(.008, .0016, 6, 14), M.metal2, .026, -.09, .4, 0, Math.PI/2); mk(g, new THREE.TorusGeometry(.008, .0016, 6, 14), M.metal2, .026, -.05, -.3, 0, Math.PI/2);
+    if (att.stock === 'swood') for (let k = 0; k < 6; k++) P.box(g, .051, .002, .002, M.dark, 0, -.05, -.25 + k*.025);
+    else for (let k = 0; k < 4; k++) P.box(g, .051, .01, .022, M.dark, 0, -.035, -.27 + k*.04); }
+  else { P.box(g,.035,.09,.045,M.poly,0,-.07,.13,-.3); P.zc(g,.012,.012,.3,M.metal2,0,-.012,.3,14); P.zc(g,.009,.009,.26,M.metal2,0,-.07,.32,12);
+    P.box(g,.04,.03,.12,M.poly,0,.026,.3); P.box(g,.012,.04,.012,M.metal,0,.0,.27); P.box(g,.05,.13,.025,M.rubber,0,-.04,.46); P.box(g,.012,.07,.012,M.metal,0,-.1,.4);
+    prof(g, [[-.34, -.012], [-.34, -.05], [-.04, -.05], [-.04, -.012]], .044, M.metal, 0, 0, 0, .004); for (let k=0;k<5;k++) P.box(g,.045,.014,.03,M.dark,0,-.03,-.29+k*.05);
+    prof(g, [[-.04, -.012], [-.04, -.05], [.1, -.05], [.12, -.012]], .044, M.metal, 0, 0, 0, .004); }
+  if (att.mag === 'std'){ P.box(g, .04, .05, .08, M.metal2, 0, -.07, -.02); P.box(g, .044, .008, .084, M.metal, 0, -.098, -.02); }
+  else { P.box(g, .04, .09, .08, M.metal2, 0, -.09, -.02); P.box(g, .044, .008, .084, M.metal, 0, -.138, -.02); for (let k = 0; k < 3; k++) P.box(g, .041, .003, .081, M.dark, 0, -.07 - k*.022, -.02); }
+  if (hands_) hands(g, [0,-.09,.13], [0,-.05,-.2]);
+  out.pos = new THREE.Vector3(.2,-.21,-.34); return out; };
+
+BUILDERS.shotgun = function(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  prof(g, [[.11, .028], [.11, -.034], [.085, -.044], [-.11, -.044], [-.11, .028], [-.09, .0375], [.09, .0375]], .054, M.metal, 0, 0, 0, .004);
+  P.box(g, .002, .024, .07, M.dark, .0272, .006, -.01); P.box(g, .03, .002, .08, M.dark, 0, -.0445, -.02);
+  P.zc(g, .005, .005, .014, M.metal2, 0, .04, .09, 10).rotation.set(0, 0, 0);
+  tguard(g, M.metal2, .0, .075, -.044, .026, .003);
+  P.zc(g, .015, .015, .62, M.metal, 0, .022, -.42, 22); P.box(g, .008, .003, .6, M.metal2, 0, .04, -.42);
+  for (let k = 0; k < 8; k++) P.box(g, .004, .004, .006, M.metal2, 0, .037, -.14 - k*.075);
+  mk(g, new THREE.SphereGeometry(.0035, 10, 8), SM(0xd9d2b0, .3, .6), 0, .044, -.715);
+  const tubeLen = att.mag === 'ext' ? .6 : .5; P.zc(g, .013, .013, tubeLen, M.metal2, 0, -.02, -.11 - tubeLen/2, 18); P.zc(g, .0145, .0145, .014, M.metal, 0, -.02, -.11 - tubeLen, 18);
+  P.box(g, .02, .03, .016, M.metal, 0, .0, -.71);
+  if (att.mag === 'ext') P.box(g, .012, .05, .014, M.metal, 0, .0, -.62);
+  const pump = new THREE.Group(); pump.position.set(0, -.022, -.3); g.add(pump);
+  P.zc(pump, .027, .027, .18, M.wood, 0, 0, 0, 24); for (let i = 0; i < 9; i++) mk(pump, new THREE.TorusGeometry(.0272, .0022, 6, 22), M.dark, 0, 0, -.075 + i*.019);
+  for (const sd of [-1, 1]) P.box(pump, .003, .006, .2, M.metal2, sd*.016, .012, .12);
+  out.mover = pump; out.amp = .07; out.pumpLate = true;
+  if (att.optic === 'iron'){ out.ads = new THREE.Vector3(0,-.048,-.3); }
+  else { rail(g, M, .14, 0, .0375, .0); const r = OPTICS[att.optic](g, M, [0,.0495,.0]); out.ads = new THREE.Vector3(0, -(.0495 + r.sightY), -.27); }
+  const tip = MUZZLES[att.muzzle](g, M, [0,.022,-.73]); const mz = new THREE.Object3D(); mz.position.set(0,.022,tip-.02); g.add(mz); out.muzzle = mz;
+  if (att.under === 'laser') out.beam = laserModule(g, M, .03, -.02, -.5);
+  if (att.stock === 'sgwood'){ prof(g, [[.11, .03], [.11, -.036], [.16, -.052], [.4, -.104], [.4, .022], [.3, .03], [.16, .032]], .045, M.wood, 0, 0, 0, .007);
+    prof(g, [[.4, .024], [.4, -.106], [.42, -.106], [.42, .024]], .049, M.rubber, 0, 0, 0, .003); for (let k = 0; k < 5; k++) P.box(g, .046, .002, .002, M.dark, 0, -.02 - k*.006, .17 + k*.004); }
+  else if (att.stock === 'pistolg'){ gripP(g, M.poly, .085, -.034, .1, .034); P.zc(g, .016, .016, .2, M.metal, 0, -.012, .2, 18);
+    P.box(g, .042, .07, .12, M.poly, 0, -.022, .3); P.box(g, .046, .11, .02, M.rubber, 0, -.03, .37); }
+  else { P.box(g, .034, .045, .024, M.metal, 0, -.01, .12); for (const y of [.002, -.058]) P.zc(g, .0075, .0075, .25, M.metal2, 0, y, .25, 12); P.box(g, .042, .11, .016, M.rubber, 0, -.03, .385);
+    gripP(g, M.poly, .085, -.034, .1, .034); }
+  if (hands_) hands(g, [0,-.08,.12], [0,-.035,-.3]);
+  out.pos = new THREE.Vector3(.19,-.21,-.32); return out; };
+
+BUILDERS.lmg = function(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  prof(g, [[.18, .045], [.18, -.05], [.12, -.05], [.1, -.045], [-.18, -.045], [-.18, .045]], .068, M.metal, 0, 0, 0, .004);
+  for (const sd of [-1, 1]) P.box(g, .004, .008, .34, M.metal2, sd*.0345, .02, 0);
+  prof(g, [[.12, .045], [.12, .072], [.0, .08], [-.1, .074], [-.1, .045]], .072, M.metal2, 0, 0, 0, .004);
+  P.zc(g, .006, .006, .076, M.metal, 0, .05, .118, 12).rotation.set(0, 0, Math.PI/2); P.box(g, .02, .01, .016, M.metal, 0, .082, -.08);
+  P.box(g, .02, .03, .04, M.metal2, -.042, .03, .0);
+  prof(g, [[.0, -.045], [.0, -.07], [.02, -.165], [.11, -.165], [.115, -.07], [.1, -.045]], .062, M.poly, 0, 0, 0, .005);
+  P.box(g, .064, .012, .1, M.metal2, 0, -.16, .065); P.box(g, .03, .012, .01, M.metal, 0, -.1, .118);
+  for (let k = 0; k < 6; k++){ const t = k/5; P.zc(g, .0035, .0035, .016, k % 2 ? M.metal2 : SM(0xb88a3a, .35, .8), -.045 + t*.004, .03 - k*.012, -.002 + k*.002, 10).rotation.set(0, 0, Math.PI/2); }
+  P.zc(g, .025, .025, .3, M.metal2, 0, .01, -.33, 22);
+  for (let r = 0; r < 3; r++) for (let k = 0; k < 7; k++){ const a = -.6 + r*.6; P.zc(g, .004, .004, .004, M.dark, Math.sin(a)*.0245, .01 + Math.cos(a)*.0245, -.22 - k*.036, 8).rotation.set(0, 0, -a); }
+  P.zc(g, .011, .011, .18, M.metal, 0, .01, -.55, 14); P.zc(g, .008, .008, .3, M.metal2, 0, -.025, -.33, 12);
+  tubeAlong(g, [[0, .045, -.06], [0, .1, -.1], [0, .105, -.2], [0, .045, -.24]], .007, M.poly, 16);
+  if (att.optic === 'iron'){ P.ring(g, .013, .003, M.metal, 0, .046, -.6); P.box(g, .006, .03, .008, M.metal, 0, .03, -.6); P.box(g, .024, .02, .02, M.metal, 0, .08, .12); out.ads = new THREE.Vector3(0,-.07,-.3); }
+  else { rail(g, M, .18, 0, .08, .0); const r = OPTICS[att.optic](g, M, [0,.0905,.01]); out.ads = new THREE.Vector3(0, -(.0905 + r.sightY), -.3); }
+  const tip = MUZZLES[att.muzzle](g, M, [0,.01,-.64]); const mz = new THREE.Object3D(); mz.position.set(0,.01,tip-.01); g.add(mz); out.muzzle = mz;
+  P.box(g, .03, .02, .03, M.metal, 0, -.01, -.46);
+  for (const sd of [-1, 1]){ tubeAlong(g, [[sd*.012, -.02, -.46], [sd*.03, -.1, -.43], [sd*.05, -.19, -.4]], .006, M.metal2, 8); P.box(g, .018, .006, .03, M.rubber, sd*.052, -.195, -.4); }
+  const [L, pose] = underFor(g, M, att, [0,-.04,-.24], [0,-.055,-.26], out);
+  tguard(g, M.metal2, .1, .16, -.05, .026, .003);
+  gripP(g, M.poly, .115, -.05, .095, .034); stockFor(g, M, att, .18);
+  if (hands_) hands(g, [0,-.1,.13], L, pose);
+  out.pos = new THREE.Vector3(.19,-.2,-.4); return out; };
+
+BUILDERS.xbow = function(att, M, hands_){
+  const g = new THREE.Group(), out = {g};
+  prof(g, [[-.32, .02], [-.32, -.02], [-.05, -.03], [.02, -.03], [.05, -.04], [.065, -.115], [.1, -.12], [.105, -.06], [.12, -.04], [.3, -.085], [.32, -.085], [.32, .03], [.2, .035], [.12, .03], [.08, .022]], .046, M.poly, 0, 0, 0, .006,
+    [[[.13, -.03], [.27, -.065], [.27, -.03], [.15, -.005]]]);
+  prof(g, [[.32, .032], [.32, -.088], [.335, -.088], [.335, .032]], .05, M.rubber, 0, 0, 0, .003);
+  P.box(g, .02, .01, .42, M.metal, 0, .028, -.1); P.box(g, .006, .003, .4, M.dark, 0, .034, -.1);
+  tguard(g, M.poly, .02, .065, -.03, .024, .0035);
+  prof(g, [[-.27, .045], [-.27, -.01], [-.34, -.01], [-.34, .045]], .07, M.metal, 0, 0, 0, .004);
+  const tips = [];
+  for (const sd of [-1, 1]){ const pts = [[sd*.03, .02, -.3], [sd*.12, .025, -.315], [sd*.2, .025, -.3], [sd*.26, .022, -.27]]; tubeAlong(g, pts, .011, M.metal2, 16); tubeAlong(g, pts.map(p => [p[0], p[1] - .012, p[2] + .004]), .008, M.metal2, 16);
+    const cam = mk(g, new THREE.CylinderGeometry(.018, .018, .012, 22), M.metal, sd*.27, .02, -.262); cam.castShadow = true; tips.push([sd*.27, .03, -.262]); }
+  const strM = SM(0xd9d4c4, .9);
+  for (const t of tips) tubeAlong(g, [t, [t[0]*.5, .033, -.16], [0, .034, -.06]], .0018, strM, 4);
+  P.box(g, .03, .02, .02, M.metal2, 0, .034, -.06);
+  P.zc(g, .005, .005, .36, SM(0x3a3a34, .6, .3), 0, .045, -.23, 10);
+  for (const a of [0, 2.09, 4.19]) P.box(g, .001, .012, .04, SM(0xc7ff48, .5), Math.cos(a)*.007, .045 + Math.sin(a)*.007, -.07, 0, 0, a);
+  prof(g, [[-.41, .045], [-.43, .045], [-.415, .052], [-.41, .052]], .012, SM(0xc8ccd0, .25, .9), 0, 0, 0, .001); P.zc(g, .007, .004, .02, SM(0xc8ccd0, .25, .9), 0, .045, -.42, 4);
+  tubeAlong(g, [[-.04, -.01, -.34], [-.05, -.06, -.36], [0, -.075, -.37], [.05, -.06, -.36], [.04, -.01, -.34]], .005, M.metal2, 14);
+  if (att.optic === 'iron'){ P.ring(g, .014, .003, M.metal, 0, .07, -.12); P.box(g, .004, .03, .006, M.metal, 0, .05, -.12); out.ads = new THREE.Vector3(0,-.075,-.24); }
+  else { rail(g, M, .14, 0, .05, .02); const r = OPTICS[att.optic](g, M, [0,.0605,.02]); out.ads = new THREE.Vector3(0, -(.0605 + r.sightY), -.26); }
+  const mz = new THREE.Object3D(); mz.position.set(0,.048,-.42); g.add(mz); out.muzzle = mz;
+  const [L, pose] = underFor(g, M, att, [0,-.03,-.25], [0,-.045,-.27], out);
+  if (hands_) hands(g, [0,-.09,.11], L, pose);
+  out.pos = new THREE.Vector3(.17,-.18,-.36); return out; };
+
+// ---- combat knife: clip-point blade with fuller, guard, ribbed grip ----
+knifeModel = function(){ const g = new THREE.Group(), steel = SM(0xc8ccd0, .22, .92), dark = SM(0x1e1e1c, .8), mt = SM(0x333333, .45, .6);
+  prof(g, [[-.03, .012], [-.16, .012], [-.19, .008], [-.225, -.006], [-.2, -.012], [-.15, -.016], [-.03, -.016]], .006, steel, 0, 0, 0, .0022);
+  P.box(g, .0066, .003, .11, mt, 0, .003, -.09);
+  P.box(g, .05, .012, .012, mt, 0, -.002, -.025); for (const sd of [-1, 1]) mk(g, new THREE.SphereGeometry(.006, 10, 8), mt, sd*.026, -.002, -.025);
+  P.zc(g, .015, .017, .1, dark, 0, -.002, .03, 18); for (let k = 0; k < 5; k++) mk(g, new THREE.TorusGeometry(.0165, .002, 6, 18), dark, 0, -.002, -.005 + k*.018);
+  P.zc(g, .018, .014, .016, mt, 0, -.002, .085, 18);
+  const hg = new THREE.Group(), kl = []; gripHand(hg, kl, V(0, 0, 0), 1, false, V(.3, -1, -.5).normalize(), false); hg.add(new THREE.Mesh(mergeGeo(kl), HAND_MAT)); hg.rotation.set(-Math.PI/2, 0, 0); hg.position.set(-.005, -.002, .04); g.add(hg);
+  g.position.set(.2, -.2, -.35); g.visible = false; camera.add(g); return g; };
+
+// ---- gloves: tactical leather texture and hard knuckle guards ----
+{ const leatherN = tex(128, 128, (c, w, h) => { c.fillStyle = 'rgb(128,128,255)'; c.fillRect(0, 0, w, h);
+    for (let i = 0; i < 1600; i++){ const x = Math.random()*w, y = Math.random()*h, s = 1 + Math.random()*2.5; c.fillStyle = `rgb(${110 + Math.random()*36},${110 + Math.random()*36},255)`; c.beginPath(); c.arc(x, y, s, 0, 6.283); c.fill(); }
+    c.strokeStyle = 'rgba(150,150,255,.6)'; c.lineWidth = 1; for (let i = 0; i < 12; i++){ c.beginPath(); c.moveTo(0, i*11 + 3); c.lineTo(w, i*11 + 3); c.setLineDash([3, 3]); c.stroke(); } });
+  leatherN.wrapS = leatherN.wrapT = THREE.RepeatWrapping; leatherN.repeat.set(6, 6);
+  HAND_MAT.normalMap = leatherN; HAND_MAT.normalScale = new THREE.Vector2(.6, .6); HAND_MAT.roughness = .62; HAND_MAT.needsUpdate = true;
+  const _gh = gripHand;
+  gripHand = function(g, gl, G0, sx, trigger, dir, watch){ _gh(g, gl, G0, sx, trigger, dir, watch);
+    const X = dx => G0.x + dx*sx;
+    gl.push({g:roundBox(.012, .05, .04, .005, 2), p:[X(.058), G0.y + .02, G0.z - .002], r:[0, 0, .12*sx], c:0x1e1e1c});
+    for (let i = 0; i < 3; i++) gl.push({g:roundBox(.009, .016, .016, .004, 2), p:[X(.06), G0.y + .04 - i*.02, G0.z - .022], c:0x262624});
+    gl.push({g:new THREE.CylinderGeometry(.02, .02, .012, 14), p:[X(.04), G0.y - .028, G0.z + .04], r:[.4, 0, 0], c:GLV3}); };
+  // sleeve: one smooth tapered tube with soft creases instead of stacked rings
+  const _faOld = forearm;
+  forearm = function(g, gl, W, dir, watch){ try { return forearmSmooth(g, gl, W, dir, watch); } catch(e){ return _faOld(g, gl, W, dir, watch); } };
+  function forearmSmooth(g, gl, W, dir, watch){
+    const A = W.clone(), cuffEnd = W.clone().addScaledVector(dir, .05), sStart = W.clone().addScaledVector(dir, .045), E = W.clone().addScaledVector(dir, .5);
+    seg(gl, A, cuffEnd, .031, .034, GLV, 16);
+    const strap = W.clone().addScaledVector(dir, .03); seg(gl, strap.clone().addScaledVector(dir, -.008), strap.clone().addScaledVector(dir, .008), .0345, .0345, GLV3, 16);
+    if (watch){ const wp = W.clone().addScaledVector(dir, .075); seg(gl, wp.clone().addScaledVector(dir,-.011), wp.clone().addScaledVector(dir,.011), .0372, .0372, 0x161616, 16);
+      gl.push({g:new THREE.CylinderGeometry(.016, .016, .01, 16), p:[wp.x, wp.y+.036, wp.z], c:0x202020}); gl.push({g:new THREE.CylinderGeometry(.012, .012, .011, 16), p:[wp.x, wp.y+.037, wp.z], c:0x6a7a70}); }
+    const sl = [], N = 18, RS = 18, tg = new THREE.CylinderGeometry(1, 1, 1, RS, N, false), p3 = tg.attributes.position;
+    for (let i = 0; i < p3.count; i++){ const y = p3.getY(i) + .5, a = Math.atan2(p3.getZ(i), p3.getX(i)); let r = .046 + y*.014; r *= 1 + .035*Math.sin(y*28 + a*2)*Math.min(1, y*4) + (y < .06 ? .04 : 0); p3.setXYZ(i, Math.cos(a)*r, y - .5, Math.sin(a)*r); }
+    tg.computeVertexNormals(); const L = E.distanceTo(sStart); tg.scale(1, L, 1);
+    _q2.setFromUnitVectors(_up, dir); _e2.setFromQuaternion(_q2, 'XYZ'); const mid = sStart.clone().add(E).multiplyScalar(.5);
+    sl.push({g:tg, p:[mid.x, mid.y, mid.z], r:[_e2.x, _e2.y, _e2.z], c:0xffffff});
+    const m = new THREE.Mesh(mergeGeo(sl), VM.sleeve); g.add(m); }
+  // fingers: one smooth tapered tube per finger instead of a string of beads
+  const _chOld = chain;
+  chain = function(list, pts, r, c, tipC){ try { return chainTube(list, pts, r, c, tipC); } catch(e){ return _chOld(list, pts, r, c, tipC); } };
+  function chainTube(list, pts, r, c, tipC){ const curve = new THREE.CatmullRomCurve3(pts), N = 12, RS = 10, tg = new THREE.TubeGeometry(curve, N, 1, RS, false), P3 = tg.attributes.position, cp = new THREE.Vector3(), v = new THREE.Vector3();
+    for (let i = 0; i <= N; i++){ curve.getPointAt(i/N, cp); const rr = r*(1.04 - .2*i/N) + r*.06*Math.sin(i/N*Math.PI*2.5)*0; for (let k = 0; k <= RS; k++){ const idx = i*(RS + 1) + k; v.fromBufferAttribute(P3, idx).sub(cp).multiplyScalar(rr); P3.setXYZ(idx, cp.x + v.x, cp.y + v.y, cp.z + v.z); } }
+    tg.computeVertexNormals(); list.push({g:tg, c});
+    const e = pts[pts.length - 1]; list.push({g:new THREE.SphereGeometry(r*.84, 12, 10), p:[e.x, e.y, e.z], c:tipC || c});
+    list.push({g:new THREE.SphereGeometry(r*1.06, 12, 10), p:[pts[0].x, pts[0].y, pts[0].z], c});
+    for (let k = 1; k < pts.length - 1; k++) list.push({g:new THREE.SphereGeometry(r*(1.06 - .2*k/(pts.length - 1)), 10, 8), p:[pts[k].x, pts[k].y, pts[k].z], c}); }
+}
+
+// ---- livelier walk and run cycle: longer running stride, hip sway and twist, forward lean, steady head, idle breathing ----
+{ const _as = animateSoldier;
+  animateSoldier = function(s, walk, phase, aim, crouch, pitch){ _as(s, walk, phase, aim, crouch, pitch);
+    const b = s.body; if (!b) return;
+    if (!crouch && walk > .02){ const run = clamp((walk - .55)/.45, 0, 1), st = 1 + .35*run;
+      s.legs[0].rotation.x *= st; s.legs[1].rotation.x *= st;
+      s.knees[0].rotation.x += run*.55*Math.max(0, Math.sin(phase - .4)); s.knees[1].rotation.x += run*.55*Math.max(0, Math.sin(phase + Math.PI - .4));
+      b.rotation.set(.07*run*(1 - aim*.5), Math.sin(phase)*.06*walk, Math.sin(phase)*.03*walk); b.position.x = Math.sin(phase)*.022*walk; b.position.y *= 1 + .6*run;
+      s.head.rotation.z = -b.rotation.z*.85; s.gun.rotation.z = Math.sin(phase*2)*.03*walk*(1 - aim*.6); }
+    else { b.rotation.set(0, 0, 0); b.position.x = 0; s.head.rotation.z = 0; s.gun.rotation.z = 0;
+      if (!crouch){ const t = performance.now()*.001 + (s.mk ? s.mk.skin*1.3 + s.mk.gear*.7 : 0); b.position.y += Math.sin(t*1.6)*.004; s.gun.rotation.z = Math.sin(t*1.6 + .5)*.01; } } };
+}
+// ---- online: vehicles and the wounded state are now shared between players ----
+var myRv = null, rvSeq = 0;
+function onlineDown(rp, wi){
+  if (player.noDown || player.downedT > 0 || !room || mode !== 'online') return false;
+  let mate = false; for (const r of remotes.values()) if (r.alive && !r.downed && r.team === player.team && Math.hypot(r.pos.x - player.pos.x, r.pos.z - player.pos.z) < 60){ mate = true; break; }
+  if (!mate) return false;
+  player.hp = 1; player.downedT = 16; player.downBy = rp; player.downWi = wi; player.downW = WNAME(wi); downHelper = null; aiming = false; touchFire = false; $('aim').classList.remove('on');
+  if (player.vehicle){ player.vehicle.rider = null; player.vehicle = null; }
+  showMsg('Вы ранены! Союзник может вас поднять'); sendPresence(); return true; }
+function onlineHurtForce(r, wi){ player.noDown = true; try { onlineHurt(50, r, wi == null ? 0 : wi, false); } finally { player.noDown = false; } }
+function remoteRevive(rp, pr, tr){
+  const rv = Array.isArray(pr.rv) ? pr.rv : null, n = rv ? num(rv[1], -1) : -1;
+  if (!tr.rvInit){ tr.rvInit = 1; tr.rv = n; return; } if (n === tr.rv) return; tr.rv = n;
+  if (rv && rv[0] === myPeer && player.downedT > 0 && player.alive && rp.team === player.team && Math.hypot(rp.pos.x - player.pos.x, rp.pos.z - player.pos.z) < 3.5){
+    player.downedT = 0; player.hp = 40; player.downBy = null; $('dmg').style.opacity = 0; showMsg('Вас поднял ' + rp.name); tone(660, .15, .05, 'triangle'); sendPresence(); } }
+function releaseRemoteVeh(rp){ const q = rp.vq; if (!q) return; if (q.rider === rp) q.rider = null; q.mesh.visible = true;
+  if (rp.vLast){ q.pos.set(rp.vLast.x, terrainH(rp.vLast.x, rp.vLast.z), rp.vLast.z); q.yaw = rp.vLast.yaw; q.speed = 0; q.mesh.position.copy(q.pos); q.mesh.rotation.y = q.yaw; } rp.vq = null; }
+function remoteVehicle(rp, pr){
+  const vh = Array.isArray(pr.vh) && rp.alive ? pr.vh : null, kind = vh ? ['quad', 'car', 'truck'][clamp(Math.round(num(vh[1])), 0, 2)] : null, idx = vh ? Math.round(num(vh[2], -1)) : -1, q = idx >= 0 ? QUADS[idx] : null;
+  if (rp.vq && rp.vq !== q) releaseRemoteVeh(rp);
+  if (rp.vm) for (const k in rp.vm) rp.vm[k].visible = false;
+  if (!vh){ rp.body.visible = true; return; }
+  if (q && (q.kind || 'quad') === kind && q !== player.vehicle && (!q.rider || q.rider === rp)){ q.rider = rp; q.mesh.visible = false; rp.vq = q; }
+  rp.vm = rp.vm || {}; let m = rp.vm[kind];
+  if (!m){ m = kind === 'quad' ? quadMesh(rp.team === 0 ? 0x2c3a52 : 0x52302c) : vehGroup(kind); rp.vm[kind] = m; rp.root.add(m); }
+  const vy = num(vh[0]); m.visible = true; m.position.set(0, 0, 0); m.rotation.y = vy - rp.root.rotation.y;
+  rp.vLast = {x:rp.pos.x, z:rp.pos.z, yaw:vy}; rp.body.visible = kind === 'quad';
+  const spd = Math.abs(num(vh[3])), rr = kind === 'truck' ? 2.4 : kind === 'car' ? 1.9 : 1.3;
+  if (rp.team !== player.team && spd > 7 && player.alive && !player.vehicle && Math.hypot(rp.pos.x - player.pos.x, rp.pos.z - player.pos.z) < rr && (!rp.runT || now() - rp.runT > 1)){ rp.runT = now(); onlineHurt(kind === 'truck' ? 200 : 150, rp, 95, false); } }
+{ const _ot = onlineTick;
+  onlineTick = function(dt){ _ot(dt); for (const q of QUADS) if (q.rider && q.rider.peer && remotes.get(q.rider.peer) !== q.rider) releaseRemoteVeh(q.rider); };
+  const _nd = nearDowned;
+  nearDowned = function(){ const b = _nd(); if (b || !room || !player.alive || player.downedT > 0) return b;
+    for (const r of remotes.values()) if (r.downed && r.alive && r.team === player.team && Math.hypot(r.pos.x - player.pos.x, r.pos.z - player.pos.z) < 1.9) return r; return null; };
+  const _rb = reviveBot;
+  reviveBot = function(b){ if (!b.peer) return _rb(b); if (b._rvT && now() - b._rvT < 3) return; b._rvT = now(); myRv = [b.peer, ++rvSeq];
+    addMoney(30, 'помощь союзнику'); addXp(100, 'помощь'); tone(660, .15, .05, 'triangle'); showMsg('Вы подняли: ' + b.name); sendPresence(); };
+}
 // rebuild every weapon model with the new shapes and materials
 for (let i = 0; i < WEAPONS.length; i++) try { applyLoadout(i); } catch(e){}
 
