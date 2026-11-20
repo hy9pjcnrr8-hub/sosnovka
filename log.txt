@@ -1,0 +1,15 @@
+11-20 03:40:42.966  1390  1390 D AndroidRuntime: Shutting down VM
+11-20 03:40:45.302   506   563 I PackageDexOptimizer: Running dexopt (dexoptNeeded=1) on: /data/app/~~1aeJG5TFI_LlSWD-zd-xQQ==/ru.ugolnyyar.nativegame-7hKuiGum1KRibofE1NKVkw==/base.apk pkg=ru.ugolnyyar.nativegame isa=x86_64 dexoptFlags=boot_complete,profile_guided,public,enable_hidden_api_checks targetFilter=speed-profile oatDir=/data/app/~~1aeJG5TFI_LlSWD-zd-xQQ==/ru.ugolnyyar.nativegame-7hKuiGum1KRibofE1NKVkw==/oat classLoaderContext=PCL[]{}
+11-20 03:40:45.303   420   420 V installd: DexInv: --- BEGIN '/data/app/~~1aeJG5TFI_LlSWD-zd-xQQ==/ru.ugolnyyar.nativegame-7hKuiGum1KRibofE1NKVkw==/base.apk' ---
+11-20 03:40:45.489  1970  1970 I dex2oat32: /apex/com.android.art/bin/dex2oat32 --input-vdex-fd=-1 --output-vdex-fd=9 --updatable-bcp-packages-file=/system/etc/updatable-bcp-packages.txt --resolve-startup-const-strings=true --max-image-block-size=524288 --compiler-filter=speed-profile --classpath-dir=/data/app/~~1aeJG5TFI_LlSWD-zd-xQQ==/ru.ugolnyyar.nativegame-7hKuiGum1KRibofE1NKVkw== --class-loader-context=PCL[]{} --generate-mini-debug-info --compact-dex-level=none --compilation-reason=install
+11-20 03:40:45.817   420   420 V installd: DexInv: --- END '/data/app/~~1aeJG5TFI_LlSWD-zd-xQQ==/ru.ugolnyyar.nativegame-7hKuiGum1KRibofE1NKVkw==/base.apk' (success) ---
+11-20 03:40:45.817   506   563 V BackupManagerService: [UserID:0] restoreAtInstall pkg=ru.ugolnyyar.nativegame token=1 restoreSet=0
+11-20 03:40:45.831  1404  1404 I MediaProvider: Invalidating LocalCallingIdentity cache for package ru.ugolnyyar.nativegame. Reason: package android.intent.action.PACKAGE_ADDED
+11-20 03:40:45.835   698   698 D AvrcpMediaPlayerList: Name of package changed: ru.ugolnyyar.nativegame
+11-20 03:40:45.950   506  1091 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=ru.ugolnyyar.nativegame/.MainActivity (has extras)} from uid 2000
+11-20 03:40:45.999   506   548 I ActivityManager: Start proc 2135:ru.ugolnyyar.nativegame/u0a130 for pre-top-activity {ru.ugolnyyar.nativegame/ru.ugolnyyar.nativegame.MainActivity}
+11-20 03:40:46.918   506  1696 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ru.ugolnyyar.nativegame flg=0x4000010 (has extras) } to com.android.packageinstaller/.PackageInstalledReceiver
+11-20 03:40:46.918   506   547 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ru.ugolnyyar.nativegame flg=0x4000010 (has extras) } to com.android.gallery3d/.app.PackagesMonitor
+11-20 03:40:48.288   506   546 D ArtManagerInternalImpl: /data/misc/iorapd/ru.ugolnyyar.nativegame/2/ru.ugolnyyar.nativegame.MainActivity/compiled_traces/compiled_trace.pb doesn't exist
+11-20 03:40:48.289   506   546 I ActivityTaskManager: Displayed ru.ugolnyyar.nativegame/.MainActivity: +2s337ms
+11-20 03:40:50.984   422  2127 I iorapd  : Perfetto TraceBuffer saved to file: /data/misc/iorapd/ru.ugolnyyar.nativegame/2/ru.ugolnyyar.nativegame.MainActivity/raw_traces/1795146050983768124.perfetto_trace.pb
