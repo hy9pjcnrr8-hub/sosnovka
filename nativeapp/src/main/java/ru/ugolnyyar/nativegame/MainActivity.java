@@ -1012,7 +1012,7 @@ public class MainActivity extends Activity {
             o.add(new Opt("🛍 Торговый центр", "+2 500 работы, доход", 3_500_000, "mall"));
         }
         o.add(new Opt("📣 Реклама", "быстрее переезжают", a2 ? 1_200_000 : AD_COST, "ad"));
-        o.add(new Opt("Завершить месяц →", 0, "end", 2));
+        o.add(new Opt(deadline < 0 ? "Завершить месяц" : "Завершить месяц →", 0, "end", 2));
         if (deadline < 0) o.add(new Opt("⏩ 3 месяца", 0, "end3", 2));
         return o.toArray(new Opt[0]);
     }
