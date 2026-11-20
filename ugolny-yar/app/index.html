@@ -78,7 +78,8 @@
   .opts.grid .btn{margin:0;padding:9px 10px;font-size:14px;font-weight:700}
   .opts.grid .btn small{display:block;font-weight:500;font-size:11.5px;color:var(--dim);margin-top:2px;line-height:1.25}
   .opts.grid .btn .cost{font-size:12px;margin-top:3px}
-  .pin{padding-top:8px}
+  .pin{padding-top:8px;display:flex;gap:7px}
+  .pin .btn{flex:1;font-size:14px;padding:10px 8px;white-space:nowrap}
   #ctl{flex:0 1 auto;min-height:0;display:flex;flex-direction:column}
   #ctl > *{flex:none}
   #ctl > .opts{flex:1 1 auto;min-height:56px;overflow-y:auto}
@@ -135,7 +136,7 @@ const City = (() => {
         REDL = "rgba(255,70,60,1)", GREENL = "rgba(110,255,170,1)", WHITE = "rgba(255,245,225,1)";
   function glow(x, y, r, col, a = 1, p = 1) { glows.push([x, y, r, col, a, p]); }
 
-  function bounds() { return G && G.act >= 2 ? [-820, 1900] : [0, 1000]; }
+  function bounds() { return G && G.act >= 3 && G.a3 && (G.a3.games || G.a3.tower) ? [-1200, 2050] : G && G.act >= 2 ? [-820, 1900] : [0, 1000]; }
   // ── сезон и время ──
   function dateOf() { return new Date(2026, 10, 13 + (G ? G.day : 0)); }
   function season() {
@@ -163,6 +164,8 @@ const City = (() => {
       tram: f.tram ? "on" : "off", museum: f.museum ? "on" : (f.demolished ? "gone" : "off"), mineFate: f.mineFate || "off", cup: f.cup ? "on" : "off", filters: f.filters ? "on" : "off" });
     for (let i = 0; i < 24; i++) { k["mic" + i] = i < (G.micro || 0) ? "on" : "off"; }
     for (let i = 0; i < 12; i++) { k["sch" + i] = i < (G.schools || 0) ? "on" : "off"; k["hos" + i] = i < (G.hospitals || 0) ? "on" : "off"; k["par" + i] = i < (G.parks || 0) ? "on" : "off"; k["mal" + i] = i < (G.malls || 0) ? "on" : "off"; }
+    const a3k = G.a3 || {};
+    Object.assign(k, { metro: a3k.metro && a3k.metro !== "bus" ? a3k.metro : "off", bridge: a3k.bridge || "off", tvtower: a3k.tower || "off", stadium: a3k.games ? "on" : "off", vsm: a3k.vsm ? "on" : "off", monument: a3k.matvey || "off" });
     k.sky = G.pop >= 200000 ? String(Math.min(9, Math.floor((G.pop - 200000) / 100000) + 1)) : "off";
     return k;
   }
@@ -174,6 +177,7 @@ const City = (() => {
     renov: [440, 280, 1, 1.4], town: [520, 260, 1, 1.0],
     wide: [540, 235, 1, .62], rail: [-130, 340, 1, 1.4], energy: [-400, 240, .8, 1.2], hydro: [-280, 290, .7, 1.4], wind: [200, 200, .35, 1.0], airport: [-80, 190, .5, 1.1],
     uni: [1210, 280, 1, 1.5], med: [1060, 290, 1, 1.7], north: [1450, 220, .9, 1.0], tram: [500, 330, 1, 1.4],
+    metro: [380, 320, 1, 1.7], river: [820, 380, 1, .9], bridge: [820, 330, 1, .85], tvtower: [-150, 150, .62, .8], stadium: [-640, 260, .8, 1.15], vsm: [-150, 370, 1, 1.1], monument: [658, 320, 1, 2.6],
     museum: [95, 230, 1, 1.5], mineFate: [95, 260, 1, 1.6], cup: [770, 200, .55, 1.3], filters: [400, 220, .78, 1.0], sky: [1400, 200, .84, .9],
   };
   function spotFor(k) {
@@ -824,6 +828,159 @@ const City = (() => {
       if (p < 1) { const cx = x0 + 160, ct = GROUND - 22 - 240; line(cx, GROUND - 22, cx, ct, 2.4, "#f4c84a"); line(cx - 60, ct + 4, cx + 16, ct + 4, 2.4, "#f4c84a"); glow(cx, ct, 10, REDL, Math.sin(T * 6) > 0 ? 1 : .2, .9); }
     }
   }
+  // ═════════ ЧАСТЬ III: река, мост, метро, телебашня, стадион, ВСМ, памятник ═════════
+  function drawAct3(se) {
+    if (!G || G.act < 3) return;
+    const a3 = G.a3 || {};
+    layer(1);
+    // ── река ──
+    const ry = GROUND + 70, rh = 60;
+    if (se.snowy) {
+      R(-1300, ry, 3400, rh, "#aebfd6");
+      for (let i = 0; i < 60; i++) { const x = -1250 + i * 57 + hash(i * 7) * 20; ctx.globalAlpha = .55; poly([x, ry + 6 + hash(i) * 30, x + 30, ry + 4 + hash(i * 3) * 30, x + 46, ry + 14 + hash(i * 5) * 30, x + 8, ry + 18 + hash(i * 9) * 30], "#e6eef8"); }
+      ctx.globalAlpha = 1;
+    } else {
+      const g = ctx.createLinearGradient(0, ry, 0, ry + rh);
+      g.addColorStop(0, se.summer ? "#2a2a4e" : "#141c38"); g.addColorStop(1, "#070b1d");
+      ctx.fillStyle = g; ctx.fillRect(-1300, ry, 3400, rh);
+      // отражения огней — дрожащие полосы
+      ctx.globalCompositeOperation = "lighter";
+      for (let x = -1180; x < 2000; x += 46) {
+        const a = .10 + .08 * Math.sin(T * 2 + x * .07);
+        for (let k = 0; k < 7; k++) {
+          const wob = Math.sin(T * 3 + k * 1.3 + x) * 3;
+          ctx.globalAlpha = a * (1 - k / 7); R(x + wob, ry + 4 + k * 7, 10 - k, 2.2, hash(x | 0) > .5 ? "#ffcf72" : "#9ad8ff");
+        }
+      }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+    }
+    R(-1300, ry - 4, 3400, 5, se.snowy ? "#d9e2ef" : "#3a4158");            // набережная
+    for (let x = -1200; x < 2000; x += 60) { line(x, ry - 4, x, ry - 16, 1, "#59607e"); circ(x, ry - 17, 1.6, "#fff2c8"); glow(x, ry - 17, 16, WARM, .55, 1); }
+
+    // ── вантовый мост ──
+    if (a3.bridge) {
+      const p = prog("bridge", 3), cx = 820, top = GROUND - 170, base = ry + rh;
+      const big = a3.bridge === "cable";
+      // настил уходит к зрителю
+      poly([cx - 70, GROUND + 36, cx + 70, GROUND + 36, cx + 120 * p + 30, base, cx - 120 * p - 30, base], "#2a2f45");
+      for (let k = 0; k < 6; k++) { const t = k / 6, y = GROUND + 36 + (base - GROUND - 36) * t, w = 70 + 80 * t; R(cx - 2, y, 4, 4, "#f4c84a"); glow(cx - w, y, 12, WARM, .7 * p, 1); glow(cx + w, y, 12, WARM, .7 * p, 1); }
+      if (big) {
+        const tp = GROUND + 36 - (GROUND + 36 - top) * p;
+        line(cx - 26, base, cx, tp, 6, "#d7dde9"); line(cx + 26, base, cx, tp, 6, "#d7dde9");
+        line(cx - 14, GROUND + 10, cx + 14, GROUND + 10, 3, "#d7dde9");
+        if (p > .6) for (let k = 1; k <= 9; k++) {
+          const t = k / 10, y = GROUND + 36 + (base - GROUND - 36) * t, w = 70 + 80 * t;
+          ctx.globalAlpha = .7; line(cx, tp + 10 + k * 3, cx - w, y, .7, "#e8eef7"); line(cx, tp + 10 + k * 3, cx + w, y, .7, "#e8eef7"); ctx.globalAlpha = 1;
+        }
+        glow(cx, tp, 26, REDL, (T % 1.4) < .7 ? 1 : .2, 1);
+        glow(cx, tp + 40, 60, COLD, .25 * p, 1);
+      }
+    }
+
+    // ── метро: павильоны с буквой «М» ──
+    if (a3.metro === "full" || a3.metro === "lrt") {
+      const p = prog("metro", 1.8), full = a3.metro === "full";
+      for (const x of [-560, -120, 380, 980, 1450, 1760]) {
+        ctx.globalAlpha = p;
+        R(x - 12, GROUND - 4, 24, 14, "#3a4a6a"); R(x - 10, GROUND - 2, 20, 10, "#9ad8ff");
+        R(x - 4, GROUND - 22, 8, 18, "#59607e");
+        circ(x, GROUND - 26, 7, full ? "#e3342f" : "#2c7be5");
+        text(full ? "М" : "Л", x, GROUND - 25.6, 8, "#ffffff");
+        ctx.globalAlpha = 1;
+        glow(x, GROUND - 26, 26, full ? REDL : COLD, .8 * p, 1);
+        glow(x, GROUND + 3, 20, COLD, .4 * p, 1);
+      }
+    }
+
+    // ── памятник Матвею ──
+    if (a3.matvey) {
+      const p = prog("monument", 2.2), x = 658, b = GROUND + 9;
+      if (a3.matvey === "monument") {
+        R(x - 12, b - 18, 24, 18, "#3c3f4f"); R(x - 15, b - 4, 30, 4, "#2c2f3d");
+        ctx.save(); ctx.beginPath(); ctx.rect(x - 20, b - 70, 40, 52); ctx.clip();
+        const yy = b - 18 + (1 - p) * 50;
+        R(x - 6, yy - 24, 12, 22, "#b08a4a"); circ(x, yy - 29, 5, "#c79b58"); R(x - 5, yy - 27, 10, 5, "#d8b070");
+        poly([x - 7, yy - 31, x, yy - 37, x + 7, yy - 31], "#c79b58");
+        line(x + 6, yy - 20, x + 13, yy - 30, 3, "#b08a4a");                   // рука с лампой
+        ctx.restore();
+        if (p >= 1) { glow(x + 13, b - 48, 18, WARM, .9 + .1 * Math.sin(T * 3), 1); glow(x, b - 40, 50, WARM, .25, 1); }
+      } else {
+        R(x - 26, GROUND - 92, 52, 9, "#2a3150"); text("ПЛОЩАДЬ МАТВЕЯ", x, GROUND - 87.5, 3.6, "#f4c84a");
+        glow(x, GROUND - 88, 30, WARM, .5 * p, 1);
+      }
+    }
+  }
+
+  function drawTVTower(se) {
+    if (!G || !G.a3 || !G.a3.tower) return;
+    layer(0.62);
+    const p = prog("tvtower", 3), x = -150, b = GROUND - 30;
+    if (G.a3.tower === "full") {
+      const h = 330 * p, top = b - h;
+      poly([x - 16, b, x - 5, top + 40, x + 5, top + 40, x + 16, b], "#cfd6e6");
+      R(x - 2, top + 40, 4, 0, "#cfd6e6");
+      if (p > .7) {
+        const py = top + 70;
+        ctx.beginPath(); ctx.ellipse(x, py, 26, 9, 0, 0, 6.28); ctx.fillStyle = "#3f6aa6"; ctx.fill();
+        for (let k = 0; k < 12; k++) { const a = T * .6 + k * .52, lx = x + Math.cos(a) * 24, ly = py + Math.sin(a) * 4; if (Math.sin(a) > -0.2) { R(lx - 1.5, ly - 2, 3, 3, "#ffe3a8"); glow(lx, ly, 8, WARM, .6, .62); } }
+        ctx.beginPath(); ctx.ellipse(x, py + 22, 18, 6, 0, 0, 6.28); ctx.fillStyle = "#2b4a7a"; ctx.fill();
+        line(x, top + 40, x, top - 20, 2, "#e8eef7");
+        glow(x, top - 20, 22, REDL, (T % 1.2) < .6 ? 1 : .15, .62);
+        glow(x, py, 70, COLD, .25, .62);
+        text("ЯР", x, py + 22, 6, "#f4c84a");
+      }
+    } else {
+      const h = 160 * p, top = b - h;
+      line(x - 10, b, x, top, 1.6, "#9aa4bd"); line(x + 10, b, x, top, 1.6, "#9aa4bd");
+      for (let y = 0; y < h - 10; y += 14) line(x - 10 * (1 - y / 160), b - y, x + 10 * (1 - y / 160), b - y - 12, .6, "#9aa4bd");
+      glow(x, top, 14, REDL, (T % 1.2) < .6 ? 1 : .2, .62);
+    }
+  }
+
+  function drawStadium(se) {
+    if (!G || !G.a3 || !G.a3.games) return;
+    layer(0.8);
+    const p = prog("stadium", 2.6), x = -640, b = GROUND - 30;
+    ctx.globalAlpha = p;
+    ctx.beginPath(); ctx.ellipse(x, b - 20, 120, 34, 0, Math.PI, 0); ctx.lineTo(x + 120, b); ctx.lineTo(x - 120, b); ctx.closePath();
+    ctx.fillStyle = "#2c3352"; ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x, b - 24, 100, 22, 0, Math.PI, 0); ctx.fillStyle = "#1d2340"; ctx.fill();
+    for (let k = 0; k < 18; k++) R(x - 100 + k * 11.5, b - 16, 6, 4, hash(k * 3 + Math.floor(T * 2)) > .5 ? "#ffe3a8" : "#d6452f");
+    text(G.a3.games === "won" ? "УНИВЕРСИАДА" : "СТАДИОН «ЯР»", x, b - 6, 6, "#f4c84a");
+    ctx.globalAlpha = 1;
+    for (const mx of [x - 130, x - 60, x + 60, x + 130]) {
+      line(mx, b, mx, b - 90 * p, 2, "#8a93a8"); R(mx - 7, b - 92 * p, 14, 6, "#cfd6e6");
+      if (p >= 1) { glow(mx, b - 89, 30, WHITE, .9, .8); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = .08; poly([mx - 6, b - 88, mx + 6, b - 88, x + 40, b - 20, x - 40, b - 20], "#fff6dd"); ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; }
+    }
+    // салют
+    const party = G.a3.games === "won" && G.day < (G.a3.gamesDay || 0) + 120;
+    if (party && p >= 1 && every("fw", .9)) {
+      const fx = x + (hash(Math.floor(T)) - .5) * 300, fy = b - 160 - hash(Math.floor(T) + 3) * 90;
+      const cols = ["255,90,79", "244,200,74", "108,198,255", "110,255,170", "255,140,220"];
+      const col = cols[Math.floor(hash(Math.floor(T) + 9) * cols.length)];
+      for (let i = 0; i < 40; i++) { const a = i / 40 * 6.283, s = 40 + hash(i + Math.floor(T)) * 25; parts.push({ type: "fw", x: fx, y: fy, p: .8, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1.6, t: 0, r: 1.3, col }); }
+    }
+  }
+
+  function drawVSM(se) {
+    if (!G || !G.a3 || !G.a3.vsm) return;
+    layer(1);
+    const [LB, RB] = bounds(), y = GROUND + 50, p = prog("vsm", 2.4);
+    const end = LB - 100 + (RB - LB + 200) * p;
+    R(LB - 100, y + 2, end - LB + 100, 3, "#8a93a8");
+    for (let x = LB - 100; x < end; x += 40) { line(x, y, x, y - 22, .8, "#59607e"); }
+    line(LB - 100, y - 20, end, y - 20, .5, "#9aa4bd");
+    if (p < 1) return;
+    const per = 5.5, t = (T % per) / per, span = RB - LB + 900, tx = RB + 400 - t * span;
+    for (let c = 0; c < 6; c++) {
+      const cx = tx + c * 46;
+      if (c === 0) { poly([cx - 26, y, cx - 10, y - 13, cx + 22, y - 13, cx + 22, y], "#f2f5fa"); R(cx - 12, y - 6, 34, 2.4, "#2c7be5"); R(cx - 14, y - 11, 8, 4, "#1a2240"); }
+      else { R(cx - 22, y - 13, 44, 13, "#f2f5fa"); R(cx - 22, y - 6, 44, 2.4, "#2c7be5"); for (let k = 0; k < 6; k++) R(cx - 19 + k * 7, y - 11, 5, 3.5, "#ffe7a8"); }
+    }
+    glow(tx - 26, y - 5, 22, WHITE, .9, 1);
+    text("ВСМ", tx + 70, y - 3.8, 3.4, "#2c7be5");
+  }
+
   let LITF = .5;
   function sign(x, y, w, label, bg, fg = "#fff", glowCol = WARM, a = 1) {
     ctx.globalAlpha = a; R(x, y, w, 9, bg); text(label, x + w / 2, y + 4.6, 4.2, fg); ctx.globalAlpha = 1;
@@ -978,6 +1135,10 @@ const City = (() => {
         q.vy += 60 * dt;
         ctx.globalAlpha = 1 - k; circ(q.x, q.y, q.r, "#fff3c0");
         glow(q.x, q.y, 8, WARM, (1 - k) * .8, q.p);
+      } else if (q.type === "fw") {
+        q.vy += 28 * dt; q.vx *= .985; q.vy *= .985;
+        ctx.globalAlpha = 1 - k; circ(q.x, q.y, q.r, `rgb(${q.col})`);
+        if (i % 3 === 0) glow(q.x, q.y, 10, `rgba(${q.col},1)`, (1 - k) * .9, q.p);
       } else if (q.type === "dust") {
         ctx.globalAlpha = (1 - k) * .35; circ(q.x, q.y, q.r * (1 + k), "#c9cfdc");
       }
@@ -1074,7 +1235,7 @@ const City = (() => {
 
     // камера
     if (T > cam.until) {
-      cam.tz = 1; cam.ty = 260;
+      cam.tz = 1; cam.ty = G.act >= 3 ? 285 : 260;
       const [L, Rb] = bounds(), vw = cw / (base * cam.z);
       cam.tx = (L + Rb) / 2 + Math.sin(T * (G.act >= 2 ? .025 : .045)) * Math.max(0, (Rb - L) / 2 - vw / 2 + 40) * .95;
     }
@@ -1084,7 +1245,7 @@ const City = (() => {
     const viewW = cw / (base * cam.z), viewH = ch / (base * cam.z);
     const [BL, BR] = bounds();
     cam.x = Math.max(BL + viewW / 2 - 40, Math.min(BR + 40 - viewW / 2, cam.x));
-    const maxY = GROUND + 78 - viewH / 2, minY = viewH / 2 + 30;
+    const maxY = GROUND + (G.act >= 3 ? 122 : 78) - viewH / 2, minY = viewH / 2 + 30;
     cam.y = minY > maxY ? maxY : Math.max(minY, Math.min(maxY, cam.y));
     if (viewW > BR - BL + 80) cam.x = (BL + BR) / 2;
 
@@ -1099,6 +1260,8 @@ const City = (() => {
     drawAirport(se);
     drawMountain(se);
     drawHydro(se);
+    drawTVTower(se);
+    drawStadium(se);
     drawFactories(se);
     drawTEC(se);
     drawSkyscrapers(se);
@@ -1110,6 +1273,8 @@ const City = (() => {
     drawStreet(se);
     drawTram(se);
     drawRail(se);
+    drawVSM(se);
+    drawAct3(se);
     drawParts(dt);
     drawGlows();
     drawSmog(se);
@@ -1149,7 +1314,7 @@ function newGame() {
   G = { day: 0, budget: 12000000, pop: 312, trust: 50, income: {}, flags: {}, chapter: "ПРОЛОГ",
         housing: 0, jobs: 0, factories: 0, blocks: 0, ads: 0, vis: {},
         act: 1, goal: GOAL, deadline: DEADLINE, step: 0, month: 0, year: 1,
-        schools: 0, hospitals: 0, parks: 0, malls: 0, micro: 0, smog: 0, capBonus: 0, a2: {}, log: [] };
+        schools: 0, hospitals: 0, parks: 0, malls: 0, micro: 0, smog: 0, capBonus: 0, a2: {}, a3: {}, log: [] };
   City.reset();
 }
 // ───────────── сохранение ─────────────
@@ -1715,7 +1880,7 @@ async function growthTick(days) {
   let rate = Math.max(.08, Math.min(.8, .2 + 1.2 * quality() + .1 * G.ads)) * serviceFactor() * smogF * days / 30;
   if (cap > G.pop) {
     let gain = Math.floor((cap - G.pop) * rate);
-    if (G.act >= 2) gain = Math.min(gain, Math.floor((G.pop * .03 + 2000) * (1 + .3 * G.ads) * serviceFactor() * smogF * days / 30));
+    if (G.act >= 2) gain = Math.min(gain, Math.floor((G.pop * .03 + 2000) * (1 + .3 * G.ads + a3boost()) * serviceFactor() * smogF * days / 30));
     await addPop(gain, "переехали в город");
   }
   else if (cap < G.pop) await addPop(-Math.floor((G.pop - cap) * .25 * days / 30), G.housing < support() ? "негде жить" : "нет работы");
@@ -1755,6 +1920,7 @@ function buildMenu() {
   }
   opts.push([`📣 Реклама<small>быстрее переезжают</small>`, act2 ? 1200000 : AD_COST, "ad"]);
   opts.push(["Завершить месяц →", 0, "end", "end"]);
+  if (G.deadline == null) opts.push(["⏩ 3 месяца", 0, "end3", "end"]);
   return opts;
 }
 
@@ -1798,10 +1964,11 @@ async function monthTurn() {
   }
   while (true) {
     const k = await choose("Что строим?", buildMenu(), capsHTML(), true);
-    if (k === "end") break;
+    if (k === "end" || k === "end3") { G._skip3 = k === "end3"; break; }
     await doBuild(k);
   }
-  const days = Math.min(30, daysLeft());
+  const days = G._skip3 ? 90 : Math.min(30, daysLeft());
+  if (G._skip3) { G.month += 2; G._skip3 = false; }
   await advance(days);
   await growthTick(days);
   if ((G.smog || 0) > 40 && G.act >= 2) G.trust = Math.max(0, G.trust - 2);
@@ -1814,7 +1981,7 @@ async function monthTurn() {
     }
   }
   await freezeEvent();
-  if (G.deadline == null && G.month % 12 === 0) G.year++;
+  if (G.deadline == null) G.year = Math.floor(G.month / 12) + 1;
   await sleep(500);
   clear();
 }
@@ -2065,29 +2232,181 @@ async function finale2() {
   G.a2.title = title;
 }
 
+// ═══════════════════════════════════════════════════════════════════
+//  ЧАСТЬ III · «МИЛЛИОННИК» — сюжет внутри свободной игры
+// ═══════════════════════════════════════════════════════════════════
+// Цена растёт вместе с экономикой: не меньше base и не меньше mult месяцев дохода.
+function P(mult, base) { return Math.round(Math.max(base, monthly() * mult) / 1000000) * 1000000; }
+function a3boost() { return (G.a3 && G.a3.boost) || 0; }
+
+const A3_STORY = [
+  { id: "metro", pop: 180000, run: async () => {
+      G.chapter = "III·1 МЕТРО"; City.focus("metro", 6000);
+      await H("Часть III · Метро");
+      await say("Утром проспект Шахтёров стоит в пробке от копра до вокзала. Трамваи битком, автобусы не справляются.");
+      await say("Метростроевцы из Новосибирска готовы зайти: грунт плотный, а у города есть то, чего нет ни у кого, — шахтёры.");
+      await BIG("6 СТАНЦИЙ");
+      const full = P(2.5, 120000000), lrt = P(1, 40000000);
+      const k = await choose("Транспорт для большого города:", [
+        ["🚇 Метро: первая линия, 6 станций — копали шахтёры", full, "full"],
+        ["🚊 Скоростной трамвай по выделенке (ЛРТ)", lrt, "lrt"],
+        ["🚌 Ещё автобусов", 8000000, "bus"],
+        ["⏳ Отложить — вернёмся через 3 месяца", 0, "later"],
+      ]);
+      if (k === "later") return "later";
+      G.a3.metro = k;
+      if (k === "full") { await advance(60); G.a3.boost = a3boost() + .2; G.capBonus += 3; G.jobs += 8000; G.trust = Math.min(100, G.trust + 10);
+        await say("Станция «Шахтёрская» украшена старыми касками и лампами. Первый поезд ведёт сын деда Матвея.");
+        if (G.flags.matvey) await Q("Под землёй опять наши. Только теперь — с поездами."); }
+      else if (k === "lrt") { await advance(35); G.a3.boost = a3boost() + .15; G.capBonus += 1; G.jobs += 3000; await say("Синие вагоны идут по выделенке — 12 минут от вокзала до горы."); }
+      else { await advance(10); G.trust = Math.max(0, G.trust - 6); await say("Автобусов стало больше. Пробок — тоже."); }
+  } },
+  { id: "bridge", pop: 240000, run: async () => {
+      G.chapter = "III·2 ЛЕВЫЙ БЕРЕГ"; City.focus("river", 6000);
+      await H("Левый берег");
+      await say("Город упёрся в реку. На правом берегу места больше нет, а левый — пустой: сосны, песок, старые дачи.");
+      await say("Мост откроет место для целого нового района.");
+      await BIG("1 200 М");
+      const cable = P(3, 150000000), pont = P(.7, 25000000);
+      const k = await choose("Как перейти реку?", [
+        ["🌉 Вантовый мост с пилоном 180 м — символ города", cable, "cable"],
+        ["⛴ Наплавной мост и паром", pont, "pont"],
+        ["Пока строим вверх, а не вширь", 0, "none"],
+        ["⏳ Отложить — вернёмся через 3 месяца", 0, "later"],
+      ]);
+      if (k === "later") return "later";
+      if (k !== "none") {
+        G.a3.bridge = k; await advance(k === "cable" ? 75 : 30);
+        G.housing += k === "cable" ? 80000 : 20000; G.a3.boost = a3boost() + (k === "cable" ? .12 : .04);
+        await say(k === "cable" ? "Пилон светится над рекой, ванты как струны. На открытии — 40 тысяч человек и салют." : "Понтоны покачиваются, летом ходит паром. Левый берег заселяется.");
+        await addPop(k === "cable" ? 15000 : 4000, "переехали на левый берег");
+      } else { await say("Цены на квартиры ползут вверх."); G.trust = Math.max(0, G.trust - 4); }
+  } },
+  { id: "tower", pop: 300000, run: async () => {
+      G.chapter = "III·3 ТЕЛЕБАШНЯ"; City.focus("tvtower", 6000);
+      await H("Башня над Яром");
+      await say("Старая вышка связи не тянет: 5G, телевидение, аварийная связь для шахт.");
+      await say("Архитекторы предлагают башню с вращающимся рестораном — чтобы с неё был виден весь город, гора и река.");
+      const full = P(1.5, 90000000);
+      const k = await choose("Какую башню ставим?", [
+        ["🗼 Телебашня 330 м с рестораном и смотровой", full, "full"],
+        ["📡 Простая вышка 5G", 20000000, "5g"],
+        ["⏳ Отложить — вернёмся через 3 месяца", 0, "later"],
+      ]);
+      if (k === "later") return "later";
+      G.a3.tower = k; await advance(k === "full" ? 50 : 15);
+      if (k === "full") { G.income["Телебашня"] = Math.round(Math.max(3000000, monthly() * .03)); G.trust = Math.min(100, G.trust + 8);
+        await say("Ресторан делает оборот за 40 минут. В ясную ночь видно огни посёлков за 80 км."); }
+      else { G.jobs += 1500; await say("Связь отличная. Туристы фотографируют гору, а не вышку."); }
+  } },
+  { id: "games", pop: 400000, run: async () => {
+      G.chapter = "III·4 УНИВЕРСИАДА"; City.focus("stadium", 6000);
+      await H("Универсиада");
+      await say("Министерство спорта ищет город для зимней Универсиады. Нужны стадион, трассы, аэропорт и гостиницы.");
+      const chance = (G.flags.cup ? .25 : 0) + (G.flags.airport === "full" ? .25 : G.flags.airport ? .1 : 0) + (G.a3.metro === "full" ? .15 : 0) + .25;
+      await say(`Шансы заявки: <b>${Math.round(Math.min(.95, chance) * 100)}%</b> (кубок мира, аэропорт и метро помогают).`, "dim");
+      const bid = P(3, 250000000), nat = P(1, 60000000);
+      const k = await choose("Участвуем?", [
+        ["🏟 Подать заявку: стадион на 40 000 и деревня спортсменов", bid, "bid"],
+        ["🏅 Провести всероссийские игры — надёжно", nat, "nat"],
+        ["Не участвуем", 0, "none"],
+        ["⏳ Отложить — следующий отбор через 3 месяца", 0, "later"],
+      ]);
+      if (k === "later") return "later";
+      if (k === "none") { await say("Универсиаду проводят в Красноярске."); return; }
+      await advance(k === "bid" ? 60 : 30);
+      G.a3.games = "built"; G.a3.gamesDay = G.day;
+      if (k === "bid") {
+        await say("Москва. Голосование. Конверт открывают медленно…");
+        if (Math.random() < Math.min(.95, chance)) {
+          G.a3.games = "won"; await STAMP("УГОЛЬНЫЙ ЯР");
+          await say("Яр принимает Универсиаду! Спонсоры, телевидение, 60 стран.");
+          G.budget += P(3, 120000000); G.a3.boost = a3boost() + .15; G.income["Универсиада и туризм"] = Math.round(monthly() * .05);
+          await addPop(30000, "переехали работать на Универсиаду");
+        } else {
+          await say("Проиграли Казани в два голоса. Стадион остаётся городу.", "red");
+          G.trust = Math.max(0, G.trust - 5); G.a3.boost = a3boost() + .05;
+        }
+      } else { G.a3.boost = a3boost() + .08; await say("Всероссийские игры прошли без единой накладки. Стадион полон каждые выходные."); await addPop(6000, "болельщики остались жить"); }
+  } },
+  { id: "vsm", pop: 550000, run: async () => {
+      G.chapter = "III·5 МАГИСТРАЛЬ"; City.focus("vsm", 6000);
+      await H("Скоростная магистраль");
+      await say("РЖД проектирует высокоскоростную магистраль на восток. Трасса может пройти через Яр — или в 200 км южнее.");
+      await BIG("2 ЧАСА ДО НОВОСИБИРСКА", false);
+      const vsm = P(3, 300000000);
+      const k = await choose("Бьёмся за магистраль?", [
+        ["🚄 Да: доля города в строительстве и вокзал ВСМ", vsm, "yes"],
+        ["Пусть идёт южнее", 0, "no"],
+        ["⏳ Отложить — РЖД ждёт ответа 3 месяца", 0, "later"],
+      ]);
+      if (k === "later") return "later";
+      if (k === "yes") {
+        G.a3.vsm = true; if (!G.flags.rail) G.flags.rail = "electric";
+        await advance(90); G.a3.boost = a3boost() + .2; G.income["ВСМ"] = Math.round(monthly() * .04); G.capBonus += 3;
+        await say("Белый поезд проходит мост за 9 секунд. Утром — в Новосибирске, вечером — дома.");
+        await addPop(20000, "приехали по ВСМ");
+      } else await say("Магистраль ушла южнее. Яр остался в стороне от главного пути.");
+  } },
+  { id: "matvey", pop: 750000, run: async () => {
+      G.chapter = "III·6 ДЕВЯНОСТО"; City.focus("monument", 7000);
+      await H("Девяносто лет");
+      if (G.flags.matvey) {
+        await say("Деду Матвею — девяносто. Он всё так же каждое утро спускается в шахтёрский музей — проверить насосы, «на всякий случай».");
+        await Q("Когда я двенадцать лет один качал воду, думал: дурак старый. А оно вон как вышло.");
+      } else {
+        await say("Старейшему шахтёру Яра — девяносто. Говорят, он двенадцать лет в одиночку держал насосы в закрытой шахте.");
+      }
+      await say("Горожане собрали подписи: хотят отметить его так, чтобы помнили дети.");
+      const k = await choose("Как отметим?", [
+        ["🗿 Памятник «Шахтёр, который не ушёл» перед ДК", 30000000, "monument"],
+        ["🪧 Назвать главную площадь его именем", 0, "square"],
+      ]);
+      G.a3.matvey = k; G.trust = Math.min(100, G.trust + 12);
+      await advance(k === "monument" ? 30 : 5);
+      await say(k === "monument" ? "Бронзовый шахтёр поднимает лампу над площадью. Лампа горит всегда." : "На табличке: «Площадь Матвея». Он ворчит, что не заслужил, — и приходит туда каждый вечер.");
+  } },
+];
+
+async function act3Story() {
+  G.a3 = G.a3 || {};
+  const ev = A3_STORY.find(e => !G.a3["done_" + e.id] && G.pop >= e.pop && (G.a3["wait_" + e.id] || 0) <= G.month);
+  if (!ev) return false;
+  G.a3["done_" + ev.id] = true;
+  clear();
+  const r = await ev.run();
+  if (r === "later") { G.a3["done_" + ev.id] = false; G.a3["wait_" + ev.id] = G.month + 3; await say("Хорошо. Вернёмся к этому через три месяца — копите бюджет.", "dim"); }
+  await pause(); G.chapter = "ГОРОД"; save();
+  return true;
+}
+
 async function act3() {
   if (!G.a2.free) {
     G.a2.free = true; G.act = 3; G.deadline = null; G.year = 1; G.month = 0;
     G.goal = G.pop < 250000 ? 250000 : G.pop < 500000 ? 500000 : 1000000;
     clear();
     await H("Свободная игра");
-    await say("Срока больше нет. Цели: 250 000 → 500 000 → миллион. За каждую — награда области.");
+    await say("Срока больше нет. Цели: 250 000 → 500 000 → миллион и дальше. За каждую — награда области.");
+    await say("Впереди — Часть III: метро, мост на левый берег, телебашня, Универсиада, скоростная магистраль. Главы откроются, когда город вырастет.", "gold");
     await say("Игра сохраняется сама каждый месяц.", "dim");
     await pause("Строить →");
   }
+  G.a3 = G.a3 || {};
   while (true) {
     G.month++;
     G.chapter = "ГОРОД";
-    await randomEvent();
+    if (!(await act3Story())) await randomEvent();
     await monthTurn();
     if (G.pop >= G.goal) {
       clear();
-      const titles = { 250000: "Крупный город", 500000: "Большой город", 1000000: "Миллионник" };
+      const titles = { 250000: "Крупный город", 500000: "Большой город", 1000000: "Миллионник", 2000000: "Два миллиона", 3000000: "Агломерация" };
       await H(titles[G.goal] || "Новая цель");
       await BIG(fmt(G.goal));
       await STAMP(G.goal >= 1000000 ? "ГОРОД-МИЛЛИОННИК" : "ЦЕЛЬ ДОСТИГНУТА");
       if (G.goal >= 1000000) { await say("Миллион. Двенадцать лет назад здесь горело 312 окон."); if (G.flags.matvey) await Q("Я ж говорил — вернутся."); G.goal = 2000000; }
+      else if (G.goal >= 2000000) { await say("Агломерация растёт: Яр — один из крупнейших городов Сибири."); G.goal += 1000000; }
       else G.goal = G.goal === 250000 ? 500000 : 1000000;
+      if (G.goal >= 2000000 && G.pop >= G.goal) G.goal += 1000000;
       await say(`Следующая цель: ${fmt(G.goal)}.`);
       await pause();
     }
@@ -2129,6 +2448,39 @@ async function act3() {
   el.querySelector(".ih-x").onclick = () => { el.hidden = true; try { localStorage.setItem("yar-hint", "1"); } catch (e) {} };
   if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
   document.addEventListener("gesturestart", e => e.preventDefault());
+})();
+</script>
+
+<div id="upd" hidden><button id="upd-btn">✨ Вышло обновление <b id="upd-v"></b> — обновить</button></div>
+<style>
+#upd{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 64px);z-index:120;display:flex;justify-content:center;pointer-events:none}
+#upd[hidden]{display:none}
+#upd button{pointer-events:auto;border:0;border-radius:999px;padding:10px 16px;font:700 14px system-ui,sans-serif;color:#1a1405;
+  background:linear-gradient(180deg,#ffdf7e,#f4c84a);box-shadow:0 10px 30px rgba(244,200,74,.45);animation:ihUp .4s ease both}
+</style>
+<script>
+(function(){
+  const APP_VERSION = "3.0";
+  let shown = false;
+  async function check() {
+    try {
+      const r = await fetch("version.json?t=" + Date.now(), { cache: "no-store" });
+      const j = await r.json();
+      if (j.v && j.v !== APP_VERSION && !shown) {
+        shown = true;
+        document.getElementById("upd-v").textContent = j.v;
+        document.getElementById("upd").hidden = false;
+      }
+    } catch (e) {}
+  }
+  document.getElementById("upd-btn").onclick = async () => {
+    try { const reg = await navigator.serviceWorker.getRegistration(); if (reg) await reg.update(); } catch (e) {}
+    try { if (window.save) save(); } catch (e) {}
+    location.reload();
+  };
+  addEventListener("load", () => setTimeout(check, 3000));
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") check(); });
+  setInterval(check, 15 * 60 * 1000);
 })();
 </script>
 </body>
