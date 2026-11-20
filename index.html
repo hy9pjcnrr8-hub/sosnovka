@@ -21,7 +21,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;background:var(--bg)}
-body{font-family:var(--body);background:var(--bg);color:var(--text);line-height:1.6}
+body{font-family:var(--body);background:transparent;color:var(--text);line-height:1.6}
 a{color:var(--accent)}
 a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 h1,h2,h3{font-family:var(--display);font-weight:900;text-wrap:balance}
@@ -31,8 +31,8 @@ h3{font-size:18px;letter-spacing:.5px}
 .muted{color:var(--muted)}
 /* background */
 .background{position:fixed;inset:0;z-index:-1}
-#forest{position:absolute;inset:0;width:100%;height:100%;display:block;filter:brightness(.55)}
-.background::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.9),transparent),linear-gradient(0deg,rgba(0,0,0,.9),transparent)}
+#forest{position:absolute;inset:0;width:100%;height:100%;display:block;filter:brightness(.95) saturate(1.1)}
+.background::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.82) 0%,rgba(0,0,0,.45) 55%,rgba(0,0,0,.1) 100%),linear-gradient(0deg,rgba(0,0,0,.85),transparent 60%)}
 /* header */
 header{position:sticky;top:0;z-index:5;height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px;
   padding:0 max(24px,4.5vw);background:rgba(0,0,0,.62);border-bottom:1px solid var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
@@ -56,7 +56,7 @@ nav a:hover{color:var(--accent)}
 .subtitle{color:var(--accent);letter-spacing:6px;font-size:13px;font-weight:700;margin-bottom:22px}
 .main h1{font-size:clamp(52px,8vw,104px);line-height:.95;letter-spacing:-3px;text-transform:uppercase}
 .main h1 span{color:var(--accent)}
-.description{margin-top:28px;color:#b3b6b1;font-size:16px;line-height:1.8;max-width:500px}
+.description{text-shadow:0 1px 14px rgba(0,0,0,.85);margin-top:28px;color:#c3c6c1;font-size:16px;line-height:1.8;max-width:500px}
 .buttons{display:flex;gap:15px;margin-top:38px;flex-wrap:wrap}
 .stats{display:flex;gap:48px;margin-top:58px;flex-wrap:wrap}
 .stat h2{color:var(--accent);font-size:30px;letter-spacing:0;margin:0;font-variant-numeric:tabular-nums}
@@ -130,6 +130,60 @@ kbd{font-family:var(--body);font-weight:700;font-size:12px;background:rgba(255,2
 .final h2{margin:0 0 6px}
 footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;color:#777b76;background:#050708;border-top:1px solid var(--line);letter-spacing:.5px}
 @media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} html{scroll-behavior:auto} }
+
+/* ===== 1.20: cleaner, easier site ===== */
+.menuBtn{display:none;width:44px;height:44px;flex:0 0 44px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.menuBtn i{display:block;width:20px;height:2px;background:#fff;transition:transform .25s,opacity .25s}
+header.open .menuBtn i:nth-child(1){transform:translateY(7px) rotate(45deg)} header.open .menuBtn i:nth-child(2){opacity:0} header.open .menuBtn i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+nav a.on{color:var(--accent)}
+.newTag{display:inline-block;background:var(--accent);color:#000;font-size:10px;font-weight:700;letter-spacing:2px;padding:3px 8px;margin-bottom:10px}
+.side-panel{transition:border-color .3s,transform .3s}.side-panel:hover{border-color:rgba(199,255,72,.55);transform:translateY(-3px)}
+h2 .cnt{display:inline-block;vertical-align:top;margin-left:10px;font-size:14px;letter-spacing:1px;padding:4px 9px;background:rgba(199,255,72,.12);color:var(--accent);border:1px solid rgba(199,255,72,.35);font-family:var(--body);font-weight:700}
+.mode,.mapc,.dev{transition:border-color .3s,transform .3s,background .3s}
+.mode:hover,.mapc:hover,.dev:hover{transform:translateY(-3px);background:rgba(0,0,0,.72)}
+.rv{opacity:.001;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}.rv.in{opacity:1;transform:none}
+.swipe{display:none;align-items:center;gap:10px;margin-top:12px}
+.swipe button{width:44px;height:40px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.06);color:#fff;font-size:18px;cursor:pointer}
+.swipe button:active{background:var(--accent);color:#000}
+.swipe .pos{font-size:12px;letter-spacing:2px;color:var(--muted);font-weight:700;margin-right:auto;font-variant-numeric:tabular-nums}
+.swipe .track{flex:1;height:3px;background:rgba(255,255,255,.12);position:relative;overflow:hidden;max-width:160px}.swipe .track i{position:absolute;top:0;bottom:0;left:0;background:var(--accent);transition:left .2s,width .2s}
+.logMore{margin-top:18px}
+.log div.hide{display:none}
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:6;display:none;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(5,8,9,.94);border-top:1px solid var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transform:translateY(110%);transition:transform .3s}
+.mbar.show{transform:none}.mbar [hidden]{display:none!important}.mbar .btn{flex:1;justify-content:center;padding:15px 10px}
+.toTop{position:fixed;right:22px;bottom:22px;z-index:6;width:48px;height:48px;border:1px solid rgba(199,255,72,.5);background:rgba(0,0,0,.7);color:var(--accent);font-size:20px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s}
+.toTop.show{opacity:1;pointer-events:auto}.toTop:hover{background:var(--accent);color:#000;transform:translateY(-3px)}
+@media (max-width:800px){
+  .menuBtn{display:flex}
+  header nav{position:fixed;top:64px;left:0;right:0;flex-direction:column;gap:0;background:#06090a;box-shadow:0 30px 60px rgba(0,0,0,.7);border-bottom:1px solid var(--line);padding:6px 0;max-height:calc(100svh - 64px);overflow-y:auto;transform:translateY(-8px);opacity:0;visibility:hidden;transition:opacity .25s,transform .25s,visibility .25s}
+  header.open nav{transform:none;opacity:1;visibility:visible}
+  header nav a{font-size:14px;letter-spacing:2px;padding:15px 24px;border-bottom:1px solid var(--line)}
+  header nav a:last-child{border-bottom:0}
+  .mbar{display:flex} .toTop{display:none} footer{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+  section{padding:54px 0}
+  .side-panel{margin-top:30px}
+}
+@media (max-width:520px){
+  .buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px} .buttons .btn{justify-content:center;padding:15px 10px;font-size:12px} .buttons .play{grid-column:1/-1;padding:18px}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:18px 10px;margin-top:38px} .main h1{letter-spacing:-2px}
+  h2 .cnt{font-size:11px;padding:3px 7px;margin-left:6px}
+  .log div{grid-template-columns:52px 1fr;gap:10px;font-size:14.5px}
+}
+@media (max-width:700px){
+  .modes,.maps{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:84%;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;
+    margin-right:calc(-1*max(22px,env(safe-area-inset-left)));padding-right:max(22px,env(safe-area-inset-left));scrollbar-width:none;overscroll-behavior-x:contain}
+  .modes::-webkit-scrollbar,.maps::-webkit-scrollbar{display:none}
+  .modes>*,.maps>*{scroll-snap-align:start}
+  .mapc{grid-template-columns:1fr;gap:12px}.mapc canvas{width:100%;max-width:210px;height:auto;aspect-ratio:1;justify-self:center}
+  .swipe{display:flex}
+  .tablewrap{border:0;background:none;overflow:visible}
+  #weapons table{min-width:0}#weapons thead{display:none}#weapons tbody{display:grid;gap:10px}
+  #weapons tr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 12px;padding:14px;background:var(--panel);border:1px solid var(--line)}
+  #weapons td{border:0;padding:0;font-size:14px}#weapons td.n{grid-column:1/-1;font-size:16px}
+  #weapons td::before{content:attr(data-l);display:block;font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:2px}
+  #weapons td.n::before{display:none}#weapons .bar{display:block;width:100%;margin:6px 0 0}
+}
+@media (prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none} }
 </style>
 </head>
 <body>
@@ -137,10 +191,11 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
 
 <header>
   <a class="logo" href="#top">ЛЕСНОЙ<span> РУБЕЖ</span></a>
-  <nav aria-label="Разделы">
+  <nav aria-label="Разделы" id="siteNav">
     <a href="#top">ГЛАВНАЯ</a><a href="#modes">РЕЖИМЫ</a><a href="#weapons">ОРУЖИЕ</a><a href="#map">КАРТЫ</a><a href="#controls">УПРАВЛЕНИЕ</a><a href="#online">ОНЛАЙН</a><a href="#log">ОБНОВЛЕНИЯ</a><a href="#team">РАЗРАБОТЧИКИ</a>
   </nav>
   <a class="btn play hbtn" href="play.html">▶ ИГРАТЬ</a>
+  <button class="menuBtn" id="menuBtn" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="siteNav"><i></i><i></i><i></i></button>
 </header>
 
 <div class="main" id="top">
@@ -153,19 +208,20 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
     <a class="btn" id="apkDl" href="lesnoy-rubezh.apk" download style="display:none;border:1px solid var(--accent);color:var(--accent)">⬇ СКАЧАТЬ ДЛЯ ANDROID</a>
     <script>if (/github\.io$/.test(location.hostname)) document.getElementById("apkDl").style.display = "inline-flex";</script>
       <a class="btn secondary" href="play.html#armory">АРСЕНАЛ</a>
-      <a class="btn secondary" href="play.html#settings">НАСТРОЙКИ</a>
+      <a class="btn secondary" href="#ios">НА IPHONE</a>
     </div>
     <div class="stats">
-      <div class="stat"><h2>4</h2><p>КАРТЫ</p></div>
-      <div class="stat"><h2>5</h2><p>СТВОЛОВ</p></div>
-      <div class="stat"><h2>40</h2><p>МОДУЛЕЙ И ОКРАСОК</p></div>
+      <div class="stat"><h2 id="stModes">17</h2><p>РЕЖИМОВ</p></div>
+      <div class="stat"><h2 id="stMaps">9</h2><p>КАРТ</p></div>
+      <div class="stat"><h2 id="stWeap">12</h2><p>СТВОЛОВ</p></div>
       <div class="stat"><h2>5×5</h2><p>КОМАНДНЫЕ БОИ</p></div>
     </div>
   </div>
   <aside class="side-panel" aria-live="polite">
     <div class="online off" id="srv">● ПРОВЕРЯЕМ СЕРВЕР…</div>
-    <h3>Обновление 0.15</h3>
-    <p>Синие против красных, игровая валюта КР, магазин оружия и модулей, миссии с наградами и три вида гранат: осколочная, светошумовая и дымовая.</p>
+    <div class="newTag">НОВОЕ</div>
+    <h3 id="upTitle">Последнее обновление</h3>
+    <p id="upText">Подробности в журнале изменений.</p>
     <a href="#log">ВСЕ ОБНОВЛЕНИЯ →</a>
   </aside>
 </div>
@@ -402,6 +458,8 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
     <a class="btn play" href="play.html">▶ НАЧАТЬ ИГРУ</a>
   </div></div>
 </div>
+<div class="mbar" id="mbar" aria-label="Быстрые действия"><a class="btn play" href="play.html">▶ ИГРАТЬ</a><a class="btn secondary" id="mbApk" href="lesnoy-rubezh.apk" download hidden>⬇ ANDROID</a><a class="btn secondary" id="mbIos" href="#ios" hidden>IPHONE</a></div>
+<button class="toTop" id="toTop" type="button" aria-label="Наверх">↑</button>
 <footer><div class="wrap">ЛЕСНОЙ РУБЕЖ · создатель: paralysax · тестеры и модераторы: иксов, Stepan2010_ok · дизайн сайта по макету paralysax · графика и звук генерируются кодом при запуске · <a href="privacy.html" style="color:inherit">политика конфиденциальности</a></div></footer>
 
 <script>
@@ -514,6 +572,61 @@ footer{padding:26px 0 calc(26px + env(safe-area-inset-bottom));font-size:13px;co
     for (const [z, col] of [[44,'#6c9bff'],[-44,'#ff7466']]){ const [X,Y] = P(0,z); m.fillStyle = col; m.beginPath(); m.arc(X, Y, 5*k, 0, 6.29); m.fill(); }
     m.font = 'bold 18px "PT Sans", sans-serif'; m.textAlign = 'center'; m.fillStyle = '#e8eee5'; m.fillText('С', c, 22); m.fillText('Ю', c, S-8);
   });
+})();
+</script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // live numbers on the first screen
+  const setN = (id, n) => { const e = document.getElementById(id); if (e && n) e.textContent = n; };
+  setN('stModes', $$('.mode').length); setN('stMaps', $$('.mapc').length); setN('stWeap', $$('#weapons tbody tr').length);
+  // newest update in the side panel
+  const first = $('.log > div');
+  if (first){ const v = first.querySelector('b').textContent.trim(), t = first.querySelector('span').textContent.trim();
+    $('#upTitle').textContent = 'Обновление ' + v; let c = t.slice(0, 210); if (t.length > 210) c = c.slice(0, c.lastIndexOf(' ')) + '…'; $('#upText').textContent = c; }
+  // counters next to section titles
+  const cnt = (sel, n) => { const h = document.querySelector(sel + ' h2'); if (h && n){ const b = document.createElement('span'); b.className = 'cnt'; b.textContent = n; h.appendChild(b); } };
+  cnt('#modes', $$('.mode').length); cnt('#map', $$('.mapc').length); cnt('#weapons', $$('#weapons tbody tr').length); cnt('#log', $$('.log > div').length);
+  // mobile menu
+  const hdr = $('header'), mb = $('#menuBtn');
+  const setMenu = o => { hdr.classList.toggle('open', o); mb.setAttribute('aria-expanded', o ? 'true' : 'false'); mb.setAttribute('aria-label', o ? 'Закрыть меню' : 'Открыть меню'); };
+  mb.addEventListener('click', () => setMenu(!hdr.classList.contains('open')));
+  $$('#siteNav a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+  // weapons table becomes cards on phones: label every cell
+  const heads = $$('#weapons thead th').map(th => th.textContent.trim());
+  $$('#weapons tbody tr').forEach(tr => [...tr.children].forEach((td, i) => td.setAttribute('data-l', heads[i] || '')));
+  // swipe carousels on phones with arrows, position and a progress line
+  for (const box of $$('.modes, .maps')){
+    const items = [...box.children], bar = document.createElement('div'); bar.className = 'swipe';
+    bar.innerHTML = '<span class="pos"></span><span class="track"><i></i></span><button type="button" aria-label="Назад">←</button><button type="button" aria-label="Дальше">→</button>';
+    box.after(bar); const pos = bar.querySelector('.pos'), fill = bar.querySelector('.track i'), [bp, bn] = bar.querySelectorAll('button');
+    const step = () => (items[1] ? items[1].offsetLeft - items[0].offsetLeft : box.clientWidth);
+    const upd = () => { const i = Math.round(box.scrollLeft/step()), n = items.length; pos.textContent = Math.min(n, i + 1) + ' / ' + n; fill.style.width = (100/n) + '%'; fill.style.left = (Math.min(n - 1, i)*100/n) + '%'; };
+    bp.addEventListener('click', () => box.scrollBy({left:-step(), behavior:reduce ? 'auto' : 'smooth'})); bn.addEventListener('click', () => box.scrollBy({left:step(), behavior:reduce ? 'auto' : 'smooth'}));
+    box.addEventListener('scroll', upd, {passive:true}); addEventListener('resize', upd); upd(); }
+  // long changelog: newest four, the rest behind a button
+  const logs = $$('.log > div');
+  if (logs.length > 4){ logs.slice(4).forEach(d => d.classList.add('hide'));
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn secondary logMore'; b.textContent = 'ПОКАЗАТЬ ВСЕ ОБНОВЛЕНИЯ (' + logs.length + ')';
+    b.addEventListener('click', () => { const open = b.dataset.open !== '1'; b.dataset.open = open ? '1' : ''; logs.slice(4).forEach(d => d.classList.toggle('hide', !open)); b.textContent = open ? 'СВЕРНУТЬ' : 'ПОКАЗАТЬ ВСЕ ОБНОВЛЕНИЯ (' + logs.length + ')'; if (!open) $('#log').scrollIntoView(); });
+    $('.log').after(b); }
+  // bottom action bar on phones, "to top" on computers
+  const gh = /github\.io$/.test(location.hostname), ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1), android = /Android/.test(navigator.userAgent);
+  if (gh && !ios) $('#mbApk').hidden = false; if (ios && !navigator.standalone) $('#mbIos').hidden = false;
+  const top = $('#top'), mbar = $('#mbar'), tt = $('#toTop');
+  const onScroll = () => { const past = scrollY > top.offsetHeight*.7; mbar.classList.toggle('show', past); tt.classList.toggle('show', scrollY > innerHeight*1.5); };
+  addEventListener('scroll', onScroll, {passive:true}); onScroll();
+  tt.addEventListener('click', () => scrollTo({top:0, behavior:reduce ? 'auto' : 'smooth'}));
+  // highlight the section you are reading in the menu
+  const links = new Map($$('#siteNav a').map(a => [a.getAttribute('href').slice(1), a]));
+  if ('IntersectionObserver' in window){
+    const so = new IntersectionObserver(es => { for (const e of es) if (e.isIntersecting){ links.forEach(a => a.classList.remove('on')); const a = links.get(e.target.id); if (a) a.classList.add('on'); } }, {rootMargin:'-45% 0px -50% 0px'});
+    ['top', ...links.keys()].forEach(id => { const el = document.getElementById(id); if (el) so.observe(el); });
+    // gentle reveal while scrolling
+    if (!reduce){ const ro = new IntersectionObserver(es => { for (const e of es) if (e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target); } }, {rootMargin:'0px 0px -8% 0px'});
+      $$('section .wrap > *, .final .box').forEach(el => { el.classList.add('rv'); ro.observe(el); }); } }
 })();
 </script>
 </body>
