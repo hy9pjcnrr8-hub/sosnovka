@@ -4,7 +4,7 @@
 <script>
 // ---- auto-update: the app opens the newest version from the game's site; offline it runs the built-in copy ----
 (function(){
-  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 1240, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
+  var REMOTE = 'https://hy9pjcnrr8-hub.github.io/sosnovka/', LOCAL_V = 1250, KEYS = ['lr_accounts','lr_session','lr_settings','lr_net','lr_dev','lr_san'];
   window.LR_BUILD = LOCAL_V;
   function b64e(s){ var b = new TextEncoder().encode(s), o = ''; for (var i = 0; i < b.length; i++) o += String.fromCharCode(b[i]); return btoa(o); }
   function b64d(s){ var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -608,7 +608,7 @@
   <div class="spIn"><div class="spEy">ТАКТИЧЕСКИЙ ШУТЕР</div><div class="spT">ЛЕСНОЙ<br><b>РУБЕЖ</b></div>
   <div class="spLine"></div><div class="spD">Синие против красных · 5 карт · 8 режимов · онлайн</div>
   <button class="spGo" id="spGo">▶ НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</button>
-  <div class="spV">версия 1.24 · Android</div></div></div>
+  <div class="spV">версия 1.25 · Android</div></div></div>
 <div id="hud" class="hidden">
   <div id="tl" class="sa-l"><div id="hpw"><span id="hpn">100</span><div id="bar"><div id="hp"></div></div></div><div id="armorW"><div id="armor"></div></div><canvas id="radar" width="192" height="192"></canvas></div>
   <div id="score"><div class="t0" id="s0">0</div><div class="mid"><div id="smid">5:00</div><div id="capbar" class="hidden"><div id="capfill"></div></div></div><div class="t1" id="s1">0</div></div>
@@ -652,7 +652,7 @@
     <span class="money" id="moneyMenu">0 КР</span>
     <span class="rankChip" id="rankChip"></span><button class="opt" id="openPass">Пропуск</button><button class="opt" id="openFriends">Друзья</button><button class="opt" id="openProfile">Профиль</button><button class="opt" id="openBoard">Рейтинг</button><button class="opt" id="openMissions">Миссии<i id="msBadge"></i></button><button class="opt" id="openArmory">Арсенал</button><button class="opt" id="openSettings">Настройки</button><button class="opt" id="openAbout">Об игре</button></div>
   <div class="mTopRow">
-  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v1.24</span></div></div></div>
+  <div class="mHead"><svg class="mEmb" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L57 12 V31 C57 46 46 56 32 61 C18 56 7 46 7 31 V12 Z" fill="#0d1410" stroke="#c7ff48" stroke-width="2.5"/><path d="M32 14 L42 30 H37 L45 42 H35 V49 H29 V42 H19 L27 30 H22 Z" fill="#2f4a2c"/><circle cx="32" cy="33" r="13" fill="none" stroke="#c7ff48" stroke-width="1.8"/><path d="M32 16v8M32 42v8M15 33h8M41 33h8" stroke="#c7ff48" stroke-width="1.8"/><circle cx="32" cy="33" r="1.8" fill="#c7ff48"/></svg><div><h1 class="mLogo">ЛЕСНОЙ <b>РУБЕЖ</b></h1><div class="mSub">ТАКТИЧЕСКИЙ ШУТЕР <span class="mVer">v1.25</span></div></div></div>
   <div class="tabs"><button class="tab sel" id="tabOff">Оффлайн</button><button class="tab" id="tabOn">Онлайн</button></div>
   </div>
   <div id="secOff">
@@ -4679,7 +4679,7 @@ function updatePlayer(dt){
   if (mv.id !== null){ const d = Math.hypot(mv.dx, mv.dy), max = 60 * settings.joySize;
     if (d > 8){ const k = Math.min(d,max)/max; mx = mv.dx/d*k; mz = -mv.dy/d*k; if (d > max*1.3 && mz > .6) wantSprint = true; } }
   if (MGU){ mx = 0; mz = 0; wantSprint = false; }
-  const l = Math.hypot(mx, mz); if (l > 1){ mx /= l; mz /= l; }
+  const l = Math.hypot(mx, mz); if (l > 1){ mx /= l; mz /= l; } LASTMOVE[0] = mx; LASTMOVE[1] = mz;
   player.moving = l > .15;
   sprinting = wantSprint && mz > .5 && !player.crouch && !aiming && aimK < .3 && reloading <= 0;
   if (sprinting && player.crouch) player.crouch = false;
@@ -4737,9 +4737,9 @@ function updatePlayer(dt){
   if (m.mover){ w.animT = Math.max(0, w.animT - dt);
     let k; if (m.pumpLate){ const p = 1 - w.animT/.55; k = (p > .3 && p < 1) ? Math.sin((p-.3)/.7*Math.PI) : 0; } else k = w.animT/.09;
     m.mover.position[m.axis || 'z'] = m.baseZ + k*m.amp; }
-  $('cross').style.transform = `scale(${1 + recoil*.35 + bloom*.9 + (sprinting ? .7 : player.moving ? .35 : 0) + (w.pellets > 1 ? .8 : 0) + (w.key === 'sniper' ? 1.2 : 0)})`;
+  if (settings.xh && settings.xh.dyn === false) $('cross').style.transform = 'none'; else $('cross').style.transform = `scale(${1 + recoil*.35 + bloom*.9 + (sprinting ? .7 : player.moving ? .35 : 0) + (w.pellets > 1 ? .8 : 0) + (w.key === 'sniper' ? 1.2 : 0)})`;
 }
-let deathCamT = 0;
+let deathCamT = 0; var LASTMOVE = [0, 0];
 function update(dt){
   if (mode === 'online') onlineTick(dt);
   if (running && mode !== 'tut'){ ensureProgExtras(); PROG.stats.playSec += dt; }
@@ -5859,7 +5859,7 @@ function myClass(){ return CLASSES[PROG.cls] ? PROG.cls : 'assault'; }
 function classSpawn(){
   const c = myClass(); abilCd = 0; dashT = 0; droneT = 0; minesLeft = c === 'engineer' ? 2 : 0;
   if (c === 'assault'){ player.armor = Math.max(player.armor || 0, 25); updateArmorHud(); }
-  $('abil').innerHTML = `<svg class="bi" viewBox="0 0 32 32" aria-hidden="true">${CLASSES[c].ico}</svg><em>${tr(c === 'engineer' ? 'МИНА' : c === 'medic' ? 'АПТЕЧКА' : c === 'scout' ? 'ДРОН' : 'РЫВОК')}</em><i id="abilCd"></i>`; abilHud();
+  $('abil').innerHTML = `<svg class="bi" viewBox="0 0 32 32" aria-hidden="true">${CLASSES[c].ico}</svg><em>${tr(c === 'engineer' ? 'МИНА' : c === 'medic' ? 'АПТЕЧКА' : c === 'scout' ? 'ДРОН' : 'СПРИНТ')}</em><i id="abilCd"></i>`; abilHud();
 }
 const classSpeed = () => (myClass() === 'assault' ? 1.08 : 1) * (dashT > 0 ? 1.4 : 1);
 const classRegen = () => myClass() === 'medic' ? 2 : 1;
@@ -6130,7 +6130,7 @@ const EN = {'Оффлайн':'Offline','Онлайн':'Online','Командны
   'Синие':'Blue','Красные':'Red','Лёгкая':'Easy','Нормальная':'Normal','Сложная':'Hard','Высокая':'High','Средняя':'Medium','Низкая':'Low','В БОЙ':'FIGHT',
   'Профиль':'Profile','Рейтинг':'Ranking','Миссии':'Missions','Арсенал':'Armory','Настройки':'Settings','Об игре':'About','Друзья':'Friends','Пропуск':'Pass','← Сайт':'← Site',
   'ТАКТИЧЕСКИЙ ШУТЕР':'TACTICAL SHOOTER','СОВЕТ':'TIP','ОГОНЬ':'FIRE','ПРИЦЕЛ':'AIM','ПРЫЖОК':'JUMP','ПРИСЕД':'CROUCH','ЗАРЯД':'RELOAD','ОРУЖИЕ':'WEAPON','ЧАТ':'CHAT','АВИА':'STRIKE',
-  'РЫВОК':'DASH','АПТЕЧКА':'MEDKIT','МИНА':'MINE','ДРОН':'DRONE','СЕСТЬ':'RIDE','ВЫЙТИ':'EXIT','РАЦИЯ':'RADIO','ЭМОЦ.':'EMOTE','Штурмовик':'Assault','Медик':'Medic','Инженер':'Engineer','Разведчик':'Scout',
+  'РЫВОК':'DASH','СПРИНТ':'BOOST','АПТЕЧКА':'MEDKIT','МИНА':'MINE','ДРОН':'DRONE','СЕСТЬ':'RIDE','ВЫЙТИ':'EXIT','РАЦИЯ':'RADIO','ЭМОЦ.':'EMOTE','Штурмовик':'Assault','Медик':'Medic','Инженер':'Engineer','Разведчик':'Scout',
   'Вход':'Sign in','Регистрация':'Sign up','Ник':'Nickname','Пароль':'Password','Повторите пароль':'Repeat password','Запомнить меня':'Remember me','Войти':'Sign in','Создать аккаунт':'Create account',
   'Назад':'Back','Готово':'Done','Закрыть':'Close','Сохранить тег':'Save tag','Комната клана':'Clan room','Выйти из клана':'Leave clan','Код аккаунта':'Account code','Выйти из аккаунта':'Sign out',
   'Сезон':'Season','За всё время':'All time','Кланы':'Clans','Продолжить':'Resume','В меню':'Main menu','Ещё раз':'Play again','ПОБЕДА':'VICTORY','ПОРАЖЕНИЕ':'DEFEAT','НИЧЬЯ':'DRAW',
@@ -6420,7 +6420,7 @@ function loop(t){
   windU.value = t*.001; camU.value.copy(camera.position); animateWorld(t);
   const fp = running ? player.pos : v1.set(0,0,0);
   sun.position.set(fp.x + SUN_OFF.x, fp.y + SUN_OFF.y, fp.z + SUN_OFF.z); sun.target.position.copy(fp);
-  if (armoryOpen) renderArmoryFrame(dt); else renderer.render(scene, camera);
+  if (armoryOpen) renderArmoryFrame(dt); else if (!(POST && POST.render())) renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
 // =============================== 0.50 ===============================
@@ -7799,6 +7799,188 @@ var REAL = null;
 }
 { const _hp = helmetPop; helmetPop = function(v){ if (v && v.real) return; return _hp.apply(this, arguments); };
   const _bm = bloodMark; bloodMark = function(b){ if (b && b.real) return; return _bm.apply(this, arguments); }; }
+
+// =============================== 1.25: crosshair editor, dash, clan codes, post effects ===============================
+// ---------- 1. crosshair: style, size, thickness, gap, colour, opacity, dynamics ----------
+{ const XH0 = {style:'cross', size:26, thick:2, gap:6, color:'#ffffff', alpha:100, dyn:true, dot:false, outline:true};
+  if (!settings.xh || typeof settings.xh !== 'object') settings.xh = {}; for (const k in XH0) if (settings.xh[k] === undefined) settings.xh[k] = XH0[k];
+  const XH = settings.xh, cross = $('cross');
+  function drawXH(el, x){ const s = Math.round(x.size), t = Math.max(1, Math.round(x.thick)), g = Math.round(x.gap), L = Math.max(2, Math.round((s - g*2)/2)), sh = x.outline ? 'box-shadow:0 0 0 1px rgba(0,0,0,.65)' : 'box-shadow:none', col = `background:${x.color}`;
+    el.style.width = el.style.height = s + 'px'; el.style.margin = `${-s/2}px 0 0 ${-s/2}px`; el.style.opacity = x.alpha/100;
+    const bar = (l, tp, w, h) => `<i style="left:${l}px;top:${tp}px;width:${w}px;height:${h}px;${col};${sh}"></i>`, c = s/2;
+    let h = '';
+    if (x.style === 'cross' || x.style === 't'){ if (x.style === 'cross') h += bar(c - t/2, 0, t, L); h += bar(c - t/2, s - L, t, L) + bar(0, c - t/2, L, t) + bar(s - L, c - t/2, L, t); }
+    else if (x.style === 'circle') h += `<i style="left:${g/2}px;top:${g/2}px;width:${s - g - t*2}px;height:${s - g - t*2}px;border:${t}px solid ${x.color};border-radius:50%;background:none;${x.outline ? 'box-shadow:0 0 0 1px rgba(0,0,0,.5),inset 0 0 0 1px rgba(0,0,0,.5)' : ''}"></i>`;
+    if (x.dot || x.style === 'dot'){ const d = Math.max(2, t + (x.style === 'dot' ? 2 : 0)); h += `<i style="left:${c - d/2}px;top:${c - d/2}px;width:${d}px;height:${d}px;border-radius:50%;${col};${sh}"></i>`; }
+    el.innerHTML = h; }
+  window.applyCrosshair = () => { drawXH(cross, XH); const pv = $('xhPrev'); if (pv) drawXH(pv, XH); };
+  // dynamics off: keep the crosshair still
+  const box = document.createElement('div'); box.className = 'sbox'; box.id = 'xhBox';
+  const COLS = ['#ffffff', '#c7ff48', '#4dff88', '#00e5ff', '#ffe14d', '#ff4d6a', '#ff7af6'];
+  box.innerHTML = `<h3>Прицел</h3><div id="xhStage"><div id="xhPrev"></div></div>
+    <div class="row" id="xhStyles" style="justify-content:flex-start;flex-wrap:wrap"><button class="opt" data-xs="cross">Крест</button><button class="opt" data-xs="t">Т-образный</button><button class="opt" data-xs="dot">Точка</button><button class="opt" data-xs="circle">Круг</button></div>
+    <label>Размер <input type="range" id="xhSize" min="8" max="60"><span id="xhSizeV"></span></label>
+    <label>Толщина <input type="range" id="xhThick" min="1" max="6"><span id="xhThickV"></span></label>
+    <label>Зазор <input type="range" id="xhGap" min="0" max="20"><span id="xhGapV"></span></label>
+    <label>Непрозрачность <input type="range" id="xhAlpha" min="20" max="100"><span id="xhAlphaV"></span></label>
+    <div class="row" id="xhCols" style="justify-content:flex-start;gap:8px">${COLS.map(c => `<button class="xhCol" data-xc="${c}" style="background:${c}" aria-label="Цвет ${c}"></button>`).join('')}</div>
+    <label class="ck"><input type="checkbox" id="xhDyn"> Динамический (расходится при стрельбе и беге)</label>
+    <label class="ck"><input type="checkbox" id="xhDot"> Точка в центре</label>
+    <label class="ck"><input type="checkbox" id="xhOut"> Чёрная обводка</label>
+    <div class="row" style="justify-content:flex-start"><button class="opt" id="xhReset">Сбросить прицел</button></div>`;
+  const grid = typeof document.querySelector === 'function' ? document.querySelector('#settings .sgrid') : null; if (grid) grid.appendChild(box);
+  const st = document.createElement('style');
+  st.textContent = `#xhStage{height:86px;border-radius:10px;margin:4px 0 8px;background:linear-gradient(135deg,#55663f,#2e3a2a 50%,#8b9aa3);position:relative;overflow:hidden}
+    #xhPrev{position:absolute;left:50%;top:50%} #xhPrev i,#cross i{position:absolute;display:block}
+    .xhCol{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.25);cursor:pointer;padding:0} .xhCol.sel{border-color:#fff;box-shadow:0 0 0 2px #c7ff48}
+    #dashBtn{width:52px;height:52px;right:calc(env(safe-area-inset-right) + 96px);bottom:calc(env(safe-area-inset-bottom) + 144px);font-size:9px;position:absolute}
+    #dashBtn i{position:absolute;left:6px;right:6px;bottom:4px;height:3px;display:flex;gap:2px}#dashBtn i b{flex:1;background:#c7ff48;border-radius:2px;opacity:.95}#dashBtn i b.off{background:rgba(255,255,255,.25)}`;
+  (document.head || document.body).appendChild(st);
+  const sync = () => { const set = (id, v) => { const e = $(id); if (e) e.value = v; }, lab = (id, v) => { const e = $(id); if (e) e.textContent = v; };
+    set('xhSize', XH.size); set('xhThick', XH.thick); set('xhGap', XH.gap); set('xhAlpha', XH.alpha); lab('xhSizeV', XH.size); lab('xhThickV', XH.thick); lab('xhGapV', XH.gap); lab('xhAlphaV', XH.alpha + '%');
+    for (const [id, k] of [['xhDyn', 'dyn'], ['xhDot', 'dot'], ['xhOut', 'outline']]){ const e = $(id); if (e) e.checked = !!XH[k]; }
+    box.querySelectorAll('[data-xs]').forEach(b => b.classList.toggle('sel', b.dataset.xs === XH.style)); box.querySelectorAll('[data-xc]').forEach(b => b.classList.toggle('sel', b.dataset.xc.toLowerCase() === XH.color.toLowerCase()));
+    applyCrosshair(); };
+  const save = () => { saveSettings(); sync(); };
+  for (const [id, k] of [['xhSize', 'size'], ['xhThick', 'thick'], ['xhGap', 'gap'], ['xhAlpha', 'alpha']]){ const e = $(id); if (e) e.addEventListener('input', () => { XH[k] = +e.value; save(); }); }
+  for (const [id, k] of [['xhDyn', 'dyn'], ['xhDot', 'dot'], ['xhOut', 'outline']]){ const e = $(id); if (e) e.addEventListener('change', () => { XH[k] = e.checked; if (!XH.dyn) cross.style.transform = 'none'; save(); }); }
+  box.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.xs){ XH.style = b.dataset.xs; save(); } else if (b.dataset.xc){ XH.color = b.dataset.xc; save(); } else if (b.id === 'xhReset'){ Object.assign(XH, XH0); save(); } });
+  sync();
+}
+// ---------- 2. weapon switching: 1 / 2 weapons, 3 knife ----------
+addEventListener('keydown', e => { if (e.code === 'Digit3' && running && !paused && !(typeof chatOpen !== 'undefined' && chatOpen) && !(window.buyMenuOpen && buyMenuOpen())) knifeAttack(); });
+// ---------- 3. dash: no cooldown timer, three charges that refill, and a short dash the next one has to wait for ----------
+var DASH = {charges:3, max:3, refill:0, t:0, vx:0, vz:0, lastShift:-9};
+{ const DUR = .2, SPEED = 15, REFILL = 1.1;
+  function dashHud(){ const b = $('dashBtn'); if (!b) return; const bars = b.querySelectorAll('i b'); bars.forEach((x, k) => x.classList.toggle('off', k >= DASH.charges)); b.classList.toggle('empty', DASH.charges < 1); }
+  window.doDash = function(){ if (!running || paused || !player.alive || player.vehicle || player.downedT > 0 || (typeof MGU !== 'undefined' && MGU)) return;
+    if (DASH.t > 0 || DASH.charges < 1) return;                // physical limit: a dash must finish first, and charges must be left
+    let [mx, mz] = LASTMOVE; if (Math.hypot(mx, mz) < .2){ mx = 0; mz = 0; }
+    if (!mx && !mz) mz = 1; const l = Math.hypot(mx, mz); mx /= l; mz /= l;
+    const fx = -Math.sin(player.yaw), fz = -Math.cos(player.yaw), rx = Math.cos(player.yaw), rz = -Math.sin(player.yaw);
+    DASH.vx = (fx*mz + rx*mx)*SPEED; DASH.vz = (fz*mz + rz*mx)*SPEED; DASH.t = DUR; DASH.charges--; if (DASH.refill <= 0) DASH.refill = REFILL;
+    if (player.crouch && typeof toggleCrouch === 'function') toggleCrouch(); try { noiseHit(.12*settings.vol, 'bandpass', 900, 1, .12); } catch(e){} buzz(15); dashHud(); };
+  window.dashFrame = function(dt){
+    if (DASH.charges < DASH.max){ DASH.refill -= dt; if (DASH.refill <= 0){ DASH.charges++; DASH.refill = DASH.charges < DASH.max ? REFILL : 0; dashHud(); } }
+    if (DASH.t <= 0 || !player.alive) return; const k = Math.min(DASH.t, dt), fall = DASH.t/DUR, dx = DASH.vx*k*(.45 + .55*fall), dz = DASH.vz*k*(.45 + .55*fall); DASH.t -= dt;
+    // small steps against walls and steep ground, so a dash never passes through anything
+    const n = Math.max(1, Math.ceil(Math.hypot(dx, dz)/.15));
+    for (let i = 0; i < n; i++){ const ox = player.pos.x, oz = player.pos.z; player.pos.x += dx/n; player.pos.z += dz/n;
+      if (groundAt(player.pos.x, player.pos.z, player.pos.y) - player.pos.y > .65){ player.pos.x = ox; player.pos.z = oz; DASH.t = 0; break; }
+      collide(player.pos, .38, player.pos.y, player.crouch ? 1.2 : 1.75); if (Math.hypot(player.pos.x - ox - dx/n, player.pos.z - oz - dz/n) > .05){ DASH.t = 0; break; } }
+    camera.fov = settings.fov + 6*Math.max(0, DASH.t/DUR); camera.updateProjectionMatrix(); if (DASH.t <= 0){ camera.fov = settings.fov; camera.updateProjectionMatrix(); } };
+  addEventListener('keydown', e => { if (!running || paused || e.repeat) return;
+    if (e.code === 'ShiftLeft' || e.code === 'ShiftRight'){ const t = performance.now()/1000; if (t - DASH.lastShift < .28){ doDash(); DASH.lastShift = -9; } else DASH.lastShift = t; }
+    if (e.code === 'AltLeft' || e.code === 'AltRight' || e.code === 'KeyY'){ e.preventDefault(); doDash(); } });
+  const hud = $('hud');
+  if (hud){ const b = document.createElement('div'); b.id = 'dashBtn'; b.className = 'btn touch-only';
+    b.innerHTML = '<svg class="bi" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16h14M10 10l-6 6 6 6M20 9l7 7-7 7M15 9l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" transform="scale(-1,1) translate(-32,0)"/></svg><em>РЫВОК</em><i><b></b><b></b><b></b></i>';
+    hud.appendChild(b); b.addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); doDash(); }, {passive:false}); b.addEventListener('mousedown', e => { e.stopPropagation(); doDash(); });
+    if (typeof BTN_IDS !== 'undefined' && Array.isArray(BTN_IDS) && !BTN_IDS.includes('dashBtn')) BTN_IDS.push('dashBtn'); }
+  const _rp = respawnPlayer; respawnPlayer = function(){ DASH.charges = DASH.max; DASH.t = 0; DASH.refill = 0; dashHud(); return _rp.apply(this, arguments); };
+  // the assault class boost keeps working, but is called "speed-up" now so it is not confused with the dash
+}
+// ---------- 4. clans with invitation codes ----------
+{ const ALPH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', TOPIC = LB_BASE + 'clanreg/';
+  const genCode = () => { let s = ''; const a = new Uint32Array(6); try { crypto.getRandomValues(a); } catch(e){ for (let i = 0; i < 6; i++) a[i] = Math.random()*1e9; } for (let i = 0; i < 6; i++) s += ALPH[a[i] % ALPH.length]; return s; };
+  const normCode = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/O/g, '0').slice(0, 6);
+  function regRead(topics, cb){ const out = {}; let done = false; const fin = ok => { if (done) return; done = true; cb(ok ? out : null); };
+    if (typeof WebSocket === 'undefined') return fin(false);
+    mqttOnce(api => { for (const t of topics) api.subscribe(TOPIC + t, (tp, s) => { if (!s) return; try { out[t] = JSON.parse(s); } catch(e){} }); setTimeout(() => { api.close(); fin(true); }, 2600); }, () => fin(false)); setTimeout(() => fin(false), 9000); }
+  function regWrite(pairs, cb){ mqttOnce(api => { for (const [t, v] of pairs) api.publish(TOPIC + t, JSON.stringify(v), true); setTimeout(() => { api.close(); cb && cb(true); }, 900); }, () => cb && cb(false)); }
+  const tagOk = t => /^[A-ZА-ЯЁ0-9]{2,5}$/.test(t);
+  let busy = false;
+  function createClan(tag){ if (busy) return; if (!ACC){ toast('Войдите в аккаунт, чтобы создать клан'); return; } if (PROG.clan){ toast('Сначала выйдите из текущего клана'); return; }
+    if (!tagOk(tag)){ toast('Тег: 2–5 букв или цифр'); return; } busy = true; toast('Проверяем тег…');
+    const tries = [genCode(), genCode(), genCode()];
+    regRead(['t/' + tag, ...tries.map(c => 'c/' + c)], r => { busy = false;
+      if (!r){ toast('Нет связи с сервером — попробуйте позже'); return; }
+      const ex = r['t/' + tag]; if (ex && ex.own && ex.own !== DEVICE_ID){ toast(`Тег [${tag}] уже занят другим кланом`); return; }
+      const code = tries.find(c => !r['c/' + c]); if (!code){ toast('Не удалось подобрать код, попробуйте ещё раз'); return; }
+      const h = sha256hex('clan:' + code).slice(0, 16);
+      regWrite([['c/' + code, {tag, own:DEVICE_ID, n:ACC.nick, t:Date.now()}], ['t/' + tag, {h, own:DEVICE_ID, n:ACC.nick, t:Date.now()}]], ok => {
+        if (!ok){ toast('Нет связи с сервером — попробуйте позже'); return; }
+        PROG.clan = tag; PROG.clanCode = code; PROG.clanOwner = true; saveProg(); lbDirty(); renderProfile(); toast(`Клан [${tag}] создан. Код для друзей: ${code}`); }); }); }
+  function joinClan(raw){ if (busy) return; if (!ACC){ toast('Войдите в аккаунт, чтобы вступить в клан'); return; } if (PROG.clan){ toast('Вы уже в клане. Сначала выйдите из него'); return; }
+    const code = normCode(raw); if (code.length !== 6){ toast('Код клана — 6 символов'); return; } busy = true; toast('Ищем клан…');
+    regRead(['c/' + code], r => { busy = false; if (!r){ toast('Нет связи с сервером — попробуйте позже'); return; }
+      const c = r['c/' + code]; if (!c || !tagOk(String(c.tag || ''))){ toast('Клан с таким кодом не найден'); return; }
+      PROG.clan = c.tag; PROG.clanCode = code; PROG.clanOwner = c.own === DEVICE_ID; saveProg(); lbDirty(); renderProfile(); toast(`Вы вступили в клан [${c.tag}]`); }); }
+  function leaveClan(){ PROG.clan = ''; PROG.clanCode = ''; PROG.clanOwner = false; saveProg(); lbDirty(); renderProfile(); toast('Вы вышли из клана'); }
+  let roster = null, rosterFor = '';
+  function loadRoster(){ if (!PROG.clan || rosterFor === PROG.clan) return; rosterFor = PROG.clan; roster = null;
+    lbFetch(PROG.season.id, list => { roster = list.filter(r => r.cl === PROG.clan).sort((a, b) => (b.sxp || 0) - (a.sxp || 0)); if (!$('profile').classList.contains('hidden')) renderProfile(); }); }
+  function clanHtml(){
+    if (!PROG.clan) return `<h3>Клан</h3><p class="help" style="margin:0 0 6px;text-align:left">В клане только живые игроки. Создайте клан — игра выдаст код из 6 символов, отправьте его друзьям. Или введите код, который прислал друг. Один игрок — один клан.</p>
+      <div class="row" style="justify-content:flex-start;flex-wrap:wrap"><input class="nick" id="clanNew" maxlength="5" placeholder="ТЕГ" style="width:90px;text-transform:uppercase" autocomplete="off" spellcheck="false"><button class="opt sel" id="clanCreate">Создать клан</button></div>
+      <div class="row" style="justify-content:flex-start;flex-wrap:wrap"><input class="nick" id="clanCodeIn" maxlength="6" placeholder="КОД" style="width:110px;text-transform:uppercase;letter-spacing:3px" autocomplete="off" spellcheck="false"><button class="opt" id="clanJoin">Вступить по коду</button></div>`;
+    loadRoster();
+    const code = PROG.clanCode ? `<div class="row" style="justify-content:flex-start;align-items:center"><span style="font-size:13px">Код клана:</span><b id="clanCodeShow" style="font-size:20px;letter-spacing:4px;color:#c7ff48;font-family:monospace">${esc(PROG.clanCode)}</b><button class="opt" id="clanCopy">Скопировать</button></div>`
+      : `<div class="row" style="justify-content:flex-start"><span style="font-size:13px">У клана ещё нет кода.</span><button class="opt" id="clanRegister">Получить код</button></div>`;
+    const list = roster === null ? '<span style="font-size:13px;opacity:.7">Загружаем состав…</span>' : roster.length ? roster.slice(0, 30).map(r => `<span class="clMem">${esc(r.n)} <em>ур. ${r.lvl}</em></span>`).join('') : '<span style="font-size:13px;opacity:.7">Пока только вы — пригласите друзей по коду</span>';
+    return `<h3>Клан [${esc(PROG.clan)}]</h3>${code}
+      <div class="row" style="justify-content:flex-start"><button class="opt sel" id="clanRoom">Комната клана</button><button class="opt" id="clanLeave">Выйти из клана</button></div>
+      <div class="row" style="justify-content:flex-start"><span style="font-size:13px">Уровень клана: <b>${PROG.clanLvl || 1}</b> · бонус к КР: <b>+${Math.round(clanBonus()*100)}%</b> · ваш вклад в казну: <b>${PROG.clanDon || 0} КР</b></span><button class="opt" data-don="100">Внести 100 КР</button><button class="opt" data-don="500">Внести 500 КР</button></div>
+      <div class="clRoster">${list}</div><p class="help" style="margin:2px 0 0;text-align:left">В составе только живые игроки, без ботов. «Комната клана» — отдельный онлайн-сервер только для своих.</p>`; }
+  const st = document.createElement('style'); st.textContent = `.clRoster{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.clMem{font-size:12.5px;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}.clMem em{font-style:normal;opacity:.6;font-size:11px}`; (document.head || document.body).appendChild(st);
+  const _rpf = renderProfile;
+  renderProfile = function(){ const r = _rpf.apply(this, arguments); const pf = $('profile'); if (!pf) return r;
+    const h = [...pf.querySelectorAll('h3')].find(x => /^Клан/.test(x.textContent)); if (!h) return r;
+    const wrap = document.createElement('div'); wrap.id = 'clanBlock'; wrap.innerHTML = clanHtml();
+    // remove the old free-text tag block (heading up to the help line) and put the new one in its place
+    let n = h.nextElementSibling; const kill = [h]; while (n && n.tagName !== 'H3'){ kill.push(n); n = n.nextElementSibling; }
+    h.parentNode.insertBefore(wrap, h); kill.forEach(x => x.remove());
+    for (const id of ['clanNew', 'clanCodeIn']){ const e = $(id); if (e) e.addEventListener('keydown', ev => { ev.stopPropagation(); if (ev.key === 'Enter') (id === 'clanNew' ? $('clanCreate') : $('clanJoin')).click(); }); }
+    return r; };
+  $('profile').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
+    if (b.id === 'clanCreate'){ e.stopImmediatePropagation(); createClan(String($('clanNew').value || '').trim().toUpperCase()); }
+    else if (b.id === 'clanJoin'){ e.stopImmediatePropagation(); joinClan($('clanCodeIn').value); }
+    else if (b.id === 'clanLeave'){ e.stopImmediatePropagation(); leaveClan(); }
+    else if (b.id === 'clanCopy'){ e.stopImmediatePropagation(); const c = PROG.clanCode; try { navigator.clipboard.writeText(c).then(() => toast('Код скопирован: ' + c), () => toast('Код: ' + c)); } catch(err){ toast('Код: ' + c); } }
+    else if (b.id === 'clanRegister'){ e.stopImmediatePropagation(); const t = PROG.clan; PROG.clan = ''; busy = false; createClan(t); if (!PROG.clan) PROG.clan = t; } }, true);
+}
+// ---------- 5. graphics: anti-aliased HDR render with light bloom and colour grading (high quality) ----------
+var POST = null;
+{ const ok = () => gfx === 'high' && settings.post !== false && renderer.capabilities && renderer.capabilities.isWebGL2 && typeof THREE.WebGLMultisampleRenderTarget === 'function';
+  const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2)), qScene = new THREE.Scene(), qCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1); quad.frustumCulled = false; qScene.add(quad);
+  const VS = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
+  const bright = new THREE.ShaderMaterial({uniforms:{tex:{value:null}, thr:{value:1.0}}, vertexShader:VS, depthTest:false, depthWrite:false,
+    fragmentShader:'uniform sampler2D tex; uniform float thr; varying vec2 vUv; void main(){ vec3 c = texture2D(tex, vUv).rgb; float l = max(c.r, max(c.g, c.b)); gl_FragColor = vec4(c * smoothstep(thr, thr * 1.8, l), 1.0); }'});
+  const blur = new THREE.ShaderMaterial({uniforms:{tex:{value:null}, dir:{value:new THREE.Vector2()}}, vertexShader:VS, depthTest:false, depthWrite:false,
+    fragmentShader:'uniform sampler2D tex; uniform vec2 dir; varying vec2 vUv; void main(){ vec3 c = texture2D(tex, vUv).rgb * 0.2270; c += (texture2D(tex, vUv + dir * 1.3846).rgb + texture2D(tex, vUv - dir * 1.3846).rgb) * 0.3162; c += (texture2D(tex, vUv + dir * 3.2308).rgb + texture2D(tex, vUv - dir * 3.2308).rgb) * 0.0703; gl_FragColor = vec4(c, 1.0); }'});
+  const comp = new THREE.ShaderMaterial({uniforms:{tex:{value:null}, bl:{value:null}, exposure:{value:1}, bloomK:{value:.16}}, vertexShader:VS, depthTest:false, depthWrite:false,
+    fragmentShader:`uniform sampler2D tex, bl; uniform float exposure, bloomK; varying vec2 vUv;
+      vec3 RRTAndODTFit(vec3 v){ vec3 a = v * (v + 0.0245786) - 0.000090537; vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081; return a / b; }
+      vec3 aces(vec3 color){ const mat3 ACESInputMat = mat3(vec3(0.59719, 0.07600, 0.02840), vec3(0.35458, 0.90834, 0.13383), vec3(0.04823, 0.01566, 0.83777));
+        const mat3 ACESOutputMat = mat3(vec3(1.60475, -0.10208, -0.00327), vec3(-0.53108, 1.10813, -0.07276), vec3(-0.07367, -0.00605, 1.07602));
+        color *= exposure / 0.6; color = ACESInputMat * color; color = RRTAndODTFit(color); color = ACESOutputMat * color; return clamp(color, 0.0, 1.0); }
+      vec3 toSRGB(vec3 c){ return mix(pow(c, vec3(0.41666)) * 1.055 - vec3(0.055), c * 12.92, vec3(lessThanEqual(c, vec3(0.0031308)))); }
+      void main(){ vec3 c = texture2D(tex, vUv).rgb + texture2D(bl, vUv).rgb * bloomK;
+        c = aces(c); float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+        c = mix(vec3(l), c, 1.1);                                              // a little more colour
+        c = mix(c, c * vec3(0.96, 1.0, 1.05), (1.0 - smoothstep(0.0, 0.45, l)) * 0.5);   // cooler shadows
+        c = mix(c, c * vec3(1.04, 1.01, 0.96), smoothstep(0.55, 1.0, l) * 0.5);           // warmer highlights
+        c = (c - 0.5) * 1.05 + 0.5;
+        gl_FragColor = vec4(toSRGB(clamp(c, 0.0, 1.0)), 1.0); }`});
+  let rt = null, b1 = null, b2 = null, W = 0, H = 0;
+  function ensure(){ const s = renderer.getDrawingBufferSize(new THREE.Vector2()); if (rt && s.x === W && s.y === H) return; W = s.x; H = s.y;
+    if (rt){ rt.dispose(); b1.dispose(); b2.dispose(); }
+    rt = new THREE.WebGLMultisampleRenderTarget(W, H, {type:THREE.HalfFloatType, format:THREE.RGBAFormat}); rt.samples = 4;
+    const bw = Math.max(1, W >> 2), bh = Math.max(1, H >> 2); b1 = new THREE.WebGLRenderTarget(bw, bh, {type:THREE.HalfFloatType}); b2 = new THREE.WebGLRenderTarget(bw, bh, {type:THREE.HalfFloatType}); }
+  function pass(mat, target){ quad.material = mat; renderer.setRenderTarget(target); renderer.render(qScene, qCam); }
+  POST = {render(){ if (!ok()) return false;
+    try { ensure(); const tm = renderer.toneMapping; renderer.setRenderTarget(rt); renderer.render(scene, camera);
+      bright.uniforms.tex.value = rt.texture; pass(bright, b1);
+      for (let k = 0; k < 2; k++){ blur.uniforms.tex.value = b1.texture; blur.uniforms.dir.value.set(1/b1.width*(1 + k), 0); pass(blur, b2); blur.uniforms.tex.value = b2.texture; blur.uniforms.dir.value.set(0, 1/b1.height*(1 + k)); pass(blur, b1); }
+      comp.uniforms.tex.value = rt.texture; comp.uniforms.bl.value = b1.texture; comp.uniforms.exposure.value = renderer.toneMappingExposure; pass(comp, null); return true; }
+    catch(e){ settings.post = false; renderer.setRenderTarget(null); return false; } } };
+  // option in the image settings
+  const ib = typeof document.querySelectorAll === 'function' ? [...document.querySelectorAll('#settings .sbox h3')].find(h => /Изображение/.test(h.textContent)) : null;
+  if (ib){ const l = document.createElement('label'); l.className = 'ck'; l.innerHTML = '<input type="checkbox" id="sPost"> Сглаживание, свечение и цветокоррекция (высокая графика)'; ib.parentNode.appendChild(l);
+    const cb = $('sPost'); cb.checked = settings.post !== false; cb.addEventListener('change', () => { settings.post = cb.checked; saveSettings(); }); }
+}
+{ const _up = update; update = function(dt){ _up(dt); if (running && !paused) dashFrame(dt); }; }
+applyCrosshair();
 
 // rebuild every weapon model with the new shapes and materials
 for (let i = 0; i < WEAPONS.length; i++) try { applyLoadout(i); } catch(e){}
